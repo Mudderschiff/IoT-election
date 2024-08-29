@@ -1,0 +1,329 @@
+[
+    {
+        "id": "c0a2f3b640bf9eb9",
+        "type": "tab",
+        "label": "Set Ceremony Details",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "236f4f73d6e3f79e",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0ad18d5e20ca0f8e",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.12.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "9e1ac79ed3de81c7",
+        "type": "comment",
+        "z": "c0a2f3b640bf9eb9",
+        "name": "Ceremony Details",
+        "info": "Ceremony Details are send as retain message. Each client can subscribe to this and get the ceremony details. The Laptop client should be the only client that can publish to this topic",
+        "x": 130,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "0c651260dd5972a6",
+        "type": "mqtt in",
+        "z": "c0a2f3b640bf9eb9",
+        "name": "",
+        "topic": "ceremony_details",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "0ad18d5e20ca0f8e",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 80,
+        "wires": [
+            [
+                "379e326c6b7aa54c"
+            ]
+        ]
+    },
+    {
+        "id": "379e326c6b7aa54c",
+        "type": "function",
+        "z": "c0a2f3b640bf9eb9",
+        "name": "Set Max Guardians",
+        "func": "// Code added here will be run once\n// whenever the node is started.\nglobal.set('max_guardians', msg.payload.Max_guardians);\nvar newMsg = { payload: context.global.get('max_guardians') };\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 80,
+        "wires": [
+            [
+                "f79afe1cbd6c3a7b"
+            ]
+        ]
+    },
+    {
+        "id": "f79afe1cbd6c3a7b",
+        "type": "debug",
+        "z": "c0a2f3b640bf9eb9",
+        "name": "Debug Max Guardians",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "d51366c35d2e35bf",
+        "type": "inject",
+        "z": "236f4f73d6e3f79e",
+        "name": "ESP Registration #1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "clients/ESP_1234",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 250,
+        "y": 40,
+        "wires": [
+            [
+                "c64cdf1a4b879dd3",
+                "9b681430341b0a37"
+            ]
+        ]
+    },
+    {
+        "id": "755b3e7d98287d56",
+        "type": "mqtt out",
+        "z": "236f4f73d6e3f79e",
+        "name": "",
+        "topic": "",
+        "qos": "2",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "0ad18d5e20ca0f8e",
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "e87224cd2a2c1d69",
+        "type": "mqtt in",
+        "z": "236f4f73d6e3f79e",
+        "name": "",
+        "topic": "clients/+/register",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "0ad18d5e20ca0f8e",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 200,
+        "wires": [
+            [
+                "010ddadb69fb885f"
+            ]
+        ]
+    },
+    {
+        "id": "214ab22688ce789a",
+        "type": "inject",
+        "z": "236f4f73d6e3f79e",
+        "name": "ESP Registration #2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "clients/ESP_4321",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 270,
+        "y": 140,
+        "wires": [
+            [
+                "c64cdf1a4b879dd3",
+                "9b681430341b0a37"
+            ]
+        ]
+    },
+    {
+        "id": "0806078d3907da71",
+        "type": "debug",
+        "z": "236f4f73d6e3f79e",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "010ddadb69fb885f",
+        "type": "function",
+        "z": "236f4f73d6e3f79e",
+        "name": "send_sequence number",
+        "func": "var max_clients = context.global.get('max_guardians'); \nvar sequence_order = context.global.get('sequence_order') || 0;\nvar topic_parts = msg.topic.split('/');\nvar client_id = topic_parts[1];\n\n // Assuming client_id is part of the payload\\n\nif (sequence_order < max_clients) {\n    msg.topic = `clients/${client_id}/sequence_order`;\n    msg.payload = { sequence_order: sequence_order };\n    sequence_order += 1;\n    context.global.set('sequence_order', sequence_order);\n    } else {\n        msg.topic = `clients/${client_id}/sequence_order`;\n        msg.payload = { error: 'No more unique sequence numbers available' };\n    }\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 200,
+        "wires": [
+            [
+                "0806078d3907da71",
+                "ed990795d29eed8f"
+            ]
+        ]
+    },
+    {
+        "id": "9b681430341b0a37",
+        "type": "debug",
+        "z": "236f4f73d6e3f79e",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "c64cdf1a4b879dd3",
+        "type": "rbe",
+        "z": "236f4f73d6e3f79e",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 490,
+        "y": 80,
+        "wires": [
+            [
+                "755b3e7d98287d56"
+            ]
+        ]
+    },
+    {
+        "id": "92ece7759f69b2e1",
+        "type": "mqtt in",
+        "z": "236f4f73d6e3f79e",
+        "name": "",
+        "topic": "clients/+/register",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "0ad18d5e20ca0f8e",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 240,
+        "y": 80,
+        "wires": [
+            [
+                "c64cdf1a4b879dd3"
+            ]
+        ]
+    },
+    {
+        "id": "ed990795d29eed8f",
+        "type": "mqtt out",
+        "z": "236f4f73d6e3f79e",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "0ad18d5e20ca0f8e",
+        "x": 570,
+        "y": 220,
+        "wires": []
+    }
+]

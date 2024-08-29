@@ -1,0 +1,36 @@
+% !TEX root = thesis.tex
+\author{Gabriel Cmiel}
+\title{Implementation of an IoT based Electronic Voting
+Machine}
+\date{\today} %Abgabedatum
+\newcommand{\artDerAbschlussarbeit}{Master's Thesis}
+\newcommand{\gutachter}{Prof. Dr. Vorname Nachname}
+\newcommand{\zweitgutachter}{Prof. Dr. Vorname Nachname}
+\newcommand{\betreuer}{Prof. Dr. Sebastian Altmeyer}
+\makeatletter
+
+\input{einstellungen/praembel}
+
+\begin{document}
+	\pagenumbering{roman}
+	\input{ts/titelseite}
+	\tableofcontents
+	\input{inhalt/zusammenfassung}
+	\input{inhalt/abkuerzungsverzeichnis}
+	\cleardoublepage
+	\pagenumbering{arabic}
+	\input{inhalt/einleitung}
+	\input{inhalt/grundlagen}
+	\input{inhalt/hauptteil}
+	\input{inhalt/schluss}
+    \cleardoublepage
+	\pagenumbering{roman}
+	\setcounter{page}{9}
+	\listoffigures
+	\addcontentsline{toc}{chapter}{List of figures}
+	\listoftables
+	\addcontentsline{toc}{chapter}{List of tables}
+	\printbibliography[heading=bibintoc]
+	\appendix
+	\input{inhalt/appendix}
+\end{document}

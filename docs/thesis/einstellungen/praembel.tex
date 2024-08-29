@@ -1,0 +1,34 @@
+\documentclass[12pt, a4paper,  twoside, openright, parskip=full, BCOR=1cm]{scrbook}
+
+
+
+
+%pakete 
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{todonotes}
+\usepackage{textcomp}
+\usepackage{scrlayer-scrpage}
+\usepackage{acronym}
+\usepackage{appendix}
+\usepackage{csquotes}
+
+
+%Kopf- und Fußzeile
+\lehead{\thepage}
+\rehead{\leftmark}
+\rohead{\thepage}
+\lohead{\rightmark}
+\lefoot{}
+\rofoot{}
+\KOMAoptions{headsepline=.5pt}
+\pagestyle{scrheadings}
+
+%Literaturverzeichnis
+\usepackage[backend=biber,bibencoding=utf-8,style=alphabetic-verb]{biblatex}
+\addbibresource{quellen/literatur.bib}
+
+
