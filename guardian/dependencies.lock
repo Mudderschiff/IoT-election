@@ -1,0 +1,22 @@
+dependencies:
+  idf:
+    component_hash: null
+    source:
+      type: idf
+    version: 5.2.2
+  lvgl/lvgl:
+    component_hash: 77ce3a05acc0f9709986d61ab2655f6e15c5803f8866aa7fe94a6cfeee6c0cd1
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 7.11.0
+  lvgl_esp32_drivers:
+    component_hash: 8c486a2bf5b62b3bd5f1e39cf785766c3665347aa7082eb858291a05056422c7
+    source:
+      git: git@github.com:Mudderschiff/lvgl_esp32_drivers.git
+      path: .
+      type: git
+    version: 733271a547fb33baa5fb9bcb5041c02d56c6afdd
+manifest_hash: 6087400ef0550783773d06455a12b1967d35f69195afa941a5a23cdf514954b1
+target: esp32
+version: 1.0.0
