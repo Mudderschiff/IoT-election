@@ -9,11 +9,12 @@
 #include "model.h"
 
 
-int mod_exp(sp_int *g, sp_int *x, sp_int *p, sp_int *y);
-void print_mp_int(sp_int *num);
+int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y);
+void print_sp_int(sp_int *num);
 int g_pow_p(sp_int *seckey, sp_int *pubkey);
 int rand_q(sp_int *result);
 int hash(sp_int *a, sp_int *b, sp_int *result);
 int make_schnorr_proof(sp_int *pubkey, sp_int *seckey);
+int generate_election_partial_key_backup();
 
 #endif // MOD_MATH_H

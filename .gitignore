@@ -125,3 +125,4 @@ fabric.properties
 # Ignore all local history of files
 .history
 .ionide
+guardian/.vscode/settings.json

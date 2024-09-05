@@ -222,6 +222,8 @@
 /* optionally turn off SHA512/224 SHA512/256 */
 /* #define WOLFSSL_NOSHA512_224 */
 /* #define WOLFSSL_NOSHA512_256 */
+// Wolfssl was deprecated in ESP-TLS. 
+//FREERTOS_ENABLE_BACKWARD_COMPATIBILITY
 
 /* when you want to use SINGLE THREAD. Note Default ESP-IDF is FreeRTOS */
 /* #define SINGLE_THREADED */
@@ -230,7 +232,7 @@
 #define NO_SHA //++
 #define NO_OLD_TLS //++
 
-// Turning of more features //++
+// Turning of more features //++ Reducing library size
 #define NO_DSA
 #define NO_MD4
 #define NO_MD5
@@ -240,7 +242,7 @@
 #define NO_CRYPT_BENCHMARK
 #define NO_CRYPT_TEST
 
-// Hardening
+// Hardening Enable TFM Timing Resistant Code
 #define TFM_TIMING_RESISTANT
 
 #define BENCH_EMBEDDED

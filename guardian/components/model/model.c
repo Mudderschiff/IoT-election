@@ -179,9 +179,13 @@ static const unsigned char q_256[] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x43 
 };
 
-void print_mp_int(sp_int *num) {   
-    // Allocate a buffer dynamically. Each byte can be represented by 2 hex characters.
-    // Plus one for the null terminator.
+/** 
+ * @brief Print the value of a sp_int
+ * @param num: The number to print
+ * @return void
+*/
+Print the value of a sp_int
+void print_sp_int(sp_int *num) {   
     int size = sp_unsigned_bin_size(num);
     char *buffer = (char *)malloc(size * 2 + 1);
     if (buffer == NULL) {
@@ -197,18 +201,25 @@ void print_mp_int(sp_int *num) {
     }
     free(buffer);
 }
-//mp_zero // returns an int? // no init?
-//operand lengths of N ∈ {512, 1024, 1536, 2048,
-//.* 2560, 3072, 3584, 4096}
-//but all numbers in a calculation must be of the same length
-// verbose enabled but doesnt print
-// Compute Large number Modular Exponetiation with hardware Y = (G ^ X) mod P
-// into 4096 bit binary and pad with 0?
-// type mathint
-int mod_exp(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
+
+/** 
+ * @brief Compute Large number Modular Exponetiation with hardware Y = (G ^ X) mod P
+ * @param g: Base
+ * @param x: Exponent
+ * @param p: Modulus
+ * @param y: Result
+ * @return 0 on success, -1 on failure
+ */
+int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
     return esp_mp_exptmod(g,x,p,y);
 }
 
+/**
+ * @brief Compute Large number Modular Exponetiation with known G (generator also known as base) and P (large prime also known as modulus). Y = (G ^ X) mod P
+ * @param seckey: Exponent
+ * @param pubkey: Result
+ * @return 0 on success, -1 on failure
+ */
 int g_pow_p(sp_int *seckey, sp_int *pubkey) {
     int ret;
     DECL_MP_INT_SIZE(large_prime, 3072);
@@ -225,8 +236,6 @@ int g_pow_p(sp_int *seckey, sp_int *pubkey) {
         ESP_LOGE("G_POW_P", "Failed to compute g^x mod p");
         ESP_LOGE("G_POW_P", "Error code: %d", ret);
     }
-
-
     sp_zero(large_prime);
     sp_zero(generator);
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
@@ -234,10 +243,12 @@ int g_pow_p(sp_int *seckey, sp_int *pubkey) {
     return 0;
 }
 
-// Generate random number below Q
-// replace with 
-// Q is very close to the maximum value for a 256 bit number.
-// Might be worth it to regenerate in case it is bigger if mod is expensive
+/**
+ * @brief Generate a random number below Q
+ * Q is very close to the maximum value for a 256 bit number. It might be worth to compare and regenerate in case mod is expensive
+ * @param result: The random number
+ * @return 0 on success, -1 on failure
+ */
 int rand_q(mp_int *result) {
     int sz = 32;    
     unsigned char *block = (unsigned char *)malloc(sz * sizeof(unsigned char));
@@ -265,15 +276,15 @@ int rand_q(mp_int *result) {
     return 0;
 }
 
-// Non Interactive Zero knowledge Proof
-// Given an ElGamal keypair and a nonce, generates a proff that the prover knows the secret key without revealing it
 
-// hash_elems
-//     Given zero or more elements, calculate their cryptographic hash
-   // using SHA256. 
- //   :param a: Zero or more elements of any of the accepted types.
-// :return: A cryptographic hash of these elements, concatenated.
-// Collision and concatenation? In python delimiter | is used
+/**
+ * @brief Given two mp_ints, calculate their cryptographic hash using SHA256.
+ * Possible collision. In the python implementation a delimiter (|) is used
+ * @param a: First element
+ * @param b: Second element
+ * @param result: The result of the hash
+ * @return 0 on success, -1 on failure
+ */
 int hash(sp_int *a, sp_int *b, sp_int *result) {
     int ret;
     word32 a_size = sp_unsigned_bin_size(a);
@@ -300,7 +311,95 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     free(tmp);
     return ret;
 }
+/**
+ * @brief Computes a single coordinate value of the election polynomial used for sharing
+ * @param exponent_modifier: Unique modifier (usually sequence order) for exponent [0, Q]
+ * @param polynomial: Election polynomial
+ * @return Polynomial used to share election keys
+ */
+int compute_polynomial_coordinate(sp_int *exponent_modifier, Polynomial polynomial, sp_int *coordinate) {
+    DECL_MP_INT_SIZE(computed_value, 256);
+    NEW_MP_INT_SIZE(computed_value, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(computed_value, 256);
+    sp_zero(computed_value);
 
+    DECL_MP_INT_SIZE(exponent, 256);
+    NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(exponent, 256);
+    sp_zero(computed_value);
+
+    DECL_MP_INT_SIZE(factor, 256);
+    NEW_MP_INT_SIZE(factor, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(factor, 256);
+    sp_zero(computed_value);
+
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
+
+    for (size_t i = 0; i < polynomial.coefficient; i++)
+    {   
+        // Accelerated
+        powmod(exponent_modifier, i, small_prime, exponent);
+        esp_mp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
+        // Not accelerated
+        sp_addmod(computed_value, factor, small_prime, computed_value);
+
+        // Reset exponent and factor for the next iteration
+        sp_zero(exponent);
+        sp_zero(factor);
+    }
+
+    // Free
+    sp_zero(small_prime);
+    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    sp_zero(computed_value)
+    FREE_MP_INT_SIZE(computed_value, NULL, DYNAMIC_TYPE_BIGINT);
+    sp_zero(exponent)
+    FREE_MP_INT_SIZE(exponent, NULL, DYNAMIC_TYPE_BIGINT);
+    sp_zero(factor)
+    FREE_MP_INT_SIZE(factor, NULL, DYNAMIC_TYPE_BIGINT);
+    return 0;
+}
+
+/**
+ * Encrypts a variable length message with a given random nonce and an ElGamal public key.
+ * @param message: message (m) to encrypt; must be in bytes.
+ * @param nonce: Randomly chosen nonce in [1, Q).
+ * @param public_key: ElGamal public key.
+ * @param encryption_seed: Encryption seed (Q) for election.
+ * @param encrypted_coordinate: The encrypted message.
+ */
+int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate) {
+    return 0;
+}
+    Encrypts a variable length byte message with a given random nonce and an ElGamal public key.
+
+/**
+ * @brief Generate election partal key backup for sharing
+ * @param sender_guardian_id: Owner of election key
+ * @param sender_guardian_polynomial: The owner's Election polynomial
+ * @param receiver_guardian_public_key: The receiving guardian's public key
+ * @return PartialKeyBackup / Encrypted Coordinate
+ */
+int generate_election_partial_key_backup() {
+    compute_polynomial_coordinate(receiver_sequence_order, sender_guardian_polynomial, coordinate);
+    rand_q(nonce);
+    hash(receiver_owner_id, receiver_sequence_order, seed);
+    hashed_elgamal_encrypt(coordinate, nonce, receiver_guardian_public_key.key, seed, encrypted_coordinate);
+    //return PartialKeyBackup(sender_guardian_id, receiver_owner_id, receiver_sequence_order, encrypted_coordinate)
+    return 0;
+}
+
+
+
+/**
+ * @brief Given an ElGamal keypair and a nonce, generates a proof that the prover knows the secret key without revealing it.
+ * @param pubkey: The public key
+ * @param seckey: The secret key
+ * @return 0 on success, -1 on failure
+ */
 int make_schnorr_proof(sp_int *pubkey, sp_int *seckey) {
     //DECL_MP_INT_SIZE(k, 256);
     //NEW_MP_INT_SIZE(k, 3072, NULL, DYNAMIC_TYPE_BIGINT);
@@ -354,8 +453,6 @@ int make_schnorr_proof(sp_int *pubkey, sp_int *seckey) {
     print_mp_int(u);
     sp_addmod(r,u,q,u);
     print_mp_int(u);
-
-    
 
     sp_zero(r);
     sp_zero(h);
