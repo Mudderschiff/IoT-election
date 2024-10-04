@@ -26,20 +26,19 @@ MQTT Broker: if all backups verified. combine_election_public_keys (pub key + co
 
 
 void app_main(void) {
-    DECL_MP_INT_SIZE(seckey, 256);
-    DECL_MP_INT_SIZE(pubkey, 3072);
-    NEW_MP_INT_SIZE(seckey, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    NEW_MP_INT_SIZE(pubkey, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(seckey, 256);
-    INIT_MP_INT_SIZE(pubkey, 3072);
-    rand_q(seckey);
-    g_pow_p(seckey, pubkey);
-    make_schnorr_proof(seckey, pubkey);
-    
-    
-    //Clear
-    sp_zero(seckey);
-    sp_zero(pubkey);
-    FREE_MP_INT_SIZE(seckey, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(pubkey, NULL, DYNAMIC_TYPE_BIGINT);
+    //DECL_MP_INT_SIZE(u, 3328);
+    //NEW_MP_INT_SIZE(u, 3328, NULL, DYNAMIC_TYPE_BIGINT);
+    //INIT_MP_INT_SIZE(u, 3328);
+    SchnorrProof proof;
+    sp_int* proof.pubkey = NULL
+    NEW_MP_INT_SIZE(proof.pubkey, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof.pubkey, 256);
+
+    DECL_MP_INT_SIZE(nonce, 256);
+    NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(nonce, 256);
+
+    rand_q(nonce);
+    g_pow_p(nonce, proof.pubkey);
+    print_sp_int(proof.pubkey);
 }

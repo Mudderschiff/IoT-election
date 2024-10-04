@@ -184,7 +184,6 @@ static const unsigned char q_256[] = {
  * @param num: The number to print
  * @return void
 */
-Print the value of a sp_int
 void print_sp_int(sp_int *num) {   
     int size = sp_unsigned_bin_size(num);
     char *buffer = (char *)malloc(size * 2 + 1);
@@ -317,7 +316,8 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @param polynomial: Election polynomial
  * @return Polynomial used to share election keys
  */
-int compute_polynomial_coordinate(sp_int *exponent_modifier, Polynomial polynomial, sp_int *coordinate) {
+//int compute_polynomial_coordinate(sp_int *exponent_modifier, Polynomial polynomial, sp_int *coordinate) {
+    /*
     DECL_MP_INT_SIZE(computed_value, 256);
     NEW_MP_INT_SIZE(computed_value, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(computed_value, 256);
@@ -360,21 +360,147 @@ int compute_polynomial_coordinate(sp_int *exponent_modifier, Polynomial polynomi
     FREE_MP_INT_SIZE(exponent, NULL, DYNAMIC_TYPE_BIGINT);
     sp_zero(factor)
     FREE_MP_INT_SIZE(factor, NULL, DYNAMIC_TYPE_BIGINT);
+    */
+    
+//    return 0;
+//}
+
+/**
+ * @brief Get a hash-based message authentication code(hmac) digest
+ * @param key: key (key) in bytes
+ * @return error_code
+ */
+int get_hmac(byte key) {
+    /*
+    Hmac hmac;
+    if(wc_HmacSetKey(&hmac, WC_SHA256, key, sizeof(key)) != 0) {
+        ESP_LOGE("HMAC", "Failed to initialise hmac");
+        wc_HmacFree(&hmac);
+        return -1;
+    }
+    if(wc_HmacUpdate(&hmac, data, sizeof(data)) != 0) {
+        ESP_LOGE("HMAC", "Failed to update data");
+        wc_HmacFree(&hmac);
+        return -1;
+    }
+    if(wc_HmacFinal(&hmac, data_key) != 0) {
+        ESP_LOGE("HMAC", "Failed to compute hash");
+        wc_HmacFree(&hmac);
+        return -1;
+    }
+    wc_HmacFree(&hmac);
+    */
     return 0;
+}
+void int_to_bytes(int value, uint8_t *bytes) {
+    for (int i = 0; i < 4; i++) {
+        bytes[3 - i] = (value >> (i * 8)) & 0xFF;
+    }
 }
 
 /**
+ * @brief Key Based Derivitive function in counter mode based on NIST SP 800-108 using HMAC as PRF
+ * @param key: Session key
+ * @param message: Encryption seed. Returns encrypted message after operation
+ * @return error_code
+ */
+int kdf(sp_int *key, sp_int *message, sp_int *keystream) {
+    /*
+     Hmac hmac;
+    byte hash[SHA256_DIGEST_SIZE];
+
+    int bits = sp_count_bits(message);
+    uint8_t bits_length[4];
+    int_to_bytes(bits, bits_length);
+
+    sp_copy(message, keystream);
+
+    int counter = bits / 256;
+    uint8_t counter_bytes[4];
+
+    if(wc_HmacSetKey(&hmac, WC_SHA256, key, sizeof(key)) != 0) {
+        ESP_LOGE("HMAC", "Failed to initialise hmac");
+        wc_HmacFree(&hmac);
+        return -1;
+    }
+
+    for(int i=0, i < counter, i++) {
+        // Convert counter into bytes representation
+        int_to_bytes(i, counter_bytes);
+
+        //Update HMAC with counter
+        if(wc_HmacUpdate(&hmac, counter_bytes, sizeof(counter_bytes)) != 0) {
+            ESP_LOGE("HMAC", "Failed to update data");
+            wc_HmacFree(&hmac);
+            return -1;
+        }
+        if(wc_HmacUpdate(&hmac, message, sizeof(message)) != 0) {
+            ESP_LOGE("HMAC", "Failed to update data");
+            wc_HmacFree(&hmac);
+            return -1;
+        }
+        if(wc_HmacUpdate(&hmac, bits_length, sizeof(bits_length)) != 0) {
+            ESP_LOGE("HMAC", "Failed to update data");
+            wc_HmacFree(&hmac);
+            return -1;
+        }
+        if (wc_HmacFinal(&hmac, hash) != 0) {
+            ESP_LOGE("HMAC", "Failed to finalize hmac");
+            wc_HmacFree(&hmac);
+        return -1;
+        }
+
+        for (int j = 0; j < SHA256_DIGEST_SIZE; j++) {
+            keystream[i * SHA256_DIGEST_SIZE + j] ^= hash[j];
+        }
+    }
+
+    wc_HmacFree(&hmac);
+    */
+   
+    return 0;
+}
+
+
+/**
  * Encrypts a variable length message with a given random nonce and an ElGamal public key.
- * @param message: message (m) to encrypt; must be in bytes.
+ * @param coordinate: message (m) to encrypt; must be in bytes.
  * @param nonce: Randomly chosen nonce in [1, Q).
  * @param public_key: ElGamal public key.
  * @param encryption_seed: Encryption seed (Q) for election.
  * @param encrypted_coordinate: The encrypted message.
  */
 int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate) {
+    //DECL_MP_INT_SIZE(large_prime, 3072);
+    //NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    //INIT_MP_INT_SIZE(large_prime, 3072);
+    //sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
+    // DECL pad, pubkey_pow_n
+
+    //g_pow_p(nonce, pad); //alpha
+    //powmod(public_key, nonce, large_prime ,pubkey_pow_n); //beta
+    //hash(pad, pubkey_pow_n, session_key); //secret_key
+    
+    //size_t pad the coordinates
+    //int len = sp_unsigned_bin_size(coordinate);
+    //int padded_size = len + (BLOCK_SIZE - (len % BLOCK_SIZE));
+    //byte padded_coordinate[padded_size];
+    //memset(padded_coordinate, 0, padded_size);
+    //sp_to_unsigned_bin_at_pos(padded_size - len, coordinate, padded_coordinate);
+
+    //kdf(session_key, encryption_seed, data_key); // KDF in counter mode
+    /*
+    mac_key = get_hmac(
+        session_key.to_hex_bytes(), encryption_seed.to_hex_bytes(), bit_length
+    )
+    to_mac = pad.to_hex_bytes() + data
+    mac = get_hmac(mac_key, to_mac)
+
+    */
     return 0;
 }
-    Encrypts a variable length byte message with a given random nonce and an ElGamal public key.
+
+
 
 /**
  * @brief Generate election partal key backup for sharing
@@ -384,95 +510,99 @@ int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key
  * @return PartialKeyBackup / Encrypted Coordinate
  */
 int generate_election_partial_key_backup() {
-    compute_polynomial_coordinate(receiver_sequence_order, sender_guardian_polynomial, coordinate);
-    rand_q(nonce);
-    hash(receiver_owner_id, receiver_sequence_order, seed);
-    hashed_elgamal_encrypt(coordinate, nonce, receiver_guardian_public_key.key, seed, encrypted_coordinate);
+    //compute_polynomial_coordinate(receiver_sequence_order, sender_guardian_polynomial, coordinate);
+    //rand_q(nonce);
+    //hash(receiver_owner_id, receiver_sequence_order, seed);
+    //hashed_elgamal_encrypt(coordinate, nonce, receiver_guardian_public_key.key, seed, encrypted_coordinate);
     //return PartialKeyBackup(sender_guardian_id, receiver_owner_id, receiver_sequence_order, encrypted_coordinate)
     return 0;
 }
 
+/**
+ * @brief Generates a polynomial for sharing election keys
+ * @param coefficients:  Number of coefficients of polynomial
+ * @param nonce: an optional nonce parameter that may be provided (useful for testing)
+ * @param Polynomial used to share election keys
+ * @return KeyBackup / Encrypted Coordinate
+ */
+int generate_polynomial(int coefficients, sp_int *polynomial) {
+    /*
+        for (int i = 0; i < coefficients; i++) {
+        rand_q(nonce);
+        g_pow_p(nonce, commitment);
+        make_schnorr_proof(nonce, commitment, proof);
+        //coefficient(nonce, committment, proof);
+        //append coefficient to coefficients
+    }
+    */
+    /*
+        for i in range(number_of_coefficients):
+        # Note: the nonce value is not safe. it is designed for testing only.
+        # this method should be called without the nonce in production.
+        value = add_q(nonce, i) if nonce is not None else rand_q()
+        commitment = g_pow_p(value)
+        proof = make_schnorr_proof(
+            ElGamalKeyPair(value, commitment), rand_q()
+        )  # TODO Alternate schnoor proof method that doesn't need KeyPair
+        coefficient = Coefficient(value, commitment, proof)
+        coefficients.append(coefficient)
+        */
+    //return Polynomial(coordinate)
+    return 0;
+}
+/**
+ * @brief Generates election key pair, proof, and polynomial
+ * @param quorum: The number of guardians required to decrypt the election
+ * @return ElGamalKeyPair
+ */
+int generate_election_key_pair(int quorum) {
+    /*
+        polynomial = generate_polynomial(quorum, nonce)
+    key_pair = ElGamalKeyPair(
+        polynomial.coefficients[0].value, polynomial.coefficients[0].commitment
+    )
+    */
+    return 0;
+}
 
 
 /**
  * @brief Given an ElGamal keypair and a nonce, generates a proof that the prover knows the secret key without revealing it.
  * @param pubkey: The public key
  * @param seckey: The secret key
+ * @param challenge: The proof
+ * @param response: The proof
  * @return 0 on success, -1 on failure
  */
-int make_schnorr_proof(sp_int *pubkey, sp_int *seckey) {
-    //DECL_MP_INT_SIZE(k, 256);
-    //NEW_MP_INT_SIZE(k, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    //INIT_MP_INT_SIZE(k, 3072);
-    
-    //DECL_MP_INT_SIZE(c, 256);
-    //NEW_MP_INT_SIZE(c, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    //INIT_MP_INT_SIZE(c, 3072);
-    
-    //DECL_MP_INT_SIZE(u, 256);
-    //NEW_MP_INT_SIZE(u, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    //INIT_MP_INT_SIZE(u, 3072);
-    
-    DECL_MP_INT_SIZE(r, 256);
-    NEW_MP_INT_SIZE(r, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(r, 256);
-    rand_q(r);
-
+int make_schnorr_proof(sp_int *seckey, SchnorrProof *proof) {
+    /*
+    DECL_MP_INT_SIZE(nonce, 256);
+    NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(nonce, 256);
     DECL_MP_INT_SIZE(h, 3072);
     NEW_MP_INT_SIZE(h, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(h, 3072);
-    g_pow_p(r, h);
+    
+    rand_q(nonce);
+    g_pow_p(nonce, h);
+    hash(pubkey, h, challenge);
 
-    //c = hash_elems(k, h)
-    DECL_MP_INT_SIZE(c, 256);
-    NEW_MP_INT_SIZE(c, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(c, 256);
-    hash(pubkey, h, c);
-    //k = keypair.public_key
+    sp_zero(h);
+    FREE_MP_INT_SIZE(h, NULL, DYNAMIC_TYPE_BIGINT);
 
-    // result of multiplication bc will have approximatelz (256 + 3072 = 3328 bits)
-    DECL_MP_INT_SIZE(u, 3328);
-    NEW_MP_INT_SIZE(u, 3328, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(u, 3328);
-    //u = a_plus_bc_q(r, keypair.secret_key, c)
-    //u = (a+b*c) mod q
-    //sp_mul(r,seckey,u);
-    //sp_addmod(r,u,q,u);
-    // b mul c
-    // a plus bc mod q (sp_addmod)
-    //u = a_plus_bc_q(r, keypair.secret_key, c)
-    //u = r = seckey
-    //u = (r + keypair.secret_key * c) mod q
-    sp_mul(seckey,c,u);
+    // a + bc ^ q = nonce + seckey * challenge ^ q
     DECL_MP_INT_SIZE(q, 256);
     NEW_MP_INT_SIZE(q, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(q, 256);
     sp_read_unsigned_bin(q, q_256, sizeof(q_256));
-    print_mp_int(r);
-    print_mp_int(q);
-    print_mp_int(u);
-    sp_addmod(r,u,q,u);
-    print_mp_int(u);
 
-    sp_zero(r);
-    sp_zero(h);
-    sp_zero(c);
-    sp_zero(u);
+    sp_mul(seckey,challenge,proof);
+    sp_addmod(nonce,proof,q,proof);
+
+    sp_zero(nonce);
     sp_zero(q);
-    FREE_MP_INT_SIZE(r, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(h, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(c, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(u, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(q, NULL, DYNAMIC_TYPE_BIGINT);
-
-
-
-
-    //k (pub key), h (commitment), c (challenge), u (response)
+    FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
+    */
     return 0;
 }
-
-
-
-// is_valid_schnoor_
-
