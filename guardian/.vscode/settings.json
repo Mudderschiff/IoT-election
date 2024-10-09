@@ -5,7 +5,13 @@
         "cstddef": "c",
         "random": "c",
         "typeinfo": "c",
-        "functional": "c"
+        "functional": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "array": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     },
     "idf.flashType": "UART",
     "idf.port": "/dev/ttyUSB0"

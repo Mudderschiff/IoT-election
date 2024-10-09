@@ -26,41 +26,24 @@ MQTT Broker: if all backups verified. combine_election_public_keys (pub key + co
 
 
 void app_main(void) {
-    SchnorrProof proof;
-    DECL_MP_INT_SIZE(pubkey, 3072);
-    NEW_MP_INT_SIZE(pubkey, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(pubkey, 3072);
-
-    DECL_MP_INT_SIZE(seckey, 256);
-    NEW_MP_INT_SIZE(seckey, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(seckey, 256);
-
-    DECL_MP_INT_SIZE(nonce, 256);
-    NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(nonce, 256);
-    rand_q(nonce);
-    rand_q(seckey);
-    g_pow_p(seckey, pubkey);
-    make_schnorr_proof(seckey, pubkey, nonce, &proof);
-
-    /*
-        proof.pubkey = (mp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    if (proof.pubkey != NULL) {
-        XMEMSET(proof.pubkey, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+    int num_coefficients = 5;
+    Coefficient polynomial[num_coefficients];
+    generate_polynomial(num_coefficients, polynomial);
+    for (int i=0; i<num_coefficients; i++) {
+        ESP_LOGI("Coefficient", "Coefficient %d", i);
+        ESP_LOGI("Coefficient", "Value");
+        print_sp_int(polynomial[i].value);
+        ESP_LOGI("Coefficient", "Commitment");
+        print_sp_int(polynomial[i].commitment);
+        ESP_LOGI("Coefficient", "Proof.pubkey");
+        print_sp_int(polynomial[i].proof.pubkey);
+        ESP_LOGI("Coefficient", "Proof.commitment");
+        print_sp_int(polynomial[i].proof.commitment);
+        ESP_LOGI("Coefficient", "Proof.challenge");
+        print_sp_int(polynomial[i].proof.challenge);
+        ESP_LOGI("Coefficient", "Proof.response");
+        print_sp_int(polynomial[i].proof.response);     
     }
-    //mp_init_size(proof.pubkey, MP_BITS_CNT(256))
-    FREE_MP_INT_SIZE(proof.pubkey, NULL, DYNAMIC_TYPE_BIGINT);
-    */
-    sp_zero(pubkey);
-    sp_zero(seckey);
-    sp_zero(nonce);
-    FREE_MP_INT_SIZE(proof.challenge, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(proof.commitment, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(proof.pubkey, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(proof.response, NULL, DYNAMIC_TYPE_BIGINT);
 
-    FREE_MP_INT_SIZE(pubkey, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(seckey, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
-
+    //free polynomials and proofs
 }

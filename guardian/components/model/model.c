@@ -521,33 +521,51 @@ int generate_election_partial_key_backup() {
 /**
  * @brief Generates a polynomial for sharing election keys
  * @param coefficients:  Number of coefficients of polynomial
- * @param nonce: an optional nonce parameter that may be provided (useful for testing)
- * @param Polynomial used to share election keys
- * @return KeyBackup / Encrypted Coordinate
+ * @param Polynomial used to share election keys. Contains value, commitment, and proof
+ * @return 0 on success, -1 on failure
  */
-int generate_polynomial(int coefficients, sp_int *polynomial) {
-    /*
-        for (int i = 0; i < coefficients; i++) {
+int generate_polynomial(int coefficients, Coefficient *polynomial) {
+    SchnorrProof proof;
+    DECL_MP_INT_SIZE(nonce, 256);
+    NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(nonce, 256);
+
+    DECL_MP_INT_SIZE(value, 256);
+    NEW_MP_INT_SIZE(value, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(value, 256);
+
+    DECL_MP_INT_SIZE(commitment, 3072);
+    NEW_MP_INT_SIZE(commitment, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(commitment, 3072);
+
+    for (int i = 0; i < coefficients; i++) {
+        rand_q(value);
         rand_q(nonce);
-        g_pow_p(nonce, commitment);
-        make_schnorr_proof(nonce, commitment, proof);
-        //coefficient(nonce, committment, proof);
-        //append coefficient to coefficients
+        g_pow_p(value, commitment);
+        polynomial[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+        polynomial[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+        if (polynomial[i].value) {
+            XMEMSET(polynomial[i].value, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+        }
+        if (polynomial[i].commitment) {
+            XMEMSET(polynomial[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        }
+        mp_init_size(polynomial[i].value, MP_BITS_CNT(256));
+        mp_init_size(polynomial[i].commitment, MP_BITS_CNT(3072));
+
+        sp_copy(nonce, polynomial[i].value);
+        sp_copy(commitment, polynomial[i].commitment);
+
+        make_schnorr_proof(nonce, commitment, nonce, &proof);
+        polynomial[i].proof = proof;
     }
-    */
-    /*
-        for i in range(number_of_coefficients):
-        # Note: the nonce value is not safe. it is designed for testing only.
-        # this method should be called without the nonce in production.
-        value = add_q(nonce, i) if nonce is not None else rand_q()
-        commitment = g_pow_p(value)
-        proof = make_schnorr_proof(
-            ElGamalKeyPair(value, commitment), rand_q()
-        )  # TODO Alternate schnoor proof method that doesn't need KeyPair
-        coefficient = Coefficient(value, commitment, proof)
-        coefficients.append(coefficient)
-        */
-    //return Polynomial(coordinate)
+
+    sp_zero(nonce);
+    sp_zero(value);
+    sp_zero(commitment);
+    FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(value, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(commitment, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 /**
@@ -592,7 +610,7 @@ int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrPro
     if (proof->response != NULL) {
         XMEMSET(proof->response, 0, MP_INT_SIZEOF(MP_BITS_CNT(4096)));
     }
-    
+
     mp_init_size(proof->pubkey, MP_BITS_CNT(3072));
     mp_init_size(proof->commitment, MP_BITS_CNT(3072));
     mp_init_size(proof->challenge, MP_BITS_CNT(256));
