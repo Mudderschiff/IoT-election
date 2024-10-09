@@ -23,7 +23,7 @@ void print_sp_int(sp_int *num);
 int g_pow_p(sp_int *seckey, sp_int *pubkey);
 int rand_q(sp_int *result);
 int hash(sp_int *a, sp_int *b, sp_int *result);
-int make_schnorr_proof(sp_int *seckey, SchnorrProof *proof);
+int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof);
 int generate_election_partial_key_backup();
 int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate);
 int generate_election_partial_key_backup();

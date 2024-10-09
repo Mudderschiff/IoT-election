@@ -568,27 +568,39 @@ int generate_election_key_pair(int quorum) {
 
 /**
  * @brief Given an ElGamal keypair and a nonce, generates a proof that the prover knows the secret key without revealing it.
- * @param pubkey: The public key
  * @param seckey: The secret key
- * @param challenge: The proof
- * @param response: The proof
+ * @param pubkey: The public key
+ * @param nonce: A random element in [0,Q)
+ * @param proof: The Schnorr proof
  * @return 0 on success, -1 on failure
  */
-int make_schnorr_proof(sp_int *seckey, SchnorrProof *proof) {
-    /*
-    DECL_MP_INT_SIZE(nonce, 256);
-    NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(nonce, 256);
-    DECL_MP_INT_SIZE(h, 3072);
-    NEW_MP_INT_SIZE(h, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(h, 3072);
-    
-    rand_q(nonce);
-    g_pow_p(nonce, h);
-    hash(pubkey, h, challenge);
+int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof) {
+    proof->pubkey = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    proof->commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    proof->challenge = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+    proof->response = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(4096)), NULL, DYNAMIC_TYPE_BIGINT);
 
-    sp_zero(h);
-    FREE_MP_INT_SIZE(h, NULL, DYNAMIC_TYPE_BIGINT);
+    if (proof->pubkey != NULL) {
+        XMEMSET(proof->pubkey, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+    }
+    if (proof->commitment != NULL) {
+        XMEMSET(proof->commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+    }
+    if (proof->challenge != NULL) {
+        XMEMSET(proof->challenge, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+    }
+    if (proof->response != NULL) {
+        XMEMSET(proof->response, 0, MP_INT_SIZEOF(MP_BITS_CNT(4096)));
+    }
+    
+    mp_init_size(proof->pubkey, MP_BITS_CNT(3072));
+    mp_init_size(proof->commitment, MP_BITS_CNT(3072));
+    mp_init_size(proof->challenge, MP_BITS_CNT(256));
+    mp_init_size(proof->response, MP_BITS_CNT(4096));
+
+    sp_copy(pubkey, proof->pubkey);
+    g_pow_p(nonce, proof->commitment);
+    hash(pubkey, proof->commitment, proof->challenge);
 
     // a + bc ^ q = nonce + seckey * challenge ^ q
     DECL_MP_INT_SIZE(q, 256);
@@ -596,13 +608,10 @@ int make_schnorr_proof(sp_int *seckey, SchnorrProof *proof) {
     INIT_MP_INT_SIZE(q, 256);
     sp_read_unsigned_bin(q, q_256, sizeof(q_256));
 
-    sp_mul(seckey,challenge,proof);
-    sp_addmod(nonce,proof,q,proof);
+    sp_mul(seckey,proof->challenge,proof->response);
+    sp_addmod(nonce,proof->response,q,proof->response);
 
-    sp_zero(nonce);
     sp_zero(q);
     FREE_MP_INT_SIZE(q, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
-    */
     return 0;
 }

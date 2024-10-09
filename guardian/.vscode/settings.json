@@ -4,7 +4,8 @@
         "model.h": "c",
         "cstddef": "c",
         "random": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "functional": "c"
     },
     "idf.flashType": "UART",
     "idf.port": "/dev/ttyUSB0"
