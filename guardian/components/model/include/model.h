@@ -24,6 +24,17 @@ typedef struct {
     SchnorrProof proof;
 } Coefficient;
 
+typedef struct {
+    int num_coefficients;
+    Coefficient* coefficients;
+} ElectionPolynomial;
+
+typedef struct {
+    sp_int* secret_key;
+    sp_int* public_key;
+} ElGamalKeyPair;
+
+
 int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y);
 void print_sp_int(sp_int *num);
 int g_pow_p(sp_int *seckey, sp_int *pubkey);
@@ -35,7 +46,8 @@ int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key
 int generate_election_partial_key_backup();
 int kdf(sp_int *key, sp_int *message, sp_int *keystream);
 int get_hmac(byte key);
-int generate_polynomial(int coefficients, Coefficient *polynomial);
+int generate_polynomial(ElectionPolynomial *polynomial);
+int generate_election_key_pair(int quorum, ElGamalKeyPair *key_pair);
 //int compute_polynomial_coordinate(sp_int *exponent_modifier, Polynomial polynomial, sp_int *coordinate);
 void int_to_bytes(int value, uint8_t *bytes);
 

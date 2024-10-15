@@ -524,7 +524,7 @@ int generate_election_partial_key_backup() {
  * @param Polynomial used to share election keys. Contains value, commitment, and proof
  * @return 0 on success, -1 on failure
  */
-int generate_polynomial(int coefficients, Coefficient *polynomial) {
+int generate_polynomial(ElectionPolynomial *polynomial) {
     SchnorrProof proof;
     DECL_MP_INT_SIZE(nonce, 256);
     NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
@@ -538,26 +538,27 @@ int generate_polynomial(int coefficients, Coefficient *polynomial) {
     NEW_MP_INT_SIZE(commitment, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(commitment, 3072);
 
-    for (int i = 0; i < coefficients; i++) {
+    for (int i = 0; i < polynomial->num_coefficients; i++) {
         rand_q(value);
         rand_q(nonce);
         g_pow_p(value, commitment);
-        polynomial[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-        polynomial[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-        if (polynomial[i].value) {
-            XMEMSET(polynomial[i].value, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+        polynomial->coefficients[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+        polynomial->coefficients[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+        
+        if (polynomial->coefficients[i].value) {
+            XMEMSET(polynomial->coefficients[i].value, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+            mp_init_size(polynomial->coefficients[i].value, MP_BITS_CNT(256));
         }
-        if (polynomial[i].commitment) {
-            XMEMSET(polynomial[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        if (polynomial->coefficients[i].commitment) {
+            XMEMSET(polynomial->coefficients[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+            mp_init_size(polynomial->coefficients[i].commitment, MP_BITS_CNT(3072));
         }
-        mp_init_size(polynomial[i].value, MP_BITS_CNT(256));
-        mp_init_size(polynomial[i].commitment, MP_BITS_CNT(3072));
 
-        sp_copy(nonce, polynomial[i].value);
-        sp_copy(commitment, polynomial[i].commitment);
+        sp_copy(nonce, polynomial->coefficients[i].value);
+        sp_copy(commitment, polynomial->coefficients[i].commitment);
 
         make_schnorr_proof(nonce, commitment, nonce, &proof);
-        polynomial[i].proof = proof;
+        polynomial->coefficients[i].proof = proof;
     }
 
     sp_zero(nonce);
@@ -573,13 +574,17 @@ int generate_polynomial(int coefficients, Coefficient *polynomial) {
  * @param quorum: The number of guardians required to decrypt the election
  * @return ElGamalKeyPair
  */
-int generate_election_key_pair(int quorum) {
-    /*
-        polynomial = generate_polynomial(quorum, nonce)
-    key_pair = ElGamalKeyPair(
-        polynomial.coefficients[0].value, polynomial.coefficients[0].commitment
-    )
-    */
+int generate_election_key_pair(int quorum, ElGamalKeyPair *key_pair) {
+    ElectionPolynomial polynomial;
+    polynomial.num_coefficients = quorum;
+    polynomial.coefficients = (Coefficient*)XMALLOC(quorum * sizeof(Coefficient), NULL, DYNAMIC_TYPE_BIGINT);
+    if (polynomial.coefficients == NULL) {
+        ESP_LOGE("Generate Election Key Pair", "Failed to allocate memory for coefficients");
+        return -1;
+    }
+    generate_polynomial(&polynomial);
+    sp_copy(polynomial.coefficients[0].value, key_pair->secret_key);
+    sp_copy(polynomial.coefficients[0].commitment, key_pair->public_key);
     return 0;
 }
 

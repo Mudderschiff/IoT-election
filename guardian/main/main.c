@@ -26,24 +26,19 @@ MQTT Broker: if all backups verified. combine_election_public_keys (pub key + co
 
 
 void app_main(void) {
-    int num_coefficients = 5;
-    Coefficient polynomial[num_coefficients];
-    generate_polynomial(num_coefficients, polynomial);
-    for (int i=0; i<num_coefficients; i++) {
-        ESP_LOGI("Coefficient", "Coefficient %d", i);
-        ESP_LOGI("Coefficient", "Value");
-        print_sp_int(polynomial[i].value);
-        ESP_LOGI("Coefficient", "Commitment");
-        print_sp_int(polynomial[i].commitment);
-        ESP_LOGI("Coefficient", "Proof.pubkey");
-        print_sp_int(polynomial[i].proof.pubkey);
-        ESP_LOGI("Coefficient", "Proof.commitment");
-        print_sp_int(polynomial[i].proof.commitment);
-        ESP_LOGI("Coefficient", "Proof.challenge");
-        print_sp_int(polynomial[i].proof.challenge);
-        ESP_LOGI("Coefficient", "Proof.response");
-        print_sp_int(polynomial[i].proof.response);     
+    ElGamalKeyPair key_pair;
+    key_pair.secret_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+    key_pair.public_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    if (key_pair.secret_key != NULL) {
+        XMEMSET(key_pair.secret_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+        mp_init_size(key_pair.secret_key, MP_BITS_CNT(256));
     }
-
-    //free polynomials and proofs
+    if (key_pair.public_key != NULL) {
+        XMEMSET(key_pair.public_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        mp_init_size(key_pair.public_key, MP_BITS_CNT(3072));
+    }
+    
+    generate_election_key_pair(5, &key_pair);
+    print_sp_int(key_pair.secret_key);
+    print_sp_int(key_pair.public_key);
 }
