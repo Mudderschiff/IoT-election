@@ -41,4 +41,7 @@ void app_main(void) {
     generate_election_key_pair(5, &key_pair);
     print_sp_int(key_pair.secret_key);
     print_sp_int(key_pair.public_key);
+
+    //compute_polynomial_coordinate(1, NULL, NULL);
+
 }
