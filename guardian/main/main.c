@@ -26,20 +26,19 @@ MQTT Broker: if all backups verified. combine_election_public_keys (pub key + co
 
 
 void app_main(void) {
-    DECL_MP_INT_SIZE(seckey, 256);
-    DECL_MP_INT_SIZE(pubkey, 3072);
-    NEW_MP_INT_SIZE(seckey, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    NEW_MP_INT_SIZE(pubkey, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(seckey, 256);
-    INIT_MP_INT_SIZE(pubkey, 3072);
-    rand_q(seckey);
-    g_pow_p(seckey, pubkey);
-    make_schnorr_proof(seckey, pubkey);
+    ElGamalKeyPair key_pair;
+    key_pair.secret_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+    key_pair.public_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    if (key_pair.secret_key != NULL) {
+        XMEMSET(key_pair.secret_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+        mp_init_size(key_pair.secret_key, MP_BITS_CNT(256));
+    }
+    if (key_pair.public_key != NULL) {
+        XMEMSET(key_pair.public_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        mp_init_size(key_pair.public_key, MP_BITS_CNT(3072));
+    }
     
-    
-    //Clear
-    sp_zero(seckey);
-    sp_zero(pubkey);
-    FREE_MP_INT_SIZE(seckey, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(pubkey, NULL, DYNAMIC_TYPE_BIGINT);
+    generate_election_key_pair(5, &key_pair);
+    print_sp_int(key_pair.secret_key);
+    print_sp_int(key_pair.public_key);
 }

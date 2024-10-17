@@ -1,7 +1,17 @@
 {
     "idf.adapterTargetName": "esp32",
     "files.associations": {
-        "model.h": "c"
+        "model.h": "c",
+        "cstddef": "c",
+        "random": "c",
+        "typeinfo": "c",
+        "functional": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "array": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     },
     "idf.flashType": "UART",
     "idf.port": "/dev/ttyUSB0"
