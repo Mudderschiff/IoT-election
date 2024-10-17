@@ -1,107 +1,19 @@
 \chapter{Hauptteil/Main Part}
 
-\subsubsection{Key Generation}
-Prior to the start of voting, trustees participate in a process wherein they generate public keys to be used in the
-election. These trustees are called "Guardians" in ElectionGuard. Members of a canvassing board could serve as
-guardians \cite[2]{eg-spec}.
+\section{Hardware}
+\subsection{Breadboard Prototype}
+Our prototype uses the NodeMCU ESP32 development board by Joy-IT. The board is equipped with the ESP32-WROOM-32 module. ESP32-WROOM-32 is a powerful, generic Wi-Fi+BT+BLE MCU module. 
 
-Each guardian generates its own public-private key pair. These public keys will be combined to form a single public
-key which will be used to encrypt individual ballots. They are also used individually by guardians to exchange
-information about their private keys so that the election record can be produced after voting or auditing is
-complete – even if not all guardians are available at that time.
+At the core of the module is the ESP32-D0WDQ6 chip \cite[6]{esp32-module}. This chip, and therefore this module. is not recommended for new designs anymore due to chip revisions. The ESP32-D0WDQ6 is based on chip revision v.1.0 or v1.1. \cite[11]{esp32-datasheet}. The ESP32-WROOM-32 module could therefore be replaced by the newer ESP32-WROOM-32E module. The ESP32-WROOM-32E module uses a ESP32-D0WD-V3 or ESP32-D0WDR2-V3 chip which are based on chip revision v3.0 or v3.1 which fixes some Hardware bugs \cite[1]{esp32-module-new}, \cite[11]{esp32-datasheet}, \cite[3-4]{esp32-errata}. Compared to the ESP32-WROOM-32 module, the ESP32-WROOM-32E module has versions that provide additional 2MB PSRAM, support higher operating ambient temperatures and versions with higher integrated SPI flash sizes (8MB or 16MB) \cite[2]{esp32-module-new}, \cite[6-7]{esp32-module}.
 
+\subsection{PCB Design}
+\subsubsection{Schematic}
+\subsubsection{Design}
+\subsubsection{BOM}
 
-The key generation ceremony begins with each guardian publishing its public keys together with proofs of knowledge
-of the associated private keys. Once all public keys are published, each guardian uses each other guardian’s public
-auxiliary key to encrypt shares of its own private keys. Finally, each guardian decrypts the shares it receives from
-other guardians and checks them for consistency. If the received shares verify, the receiving guardian announces its
-completion. If any shares fail to verify, the receiving guardian challenges the sender. In this case, the sender is
-obliged to reveal the shares it sent. If it does so and the shares verify, the ceremony concludes and the election
-proceeds. If a challenged guardian fails to produce key shares that verify, that guardian is removed and the key
-generation ceremony restarts with a replacement guardian. \cite[2]{eg-spec}
-
-Although it is preferred to generate new keys for each election, it is permissible to use the same
-keys for multiple elections so long as the set of guardians remains the same. A complete new set of keys must
-be generated if even a single guardian is replaced.\cite[3]{eg-spec}
-
-5As will be seen below, the actual public key used to encrypt votes will be a combination of separately generated public
-keys. So, no entity will ever be in possession of a private key that can be used to decrypt
--\cite[5]{eg-spec}
-
-3.2 Key Generation Before an election, the number of guardians (n) is fixed together with a quorum value (k) that
-describes the number of guardians necessary to decrypt tallies and produce election verification data. The values n and
-k are integers subject to the constraint that $1 \leq k \leq n$. Canvassing board members can often serve the role of election
-guardians, and typical values for n and k could be 5 and 3 – indicating that 3 of 5 canvassing board members must
-cooperate to produce the artifacts that enable election verification. The reason for not setting the quorum value k too
-low is that it will also be possible for k guardians to decrypt individual ballots.
-\cite[8]{eg-spec}
-
-
-\subsection{Key Generation}
-of an election is a public ballot coding file. This file lists all the contests in an election, the number of selections
-allowed for each contest, and the options for each contest together with associations between each option and its
-representation on a virtual ballot. It is assumed that each contest in the ballot coding file has a unique label and
-that within each contest, each option also has a unique label. For
-\cite[8]{eg-spec}
-
-But the contents of this file are hashed together with the prime modulus (p), subgroup order (q), generator (g), number
-of guardians (n), decryption quorum threshold value (k), date, and jurisdictional information to form a base hash code (
-Q) which will be incorporated into every subsequent hash computation in the election.
-\cite[8]{eg-spec}
-
-\subsection{Decryption when all guardians are present}
-If all guardians are present and have posted suitable proofs, the next step is to publish the value
-\cite[19]{eg-spec}.
-one or more of the election guardians are not available for decryption, any k available guardians can use the
-information they have to reconstruct the partial decryptions for missing guardians
-\cite[19]{eg-spec}
-
-The base hash value Q computed from the above. The commitments from each election guardian to each of their polynomial
-coefficients. The proofs from each guardian of possession of each of the associated coefficients. The election public
-key. The extended
-\cite[24]{eg-spec}
-
-
-\subsection{Elgamal}
-Public-key cryptography allows anyone to exchange secret messages with any partners, sign documents and use many other cryptographic applications \cite[22]{crypto}. Diffie-Hellman is the first published public key algorithm by Diffie and Hellman in 1976.\cite[94]. ElGamal is a generalisation of the Diffie-Hellman key exchange protocol.\cite[95]{crypto} ElGamal is suitable for encryption and signing compared to Diffie-Hellman which is only suitable for key exchange.\cite[78]{crypto}.
-
-\subsubsection{SHA-256}
-SHA-256 is a one-way hash function. One-way functions are functions that are easy to calculate, but whose inversion is very difficult or impossible to calculate \cite[100]{crypto}. One-way hash functions map plaintexts of any length to a hash value of a fixed length. \cite[100]{crypto}.
-
-
-
-
-
-
-
-
-
-\subsection{Non-interactive zero-knowledge (NIZK)}
-Non-interactive zero-knowledge (NIZK) proofs ElectionGuard provides numerous proofs about encryption keys, encrypted
-ballots, and election tallies using the following four techniques \cite[6]{eg-spec}
-\subsubsection{Schnorr proof}
-1. A Schnorr proof7 allows the holder of an ElGamal
-secret key s to interactively prove possession of s without revealing s. \cite[6]{eg-spec}.
-\subsubsection{Chaum-Pedersen}
-2. A Chaum-Pedersen proof8 allows an ElGamal
-encryption to be interactively proven to decrypt to a particular value without revealing the nonce used for encryption
-or the secret decryption key s. (This proof can be constructed with access to either the nonce used for encryption or
-the secret decryption key.) \cite[6]{eg-spec}
-\subsubsection{Cramer-Damg ard-Schoenmakers technique}
-3. The Cramer-Damg ard-Schoenmakers technique9 enables a disjunction to be interactively
-proven without revealing which disjunct is true.
-\subsubsection{Fiat-Shamir heuristic}
-4. The Fiat-Shamir heuristic10 allows interactive proofs to be
-converted into non-interactive proofs. \cite[6]{eg-spec}
-
-Using a combination of the above techniques, it is possible for ElectionGuard to
-demonstrate that keys are properly chosen, that ballots are properly formed, and that decryptions match claimed values.
-\cite[6]{eg-spec}
-
-Threshold Encryption
-Additive Homomorphic encryption
-\section{asw}
-
+\section{Implementation/Software Architecture}
+\subsection{Model}
+\subsubsection{Difference with other Implementations}
 Since ElectionGuards original specification in 2019, there have been several implementations of ElectionGuard that have been used in various applications \cite[eg-paper]. The current roadmap of ElectionGuard targets a c++ implementation of the ElectionGuard 2.0 specification. [https://www.electionguard.vote/overview/Roadmap/]. Earlier implementations include a Python reference implementation of the ElectionGuard 1.0 specification and an encryption engine in C++ with a C wrapper.
 
 ESP32 development support development of applications in C, C++ and Micropython. [source]. Initialy, we could try to port the encryption engine written in c++ over to ESP32. This would allow us to use the existing codebase and focus on the integration of the encryption component with the hardware.
@@ -112,6 +24,19 @@ The modular exponentiation at the heart of most ElectionGuard operations imposes
 The c++ implementation uses Microsoft's HACL* - a performant C implementation of a wide variety of cryptographic primitives which have been formally verified for correctness [source.]. For performance reasons the implementation of the c++ encryption engine  uses pre-computed tables to make encryption substantially faster. This is possible because most exponentiations in ElectionGuard have fixed base, either the generator g or the election public key K. The pre-computed tables contain certain powers of these bases. The Python reference implementation uses a more straightforwar approach by using GnuMP. [source].
 
 The ESP32 is equipped with hardware accelerators of general algorithms such as SHA and RSA and it also supports independent arithmetic, such as Big Integer Multiplication and Big Integer Modular Multiplication. [esp tech reference,4.1.19]. The hardware accelerators greatly improve operation speed and reduce software complexity. 
+
+\subsubsection{Performance}
+- With/Without HW Accerleration
+- Single/Dual Core
+\subsection{View}
+\subsection{Adapter}
+
+\section{Verification}
+
+
+
+
+
 
 
 
