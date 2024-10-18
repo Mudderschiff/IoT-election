@@ -4,12 +4,17 @@
 \subsection{Breadboard Prototype}
 Our prototype uses the NodeMCU ESP32 development board by Joy-IT. The board is equipped with the ESP32-WROOM-32 module. ESP32-WROOM-32 is a powerful, generic Wi-Fi+BT+BLE MCU module. 
 
-At the core of the module is the ESP32-D0WDQ6 chip \cite[6]{esp32-module}. This chip, and therefore this module. is not recommended for new designs anymore due to chip revisions. The ESP32-D0WDQ6 is based on chip revision v.1.0 or v1.1. \cite[11]{esp32-datasheet}. The ESP32-WROOM-32 module could therefore be replaced by the newer ESP32-WROOM-32E module. The ESP32-WROOM-32E module uses a ESP32-D0WD-V3 or ESP32-D0WDR2-V3 chip which are based on chip revision v3.0 or v3.1 which fixes some Hardware bugs \cite[1]{esp32-module-new}, \cite[11]{esp32-datasheet}, \cite[3-4]{esp32-errata}. Compared to the ESP32-WROOM-32 module, the ESP32-WROOM-32E module has versions that provide additional 2MB PSRAM, support higher operating ambient temperatures and versions with higher integrated SPI flash sizes (8MB or 16MB) \cite[2]{esp32-module-new}, \cite[6-7]{esp32-module}.
+At the core of the module is the ESP32-D0WDQ6 chip \cite[6]{esp32-module}. This chip, and therefore this module. is not recommended for new designs anymore due to chip revisions. The ESP32-D0WDQ6 is based on chip revision v.1.0 or v1.1. \cite[11]{esp32-datasheet}. The ESP32-WROOM-32 module could therefore be replaced by the newer ESP32-WROOM-32E module. The ESP32-WROOM-32E module uses a ESP32-D0WD-V3 or ESP32-D0WDR2-V3 chip which are based on chip revision v3.0 or v3.1 which fixes some Hardware bugs \cite[1]{esp32-module-new}, \cite[11]{esp32-datasheet}, \cite[3-4]{esp32-errata}. Compared to the ESP32-WROOM-32 module, the ESP32-WROOM-32E module has versions that provide additional 2MB PSRAM, support higher operating ambient temperatures and veWrsions with higher integrated SPI flash sizes (8MB or 16MB) \cite[2]{esp32-module-new}, \cite[6-7]{esp32-module}.
 
-\subsection{PCB Design}
-\subsubsection{Schematic}
-\subsubsection{Design}
-\subsubsection{BOM}
+\subsection{Cryptographic Hardware accelerators}
+\begin{figure}
+	\centering
+	\includegraphics[scale=.5]{abbildungen/functional-block-diagram}
+	\caption{ESP32 Functional Block Diagram}
+	\label{Fig:esp32-crypto}
+\end{figure}
+
+
 
 \section{Implementation/Software Architecture}
 \subsection{Model}
