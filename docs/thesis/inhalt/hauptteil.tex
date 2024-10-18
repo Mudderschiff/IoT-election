@@ -18,6 +18,13 @@ At the core of the module is the ESP32-D0WDQ6 chip \cite[6]{esp32-module}. This 
 
 \section{Implementation/Software Architecture}
 \subsection{Model}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\textwidth]{abbildungen/Diagramme/python-classes.png}
+	\caption{Selected Python Classes from Reference Implementation for Guardian Functionality}
+	\label{Fig:uml-classes-python}
+\end{figure}
+
 \subsubsection{Difference with other Implementations}
 Since ElectionGuards original specification in 2019, there have been several implementations of ElectionGuard that have been used in various applications \cite[eg-paper]. The current roadmap of ElectionGuard targets a c++ implementation of the ElectionGuard 2.0 specification. [https://www.electionguard.vote/overview/Roadmap/]. Earlier implementations include a Python reference implementation of the ElectionGuard 1.0 specification and an encryption engine in C++ with a C wrapper.
 
@@ -38,38 +45,6 @@ The ESP32 is equipped with hardware accelerators of general algorithms such as S
 
 \section{Verification}
 
-
-
-
-
-
-
-
-
-\begin{table}[ht]
-	\centering
-	\begin{tabular}{|c|c|c|c|}
-		\hline
-		&LCD&Board&Description\\\hline
-		1&VCC&3.3V\\\hline
-		2&GND&GND\\\hline
-		3&GND&GND\\\hline
-		4&NC \\\hline
-		5&NC \\\hline
-		6&NC \\\hline
-		7&CLK&D14&SPI-CLK\\\hline
-		8&SDA&D13&SPI-MOSI\\\hline
-		9&RS&D34&Any GPIO PIN\\\hline
-		10&RST&D35&Any GPIO PIN\\\hline
-		11&CS&D15&SPI-SS\\\hline
-	\end{tabular}
-	\caption{PINOUT LCD}
-	\label{Tab:PINOUT_LCD}
-\end{table}
-
-Bachelor- und Masterarbeiten können sowohl in deutsch als auch in englisch geschrieben werden. 
-Die sprachliche Ausarbeitung wird bewertet, was bei der Wahl der Sprache berücksichtigt werden sollte. 
-Im folgenden werden ein paar Hinweise zur Ausarbeitung  mit \LaTeX\ gegeben.
 
 
 \section{Unterkapitel}
