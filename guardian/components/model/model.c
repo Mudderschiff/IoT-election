@@ -310,41 +310,37 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     free(tmp);
     return ret;
 }
+
+
 /**
  * @brief Computes a single coordinate value of the election polynomial used for sharing
  * @param exponent_modifier: Unique modifier (usually sequence order) for exponent [0, Q]
  * @param polynomial: Election polynomial
- * @return Polynomial used to share election keys
+ * @param coordinate: The computed coordinate
+ * @return 0 on success, -1 on failure
  */
-//int compute_polynomial_coordinate(sp_int *exponent_modifier, Polynomial polynomial, sp_int *coordinate) {
-    /*
-    DECL_MP_INT_SIZE(computed_value, 256);
-    NEW_MP_INT_SIZE(computed_value, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(computed_value, 256);
-    sp_zero(computed_value);
-
+/*
+int compute_polynomial_coordinate(int *exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
     DECL_MP_INT_SIZE(exponent, 256);
     NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 256);
-    sp_zero(computed_value);
 
     DECL_MP_INT_SIZE(factor, 256);
     NEW_MP_INT_SIZE(factor, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(factor, 256);
-    sp_zero(computed_value);
 
     DECL_MP_INT_SIZE(small_prime, 256);
     NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(small_prime, 256);
     sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
 
-    for (size_t i = 0; i < polynomial.coefficient; i++)
+    for (size_t i = 0; i < polynomial->num_coefficients; i++)
     {   
         // Accelerated
         powmod(exponent_modifier, i, small_prime, exponent);
-        esp_mp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
+        esp_mp_mulmod(polynomial->coefficients[i].value, exponent, small_prime, factor);
         // Not accelerated
-        sp_addmod(computed_value, factor, small_prime, computed_value);
+        sp_addmod(coordinate, factor, small_prime, coordinate);
 
         // Reset exponent and factor for the next iteration
         sp_zero(exponent);
@@ -354,16 +350,11 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     // Free
     sp_zero(small_prime);
     FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
-    sp_zero(computed_value)
-    FREE_MP_INT_SIZE(computed_value, NULL, DYNAMIC_TYPE_BIGINT);
     sp_zero(exponent)
     FREE_MP_INT_SIZE(exponent, NULL, DYNAMIC_TYPE_BIGINT);
     sp_zero(factor)
     FREE_MP_INT_SIZE(factor, NULL, DYNAMIC_TYPE_BIGINT);
-    */
-    
-//    return 0;
-//}
+} */
 
 /**
  * @brief Get a hash-based message authentication code(hmac) digest
@@ -572,7 +563,8 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
 /**
  * @brief Generates election key pair, proof, and polynomial
  * @param quorum: The number of guardians required to decrypt the election
- * @return ElGamalKeyPair
+ * @param key_pair: The election key pair
+ * @return 0 on success, -1 on failure
  */
 int generate_election_key_pair(int quorum, ElGamalKeyPair *key_pair) {
     ElectionPolynomial polynomial;
