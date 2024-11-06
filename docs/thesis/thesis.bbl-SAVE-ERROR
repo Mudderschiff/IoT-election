@@ -1,0 +1,567 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{anyt/global//global/global/global}
+    \entry{EAC}{report}{}{}
+      \list{institution}{1}{%
+        {Microsoft}%
+      }
+      \field{labelalpha}{23}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{month}{1}
+      \field{title}{End-to-End Verifiability in Real-World Elections}
+      \field{type}{techreport}
+      \field{year}{2023}
+      \true{nocite}
+    \endentry
+    \entry{esp32-datasheet}{manual}{}{}
+      \list{organization}{1}{%
+        {Espressif Systems}%
+      }
+      \field{labelalpha}{24}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extraalpha}{1}
+      \field{labeltitlesource}{title}
+      \field{edition}{v4.5}
+      \field{title}{{ESP32 Series} Datasheet}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf
+      \endverb
+    \endentry
+    \entry{esp32-ref}{manual}{}{}
+      \list{organization}{1}{%
+        {Espressif Systems}%
+      }
+      \field{labelalpha}{24}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extraalpha}{2}
+      \field{labeltitlesource}{title}
+      \field{edition}{v5.2}
+      \field{month}{8}
+      \field{title}{{ESP32} Technical Reference Manual}
+      \field{year}{2024}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf
+      \endverb
+    \endentry
+    \entry{eg-paper}{misc}{}{}
+      \name{author}{4}{}{%
+        {{hash=14a2b78ffb98c1cb4013dabb4ae9f075}{%
+           family={Benaloh},
+           familyi={B\bibinitperiod},
+           given={Josh},
+           giveni={J\bibinitperiod}}}%
+        {{hash=b1315d1cb133620e9488e665512a2272}{%
+           family={Naehrig},
+           familyi={N\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+        {{hash=3c6ed346633d45823651d9d6eb7bf4f4}{%
+           family={Pereira},
+           familyi={P\bibinitperiod},
+           given={Olivier},
+           giveni={O\bibinitperiod}}}%
+        {{hash=ccdabeaeaea069c5504cc19de9e374ba}{%
+           family={Wallach},
+           familyi={W\bibinitperiod},
+           given={Dan\bibnamedelima S.},
+           giveni={D\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{4fbb25f54480639384c2d1e75f937d93}
+      \strng{fullhash}{bad5562098ee0eb27b6c2a8950af93a7}
+      \strng{fullhashraw}{bad5562098ee0eb27b6c2a8950af93a7}
+      \strng{bibnamehash}{4fbb25f54480639384c2d1e75f937d93}
+      \strng{authorbibnamehash}{4fbb25f54480639384c2d1e75f937d93}
+      \strng{authornamehash}{4fbb25f54480639384c2d1e75f937d93}
+      \strng{authorfullhash}{bad5562098ee0eb27b6c2a8950af93a7}
+      \strng{authorfullhashraw}{bad5562098ee0eb27b6c2a8950af93a7}
+      \field{labelalpha}{Ben+24}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Cryptology ePrint Archive, Paper 2024/955}
+      \field{note}{\url{https://eprint.iacr.org/2024/955}}
+      \field{title}{{ElectionGuard}: a Cryptographic Toolkit to Enable Verifiable Elections}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://eprint.iacr.org/2024/955
+      \endverb
+      \verb{url}
+      \verb https://eprint.iacr.org/2024/955
+      \endverb
+    \endentry
+    \entry{eg-spec}{manual}{}{}
+      \name{author}{2}{}{%
+        {{hash=14a2b78ffb98c1cb4013dabb4ae9f075}{%
+           family={Benaloh},
+           familyi={B\bibinitperiod},
+           given={Josh},
+           giveni={J\bibinitperiod}}}%
+        {{hash=b1315d1cb133620e9488e665512a2272}{%
+           family={Naehrig},
+           familyi={N\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Microsoft Research}%
+      }
+      \strng{namehash}{f8632c8bcfb3a9379aacac406797237f}
+      \strng{fullhash}{f8632c8bcfb3a9379aacac406797237f}
+      \strng{fullhashraw}{f8632c8bcfb3a9379aacac406797237f}
+      \strng{bibnamehash}{f8632c8bcfb3a9379aacac406797237f}
+      \strng{authorbibnamehash}{f8632c8bcfb3a9379aacac406797237f}
+      \strng{authornamehash}{f8632c8bcfb3a9379aacac406797237f}
+      \strng{authorfullhash}{f8632c8bcfb3a9379aacac406797237f}
+      \strng{authorfullhashraw}{f8632c8bcfb3a9379aacac406797237f}
+      \field{labelalpha}{BN}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{v1.0}
+      \field{title}{{ElectionGuard} Specification}
+      \true{nocite}
+    \endentry
+    \entry{eac-pressrelease}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=a4fe5d120d8f1031c7cbce344d13472d}{%
+           family={Commission},
+           familyi={C\bibinitperiod},
+           given={United\bibnamedelimb States\bibnamedelimb Election\bibnamedelima Assistance},
+           giveni={U\bibinitperiod\bibinitdelim S\bibinitperiod\bibinitdelim E\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{a4fe5d120d8f1031c7cbce344d13472d}
+      \strng{fullhash}{a4fe5d120d8f1031c7cbce344d13472d}
+      \strng{fullhashraw}{a4fe5d120d8f1031c7cbce344d13472d}
+      \strng{bibnamehash}{a4fe5d120d8f1031c7cbce344d13472d}
+      \strng{authorbibnamehash}{a4fe5d120d8f1031c7cbce344d13472d}
+      \strng{authornamehash}{a4fe5d120d8f1031c7cbce344d13472d}
+      \strng{authorfullhash}{a4fe5d120d8f1031c7cbce344d13472d}
+      \strng{authorfullhashraw}{a4fe5d120d8f1031c7cbce344d13472d}
+      \field{labelalpha}{Com21}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{02}
+      \field{note}{Accessed on 2024-01-10}
+      \field{title}{U.S. Election Assistance Commission Adopts New Voluntary Voting System Guidelines 2.0}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://www.eac.gov/news/2021/02/10/us-election-assistance-commission-adopts-new-voluntary-voting-system-guidelines-20
+      \endverb
+      \verb{url}
+      \verb https://www.eac.gov/news/2021/02/10/us-election-assistance-commission-adopts-new-voluntary-voting-system-guidelines-20
+      \endverb
+    \endentry
+    \entry{crypto}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=0ad7b7b50f220390cbf1c36575c6a49a}{%
+           family={Ertel},
+           familyi={E\bibinitperiod},
+           given={Wolfgang},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {München}%
+      }
+      \list{publisher}{1}{%
+        {Carl Hanser Verlag}%
+      }
+      \strng{namehash}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \strng{fullhash}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \strng{fullhashraw}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \strng{bibnamehash}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \strng{authorbibnamehash}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \strng{authornamehash}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \strng{authorfullhash}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \strng{authorfullhashraw}{0ad7b7b50f220390cbf1c36575c6a49a}
+      \field{labelalpha}{Ert07}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{3., aktualisierte Auflage}
+      \field{isbn}{978-3-446-41195-1}
+      \field{title}{Angewandte Kryptographie}
+      \field{year}{2007}
+    \endentry
+    \entry{mqtt-v5.0}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=47633c4492348beaad2828186cafd227}{%
+           family={et.al},
+           familyi={e\bibinitperiod},
+           given={Andrew\bibnamedelima Banks},
+           giveni={A\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {LCDWiki}%
+      }
+      \strng{namehash}{47633c4492348beaad2828186cafd227}
+      \strng{fullhash}{47633c4492348beaad2828186cafd227}
+      \strng{fullhashraw}{47633c4492348beaad2828186cafd227}
+      \strng{bibnamehash}{47633c4492348beaad2828186cafd227}
+      \strng{authorbibnamehash}{47633c4492348beaad2828186cafd227}
+      \strng{authornamehash}{47633c4492348beaad2828186cafd227}
+      \strng{authorfullhash}{47633c4492348beaad2828186cafd227}
+      \strng{authorfullhashraw}{47633c4492348beaad2828186cafd227}
+      \field{labelalpha}{eta19}
+      \field{sortinit}{e}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{Rev1.0}
+      \field{month}{03}
+      \field{title}{MQTT Version 5.0}
+      \field{year}{2019}
+      \true{nocite}
+    \endentry
+    \entry{buttons-ds}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=db5170a546f71f7fbbe0fc7fc14e7a7a}{%
+           family={GmbH},
+           familyi={G\bibinitperiod},
+           given={SIMAC\bibnamedelima Electronics},
+           giveni={S\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Pascalstr. 8, 47506 Neukirchen-Vluyn}%
+      }
+      \list{organization}{1}{%
+        {SIMAC Electronics GmbH}%
+      }
+      \strng{namehash}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \strng{fullhash}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \strng{fullhashraw}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \strng{bibnamehash}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \strng{authorbibnamehash}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \strng{authornamehash}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \strng{authorfullhash}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \strng{authorfullhashraw}{db5170a546f71f7fbbe0fc7fc14e7a7a}
+      \field{labelalpha}{Gmb20}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{10}
+      \field{title}{SBC-Button 2 Datasheet}
+      \field{year}{2020}
+      \true{nocite}
+    \endentry
+    \entry{python-reference}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=0a98d73c9c9edb32b14966b73e677df9}{%
+           family={Initiative},
+           familyi={I\bibinitperiod},
+           given={Election\bibnamedelima Tech},
+           giveni={E\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+      }
+      \strng{namehash}{0a98d73c9c9edb32b14966b73e677df9}
+      \strng{fullhash}{0a98d73c9c9edb32b14966b73e677df9}
+      \strng{fullhashraw}{0a98d73c9c9edb32b14966b73e677df9}
+      \strng{bibnamehash}{0a98d73c9c9edb32b14966b73e677df9}
+      \strng{authorbibnamehash}{0a98d73c9c9edb32b14966b73e677df9}
+      \strng{authornamehash}{0a98d73c9c9edb32b14966b73e677df9}
+      \strng{authorfullhash}{0a98d73c9c9edb32b14966b73e677df9}
+      \strng{authorfullhashraw}{0a98d73c9c9edb32b14966b73e677df9}
+      \field{labelalpha}{Ini}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{ElectionGuard Python}
+      \field{version}{1.0.0}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://github.com/Election-Tech-Initiative/electionguard-python/tree/1.0.0
+      \endverb
+      \verb{url}
+      \verb https://github.com/Election-Tech-Initiative/electionguard-python/tree/1.0.0
+      \endverb
+    \endentry
+    \entry{esp32-ds}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=cba157afa0239d1cfe4a12bb6c9b651f}{%
+           family={Joy-it},
+           familyi={J\bibinithyphendelim i\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Joy-it}%
+      }
+      \strng{namehash}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \strng{fullhash}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \strng{fullhashraw}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \strng{bibnamehash}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \strng{authorbibnamehash}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \strng{authornamehash}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \strng{authorfullhash}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \strng{authorfullhashraw}{cba157afa0239d1cfe4a12bb6c9b651f}
+      \field{labelalpha}{Joy18}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{9}
+      \field{title}{NodeMCU ESP32 Datasheet}
+      \field{year}{2018}
+      \true{nocite}
+    \endentry
+    \entry{lcd}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=7bd649202b571e3d01e187482db66f64}{%
+           family={LCDWiki},
+           familyi={L\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {LCDWiki}%
+      }
+      \strng{namehash}{7bd649202b571e3d01e187482db66f64}
+      \strng{fullhash}{7bd649202b571e3d01e187482db66f64}
+      \strng{fullhashraw}{7bd649202b571e3d01e187482db66f64}
+      \strng{bibnamehash}{7bd649202b571e3d01e187482db66f64}
+      \strng{authorbibnamehash}{7bd649202b571e3d01e187482db66f64}
+      \strng{authornamehash}{7bd649202b571e3d01e187482db66f64}
+      \strng{authorfullhash}{7bd649202b571e3d01e187482db66f64}
+      \strng{authorfullhashraw}{7bd649202b571e3d01e187482db66f64}
+      \field{labelalpha}{LCD}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{Rev1.0}
+      \field{title}{1.8inch Arduino SPI Module MAR1801 User Manual}
+    \endentry
+    \entry{vvsg-intro}{misc}{}{}
+      \name{author}{2}{}{%
+        {{hash=91348c04260bd8fbee564adff6c9431e}{%
+           family={Standards},
+           familyi={S\bibinitperiod},
+           given={National\bibnamedelima Institute},
+           giveni={N\bibinitperiod\bibinitdelim I\bibinitperiod},
+           prefix={of},
+           prefixi={o\bibinitperiod}}}%
+        {{hash=e7e767d7c0e58b16e57d3ab16150db80}{%
+           family={Technology},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{e94f05990128e9f2bf16dd176922276f}
+      \strng{fullhash}{e94f05990128e9f2bf16dd176922276f}
+      \strng{fullhashraw}{e94f05990128e9f2bf16dd176922276f}
+      \strng{bibnamehash}{e94f05990128e9f2bf16dd176922276f}
+      \strng{authorbibnamehash}{e94f05990128e9f2bf16dd176922276f}
+      \strng{authornamehash}{e94f05990128e9f2bf16dd176922276f}
+      \strng{authorfullhash}{e94f05990128e9f2bf16dd176922276f}
+      \strng{authorfullhashraw}{e94f05990128e9f2bf16dd176922276f}
+      \field{labelalpha}{ST17}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{05}
+      \field{note}{Accessed on 2024-01-10}
+      \field{title}{VVSG Introduction}
+      \field{year}{2017}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://www.microsoft.com/en-us/research/project/electionguard/
+      \endverb
+      \verb{url}
+      \verb https://www.microsoft.com/en-us/research/project/electionguard/
+      \endverb
+    \endentry
+    \entry{esp32-module}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=b1d5d0040be4721ebd66cd10ec68502c}{%
+           family={Systems},
+           familyi={S\bibinitperiod},
+           given={Espressif},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Shanghai, China}%
+      }
+      \list{organization}{1}{%
+        {Espressif Systems}%
+      }
+      \strng{namehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{bibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorbibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authornamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \field{extraname}{1}
+      \field{labelalpha}{Sys23}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{2}
+      \field{note}{Not Recommended For New Designs (NRND)}
+      \field{title}{ESP32-WROOM-32 Datasheet}
+      \field{version}{3.4}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf
+      \endverb
+    \endentry
+    \entry{esp32-series}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=b1d5d0040be4721ebd66cd10ec68502c}{%
+           family={Systems},
+           familyi={S\bibinitperiod},
+           given={Espressif},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Shanghai, China}%
+      }
+      \list{organization}{1}{%
+        {Espressif Systems}%
+      }
+      \strng{namehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{bibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorbibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authornamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \field{extraname}{2}
+      \field{labelalpha}{Sys24}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{9}
+      \field{title}{ESP32 Series Datasheet}
+      \field{version}{4.7}
+      \field{year}{2024}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf
+      \endverb
+    \endentry
+    \entry{esp32-errata}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=b1d5d0040be4721ebd66cd10ec68502c}{%
+           family={Systems},
+           familyi={S\bibinitperiod},
+           given={Espressif},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Shanghai, China}%
+      }
+      \list{organization}{1}{%
+        {Espressif Systems}%
+      }
+      \strng{namehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{bibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorbibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authornamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \field{extraname}{3}
+      \field{labelalpha}{Sys24}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{9}
+      \field{title}{ESP32 Series Datasheet}
+      \field{version}{4.7}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_errata_en.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32_errata_en.pdf
+      \endverb
+    \endentry
+    \entry{esp32-module-new}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=b1d5d0040be4721ebd66cd10ec68502c}{%
+           family={Systems},
+           familyi={S\bibinitperiod},
+           given={Espressif},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Shanghai, China}%
+      }
+      \list{organization}{1}{%
+        {Espressif Systems}%
+      }
+      \strng{namehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{fullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{bibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorbibnamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authornamehash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhash}{b1d5d0040be4721ebd66cd10ec68502c}
+      \strng{authorfullhashraw}{b1d5d0040be4721ebd66cd10ec68502c}
+      \field{extraname}{4}
+      \field{labelalpha}{Sys24}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extraalpha}{3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{9}
+      \field{title}{ESP32-WROOM-32E Datasheet}
+      \field{version}{1.7}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

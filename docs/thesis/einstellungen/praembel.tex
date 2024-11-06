@@ -31,4 +31,41 @@
 \usepackage[backend=biber,bibencoding=utf-8,style=alphabetic-verb]{biblatex}
 \addbibresource{quellen/literatur.bib}
 
+%Glossar
+\usepackage{glossaries}
+\makenoidxglossaries
 
+% Define glossary entries
+\newglossaryentry{eac}{
+    name={EAC},
+    description={Election Assistance Commission}
+}
+
+\newglossaryentry{e2e}{
+    name={E2E},
+    description={End-to-end}
+}
+
+\newglossaryentry{vvsg}{
+    name={VVSG},
+    description={Voluntary Voting System Guidelines}
+}
+
+%Appendix
+\usepackage{listings}
+\usepackage{xcolor}
+% Define custom settings for listings
+\lstdefinestyle{customstyle}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=C,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstset{style=customstyle}
