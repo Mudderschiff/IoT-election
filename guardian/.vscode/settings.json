@@ -11,7 +11,9 @@
         "array": "c",
         "tuple": "c",
         "type_traits": "c",
-        "utility": "c"
+        "utility": "c",
+        "crypto_utils.h": "c",
+        "utils.h": "c"
     },
     "idf.flashType": "UART",
     "idf.port": "/dev/ttyUSB0"

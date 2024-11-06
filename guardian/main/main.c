@@ -26,22 +26,11 @@ MQTT Broker: if all backups verified. combine_election_public_keys (pub key + co
 
 
 void app_main(void) {
-    ElGamalKeyPair key_pair;
-    key_pair.secret_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    key_pair.public_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-    if (key_pair.secret_key != NULL) {
-        XMEMSET(key_pair.secret_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-        mp_init_size(key_pair.secret_key, MP_BITS_CNT(256));
-    }
-    if (key_pair.public_key != NULL) {
-        XMEMSET(key_pair.public_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-        mp_init_size(key_pair.public_key, MP_BITS_CNT(3072));
-    }
-    
+    ElectionKeyPair key_pair;
+    key_pair.guardian_id = 5;
     generate_election_key_pair(5, &key_pair);
-    print_sp_int(key_pair.secret_key);
-    print_sp_int(key_pair.public_key);
 
-    //compute_polynomial_coordinate(1, NULL, NULL);
+    print_sp_int(key_pair.private_key);
+    print_sp_int(key_pair.public_key);
 
 }
