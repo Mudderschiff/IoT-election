@@ -32,5 +32,5 @@ void app_main(void) {
 
     print_sp_int(key_pair.private_key);
     print_sp_int(key_pair.public_key);
-
+    free_ElectionKeyPair(&key_pair);
 }

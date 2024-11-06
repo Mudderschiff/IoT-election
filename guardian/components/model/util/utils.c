@@ -27,3 +27,69 @@ void int_to_bytes(int value, uint8_t *bytes) {
         bytes[3 - i] = (value >> (i * 8)) & 0xFF;
     }
 }
+
+void free_ElectionKeyPair(ElectionKeyPair* key_pair) {
+    if (key_pair == NULL) return;
+
+    if (key_pair->public_key != NULL) {
+        FREE_MP_INT_SIZE(key_pair->public_key, NULL, DYNAMIC_TYPE_BIGINT);
+        key_pair->public_key = NULL;
+    }
+
+    if (key_pair->private_key != NULL) {
+        //make sure to zero out the private key before freeing it
+        sp_zero(key_pair->private_key);
+        FREE_MP_INT_SIZE(key_pair->private_key, NULL, DYNAMIC_TYPE_BIGINT);
+        key_pair->private_key = NULL;
+    }
+
+    free_ElectionPolynomial(&key_pair->polynomial);
+}
+
+void free_ElectionPolynomial(ElectionPolynomial* polynomial) {
+    if (polynomial == NULL) return;
+
+    if (polynomial->coefficients != NULL) {
+        for (int i = 0; i < polynomial->num_coefficients; ++i) {
+            free_Coefficient(&polynomial->coefficients[i]);
+        }
+        free(polynomial->coefficients);
+        polynomial->coefficients = NULL;
+    }
+}
+
+void free_Coefficient(Coefficient* coefficient) {
+    if (coefficient == NULL) return;
+
+    if (coefficient->commitment != NULL) {
+        FREE_MP_INT_SIZE(coefficient->commitment, NULL, DYNAMIC_TYPE_BIGINT);
+        coefficient->commitment = NULL;
+    }
+    if (coefficient->value != NULL) {
+        FREE_MP_INT_SIZE(coefficient->value, NULL, DYNAMIC_TYPE_BIGINT);
+        coefficient->value = NULL;
+    }
+    free_SchnorrProof(&coefficient->proof);
+}
+
+void free_SchnorrProof(SchnorrProof* proof) {
+    if (proof == NULL) return;
+
+    if (proof->pubkey != NULL) {
+        FREE_MP_INT_SIZE(proof->pubkey, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->pubkey = NULL;
+    }
+    if (proof->commitment != NULL) {
+        FREE_MP_INT_SIZE(proof->pubkey, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->commitment = NULL;
+    }
+    if (proof->challenge != NULL) {
+        FREE_MP_INT_SIZE(proof->pubkey, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->challenge = NULL;
+    }
+
+    if (proof->response != NULL) {
+        FREE_MP_INT_SIZE(proof->pubkey, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->response = NULL;
+    }
+}
