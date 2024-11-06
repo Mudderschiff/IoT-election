@@ -13,7 +13,8 @@
         "type_traits": "c",
         "utility": "c",
         "crypto_utils.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "*.tcc": "c"
     },
     "idf.flashType": "UART",
     "idf.port": "/dev/ttyUSB0"

@@ -38,6 +38,19 @@ typedef struct {
     ElectionPolynomial polynomial;
 } ElectionKeyPair;
  
+ typedef struct {
+    int guardian_id;
+    int designated_id;
+    sp_int* encrypted_coordinate;
+ } ElectionPartialKeyPairBackup;
+
+ 
+ typedef struct {
+    int guardian_id;
+    int designated_id;
+    int verified_id;
+    bool verified;
+ } ElectionPartialKeyVerification;
 
 
 /*
@@ -56,8 +69,10 @@ typedef struct {
 } ElectionPartialKeyVerification;
 */
 
-int compute_polynomial_coordinate(int *exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
+int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial *polynomial, sp_int *coordinate);
+int verify_polynomial_coordinate(int exponent_modifier, sp_int *coordinate, ElectionPolynomial polynomial, bool verified);
 int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate);
+int hashed_elgamal_decrypt(sp_int *private_key, sp_int *seed, sp_int *encrypted_coordinate, sp_int *coordinate);
 int generate_polynomial(ElectionPolynomial *polynomial);
 int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y);
 int g_pow_p(sp_int *seckey, sp_int *pubkey);

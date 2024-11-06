@@ -139,7 +139,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int compute_polynomial_coordinate(int *exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
+int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial *polynomial, sp_int *coordinate) {
     DECL_MP_INT_SIZE(exponent, 256);
     NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 256);
@@ -155,11 +155,11 @@ int compute_polynomial_coordinate(int *exponent_modifier, ElectionPolynomial pol
     INIT_MP_INT_SIZE(small_prime, 256);
     sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
 
-    for (size_t i = 0; i < polynomial.num_coefficients; i++)
+    for (size_t i = 0; i < polynomial->num_coefficients; i++)
     {   
         // Accelerated
         powmod(exponent_modifier, i, small_prime, exponent);
-        esp_mp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
+        esp_mp_mulmod(polynomial->coefficients[i].value, exponent, small_prime, factor);
         // Not accelerated
         sp_addmod(coordinate, factor, small_prime, coordinate);
 
@@ -177,6 +177,18 @@ int compute_polynomial_coordinate(int *exponent_modifier, ElectionPolynomial pol
     FREE_MP_INT_SIZE(factor, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
+
+/**
+ * @brief Computes a single coordinate value of the election polynomial used for sharing
+ * @param exponent_modifier: Unique modifier (usually sequence order) for exponent [0, Q]
+ * @param polynomial: Election polynomial
+ * @param coordinate: The computed coordinate
+ * @return 0 on success, -1 on failure
+ */
+int verify_polynomial_coordinate(int exponent_modifier, sp_int *coordinate, ElectionPolynomial polynomial, bool verified) {
+   return 0;
+}
+
 
 /**
  * @brief Get a hash-based message authentication code(hmac) digest
@@ -305,6 +317,18 @@ int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key
     mac = get_hmac(mac_key, to_mac)
 
     */
+    return 0;
+}
+
+/**
+ * Encrypts a variable length message with a given random nonce and an ElGamal public key.
+ * @param coordinate: message (m) to encrypt; must be in bytes.
+ * @param nonce: Randomly chosen nonce in [1, Q).
+ * @param public_key: ElGamal public key.
+ * @param encryption_seed: Encryption seed (Q) for election.
+ * @param encrypted_coordinate: The encrypted message.
+ */
+int hashed_elgamal_decrypt(sp_int *private_key, sp_int *seed, sp_int *encrypted_coordinate, sp_int *coordinate) {
     return 0;
 }
 
