@@ -38,14 +38,7 @@ int generate_election_key_pair(int quorum, ElectionKeyPair *key_pair) {
  * @param receiver_guardian_public_key: The receiving guardian's public key
  * @return PartialKeyBackup / Encrypted Coordinate
  */
-int generate_election_partial_key_backup(int sender_guardian_id, int designated_id, ElectionPolynomial *sender_guardian_polynomial, sp_int *receiver_guardian_public_key, ElectionPartialKeyPairBackup *backup) {
-    backup->guardian_id = sender_guardian_id;
-    backup->designated_id = designated_id;
-    backup->encrypted_coordinate = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-    if (backup->encrypted_coordinate != NULL) {
-        XMEMSET(backup->encrypted_coordinate, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-        mp_init_size(backup->encrypted_coordinate, MP_BITS_CNT(3072));
-    }
+int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPair *receiver, ElectionPartialKeyPairBackup *backup) {
     DECL_MP_INT_SIZE(coordinate, 256);
     NEW_MP_INT_SIZE(coordinate, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(coordinate, 256);
@@ -56,11 +49,19 @@ int generate_election_partial_key_backup(int sender_guardian_id, int designated_
     NEW_MP_INT_SIZE(seed, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(seed, 256);
 
-    compute_polynomial_coordinate(sender_guardian_id, sender_guardian_polynomial, coordinate);
+    backup->sender = sender->guardian_id;
+    backup->receiver = receiver->guardian_id;
+    backup->encrypted_coordinate = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    if (backup->encrypted_coordinate != NULL) {
+        XMEMSET(backup->encrypted_coordinate, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        mp_init_size(backup->encrypted_coordinate, MP_BITS_CNT(3072));
+    }
+    compute_polynomial_coordinate(receiver->guardian_id, sender->polynomial, coordinate);
     rand_q(nonce);
-    hash(sender_guardian_id, sender_guardian_id, seed);
-    hashed_elgamal_encrypt(coordinate, nonce, receiver_guardian_public_key, seed, backup->encrypted_coordinate);
-    
+    //get_backup_seed()
+    hash(receiver->guardian_id, receiver->guardian_id, seed);
+    hashed_elgamal_encrypt(coordinate, nonce, receiver->public_key, seed, backup->encrypted_coordinate);
+
     sp_zero(coordinate);
     sp_zero(nonce);
     sp_zero(seed);
@@ -77,27 +78,28 @@ int generate_election_partial_key_backup(int sender_guardian_id, int designated_
  * @param sender_guardian_public_key: Sender guardian's election public key
  * @param receiver_guardian_keys: Receiving guardian's key pair
  */
-int verify_election_partial_key_backup(ElectionKeyPair *guardian, ElectionKeyPair *designated, ElectionPartialKeyPairBackup *backup, ElectionKeyPair *key_pair) {
+int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPair *sender, ElectionPartialKeyPairBackup *backup, ElectionPartialKeyVerification *verification) {
     DECL_MP_INT_SIZE(encryption_seed, 256);
     NEW_MP_INT_SIZE(encryption_seed, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(encryption_seed, 256);
+
     DECL_MP_INT_SIZE(coordinate, 3072);
     NEW_MP_INT_SIZE(coordinate, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(coordinate, 3072);
-
-    hash(guardian->guardian_id, designated->guardian_id, encryption_seed);
-    //own_keypair->private_key;
-    hashed_elgamal_decrypt(guardian->private_key, encryption_seed, backup->encrypted_coordinate, coordinate);
-
-    ElectionPartialKeyVerification verification;
-    verification.guardian_id = guardian->guardian_id;
-    verification.designated_id = designated->guardian_id;
-    verification.verified_id = designated->guardian_id;
-    verification.verified = false;
-    verify_polynomial_coordinate(designated->guardian_id, coordinate, designated->polynomial, verification.verified);
     
+    verification->sender = backup->sender;
+    verification->receiver = backup->receiver;
+    verification->verifier = receiver->guardian_id;
+    verification->verified = false;
+    //get_backup_seed()
+    hash(receiver->guardian_id, backup->receiver, encryption_seed);
+    // decrypt encrypted_coordinate
+    hashed_elgamal_decrypt(receiver->private_key, encryption_seed, backup->encrypted_coordinate, coordinate);
+    verify_polynomial_coordinate(coordinate, backup->receiver, sender->polynomial, verification->verified);
+
     sp_zero(encryption_seed);
     FREE_MP_INT_SIZE(encryption_seed, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(coordinate, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 

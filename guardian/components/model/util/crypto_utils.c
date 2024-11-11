@@ -139,7 +139,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial *polynomial, sp_int *coordinate) {
+int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
     DECL_MP_INT_SIZE(exponent, 256);
     NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 256);
@@ -155,11 +155,11 @@ int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial *pol
     INIT_MP_INT_SIZE(small_prime, 256);
     sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
 
-    for (size_t i = 0; i < polynomial->num_coefficients; i++)
+    for (size_t i = 0; i < polynomial.num_coefficients; i++)
     {   
         // Accelerated
         powmod(exponent_modifier, i, small_prime, exponent);
-        esp_mp_mulmod(polynomial->coefficients[i].value, exponent, small_prime, factor);
+        esp_mp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
         // Not accelerated
         sp_addmod(coordinate, factor, small_prime, coordinate);
 
