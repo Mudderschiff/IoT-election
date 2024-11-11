@@ -140,8 +140,15 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @return 0 on success, -1 on failure
  */
 int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
-    int num_coefficients = polynomial.num_coefficients;
-    ESP_LOGI("POLYNOMIAL", "Number of coefficients: %d", num_coefficients);
+    DECL_MP_INT_SIZE(modifier, 256);
+    NEW_MP_INT_SIZE(modifier, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(modifier, 256);
+    sp_set_int(modifier, exponent_modifier);
+
+    DECL_MP_INT_SIZE(exponent_i, 256);
+    NEW_MP_INT_SIZE(exponent_i, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(exponent_i, 256);
+
     DECL_MP_INT_SIZE(exponent, 256);
     NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 256);
@@ -159,8 +166,9 @@ int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial poly
 
     for (size_t i = 0; i < polynomial.num_coefficients; i++)
     {   
+        sp_set_int(modifier, i);
         // Accelerated
-        powmod(exponent_modifier, i, small_prime, exponent);
+        powmod(modifier, exponent_i, small_prime, exponent);
         esp_mp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
         // Not accelerated
         sp_addmod(coordinate, factor, small_prime, coordinate);
@@ -169,13 +177,10 @@ int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial poly
         sp_zero(exponent);
         sp_zero(factor);
     }
-
-    // Free
-    sp_zero(small_prime);
+    FREE_MP_INT_SIZE(exponent_i, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(modifier, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
-    sp_zero(exponent);
     FREE_MP_INT_SIZE(exponent, NULL, DYNAMIC_TYPE_BIGINT);
-    sp_zero(factor);
     FREE_MP_INT_SIZE(factor, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
