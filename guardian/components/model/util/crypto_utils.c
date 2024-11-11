@@ -140,6 +140,8 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @return 0 on success, -1 on failure
  */
 int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
+    int num_coefficients = polynomial.num_coefficients;
+    ESP_LOGI("POLYNOMIAL", "Number of coefficients: %d", num_coefficients);
     DECL_MP_INT_SIZE(exponent, 256);
     NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 256);
@@ -185,7 +187,7 @@ int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial poly
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int verify_polynomial_coordinate(int exponent_modifier, sp_int *coordinate, ElectionPolynomial polynomial, bool verified) {
+int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate, bool verified) {
    return 0;
 }
 

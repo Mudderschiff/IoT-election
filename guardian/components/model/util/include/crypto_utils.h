@@ -70,7 +70,7 @@ typedef struct {
 */
 
 int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
-int verify_polynomial_coordinate(int exponent_modifier, sp_int *coordinate, ElectionPolynomial polynomial, bool verified);
+int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate, bool verified);
 int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate);
 int hashed_elgamal_decrypt(sp_int *private_key, sp_int *seed, sp_int *encrypted_coordinate, sp_int *coordinate);
 int generate_polynomial(ElectionPolynomial *polynomial);

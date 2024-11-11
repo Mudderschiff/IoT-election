@@ -18,16 +18,15 @@ int generate_election_key_pair(int quorum, ElectionKeyPair *key_pair) {
         XMEMSET(key_pair->public_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
         mp_init_size(key_pair->public_key, MP_BITS_CNT(3072));
     }
-    ElectionPolynomial polynomial;
-    polynomial.num_coefficients = quorum;
-    polynomial.coefficients = (Coefficient*)XMALLOC(quorum * sizeof(Coefficient), NULL, DYNAMIC_TYPE_BIGINT);
-    if (polynomial.coefficients == NULL) {
+    key_pair->polynomial.num_coefficients = quorum;
+    key_pair->polynomial.coefficients = (Coefficient*)XMALLOC(quorum * sizeof(Coefficient), NULL, DYNAMIC_TYPE_BIGINT);
+    if (key_pair->polynomial.num_coefficients == NULL) {
         ESP_LOGE("Generate Election Key Pair", "Failed to allocate memory for coefficients");
         return -1;
     }
-    generate_polynomial(&polynomial);
-    sp_copy(polynomial.coefficients[0].value, key_pair->private_key);
-    sp_copy(polynomial.coefficients[0].commitment, key_pair->public_key);
+    generate_polynomial(&key_pair->polynomial);
+    sp_copy(key_pair->polynomial.coefficients[0].value, key_pair->private_key);
+    sp_copy(key_pair->polynomial.coefficients[0].commitment, key_pair->public_key);
     return 0;
 }
 
@@ -57,6 +56,7 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
         mp_init_size(backup->encrypted_coordinate, MP_BITS_CNT(3072));
     }
     compute_polynomial_coordinate(receiver->guardian_id, sender->polynomial, coordinate);
+
     rand_q(nonce);
     //get_backup_seed()
     hash(receiver->guardian_id, receiver->guardian_id, seed);
@@ -95,7 +95,7 @@ int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPai
     hash(receiver->guardian_id, backup->receiver, encryption_seed);
     // decrypt encrypted_coordinate
     hashed_elgamal_decrypt(receiver->private_key, encryption_seed, backup->encrypted_coordinate, coordinate);
-    verify_polynomial_coordinate(coordinate, backup->receiver, sender->polynomial, verification->verified);
+    verify_polynomial_coordinate(backup->receiver, sender->polynomial, coordinate, verification->verified);
 
     sp_zero(encryption_seed);
     FREE_MP_INT_SIZE(encryption_seed, NULL, DYNAMIC_TYPE_BIGINT);
