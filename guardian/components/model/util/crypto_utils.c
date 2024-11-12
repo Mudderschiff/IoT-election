@@ -393,15 +393,41 @@ int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key
 }
 
 /**
- * Encrypts a variable length message with a given random nonce and an ElGamal public key.
- * @param coordinate: message (m) to encrypt; must be in bytes.
- * @param nonce: Randomly chosen nonce in [1, Q).
- * @param public_key: ElGamal public key.
+ * Decrypt an ElGamal ciphertext using a known ElGamal secret key
+ * @param secret_key: The corresponding ElGamal secret key.
  * @param encryption_seed: Encryption seed (Q) for election.
- * @param encrypted_coordinate: The encrypted message.
+ * @param plaintext: Decrypted plaintext message.
  */
-int hashed_elgamal_decrypt(sp_int *private_key, sp_int *seed, sp_int *encrypted_coordinate, sp_int *coordinate) {
-    return 0;
+int hashed_elgamal_decrypt(sp_int *secret_key, sp_int *encryption_seed, sp_int *plaintext) {
+    /*
+
+        session_key = hash_elems(self.pad, pow_p(self.pad, secret_key))
+        data_bytes = to_padded_bytes(self.data)
+
+        (ciphertext_chunks, bit_length) = _get_chunks(data_bytes)
+        mac_key = get_hmac(
+            session_key.to_hex_bytes(),
+            encryption_seed.to_hex_bytes(),
+            bit_length,
+        )
+        to_mac = self.pad.to_hex_bytes() + data_bytes
+        mac = bytes_to_hex(get_hmac(mac_key, to_mac))
+
+        if mac != self.mac:
+            log_error("MAC verification failed in decryption.")
+            return None
+
+        data = b""
+        for i, block in enumerate(ciphertext_chunks):
+            data_key = get_hmac(
+                session_key.to_hex_bytes(),
+                encryption_seed.to_hex_bytes(),
+                bit_length,
+                (i + 1),
+            )
+            data += bytes([a ^ b for (a, b) in zip(block, data_key)])
+        return data
+    */
 }
 
 /**

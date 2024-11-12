@@ -52,22 +52,13 @@ typedef struct {
     bool verified;
  } ElectionPartialKeyVerification;
 
-
-/*
-
 typedef struct {
-    int guardian_id;
-    int designated_id;
-    HashedElGamalCiphertext encrypted_coordinate;
-} ElectionPartialKeyBackup;
+    sp_int* pad;
+    sp_int* data;
+    sp_int* mac;
+} HashedElGamalCiphertext;
 
-typedef struct {
-    int guardian_id;
-    int designated_id;
-    HashedElGamalCiphertext encrypted_coordinate;
-    SchnorrProof proof;
-} ElectionPartialKeyVerification;
-*/
+
 
 int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
 int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);

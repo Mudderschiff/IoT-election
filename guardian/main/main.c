@@ -39,4 +39,5 @@ void app_main(void) {
     compute_polynomial_coordinate(receiver.guardian_id, sender.polynomial, coordinate);
     int verified = verify_polynomial_coordinate(receiver.guardian_id, sender.polynomial, coordinate);
     ESP_LOGI("COORDINATE", "Verified: %d", verified);
+
 }
