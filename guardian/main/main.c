@@ -36,8 +36,7 @@ void app_main(void) {
     DECL_MP_INT_SIZE(coordinate, 256);
     NEW_MP_INT_SIZE(coordinate, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(coordinate, 256);
-    bool verified = false;
     compute_polynomial_coordinate(receiver.guardian_id, sender.polynomial, coordinate);
-    verify_polynomial_coordinate(receiver.guardian_id, sender.polynomial, coordinate, verified);
+    int verified = verify_polynomial_coordinate(receiver.guardian_id, sender.polynomial, coordinate);
     ESP_LOGI("COORDINATE", "Verified: %d", verified);
 }

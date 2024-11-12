@@ -70,7 +70,7 @@ typedef struct {
 */
 
 int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
-int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate, bool verified);
+int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
 int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate);
 int hashed_elgamal_decrypt(sp_int *private_key, sp_int *seed, sp_int *encrypted_coordinate, sp_int *coordinate);
 int generate_polynomial(ElectionPolynomial *polynomial);
@@ -81,5 +81,6 @@ int hash(sp_int *a, sp_int *b, sp_int *result);
 int kdf(sp_int *key, sp_int *message, sp_int *keystream);
 int get_hmac(byte key);
 int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof);
+void print_sp_int(sp_int *num);
 
 #endif // CRYPTO_UTILS_H

@@ -95,7 +95,7 @@ int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPai
     hash(receiver->guardian_id, backup->receiver, encryption_seed);
     // decrypt encrypted_coordinate
     hashed_elgamal_decrypt(receiver->private_key, encryption_seed, backup->encrypted_coordinate, coordinate);
-    verify_polynomial_coordinate(backup->receiver, sender->polynomial, coordinate, verification->verified);
+    verify_polynomial_coordinate(backup->receiver, sender->polynomial, coordinate);
 
     sp_zero(encryption_seed);
     FREE_MP_INT_SIZE(encryption_seed, NULL, DYNAMIC_TYPE_BIGINT);

@@ -21,6 +21,24 @@
 
 #include "crypto_utils.h"
 
+
+void print_sp_int(sp_int *num) {   
+    int size = sp_unsigned_bin_size(num);
+    char *buffer = (char *)malloc(size * 2 + 1);
+    if (buffer == NULL) {
+        ESP_LOGE("Print mp_int", "Failed to allocate memory for buffer");
+        return;
+    }
+    memset(buffer, 0, size * 2 + 1); // Initialize the buffer to zeros
+
+    if (sp_toradix(num, buffer, 16) == MP_OKAY) {
+        ESP_LOGI("Print mp_int", "mp_int value: %s", buffer);
+    } else {
+        ESP_LOGE("Print mp_int", "Failed to convert mp_int to string");
+    }
+    free(buffer);
+}
+
 /** 
  * @brief Compute Large number Modular Exponetiation with hardware Y = (G ^ X) mod P
  * @param g: Base
@@ -163,19 +181,13 @@ int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial poly
     NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(small_prime, 256);
     sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
-
     for (size_t i = 0; i < polynomial.num_coefficients; i++)
     {   
-        sp_set_int(modifier, i);
-        // Accelerated
-        powmod(modifier, exponent_i, small_prime, exponent);
-        esp_mp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
-        // Not accelerated
+        sp_set_int(exponent_i, i);
+        // Not Accelerated. Operator lenght to small
+        sp_exptmod(modifier, exponent_i, small_prime, exponent);
+        sp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
         sp_addmod(coordinate, factor, small_prime, coordinate);
-
-        // Reset exponent and factor for the next iteration
-        sp_zero(exponent);
-        sp_zero(factor);
     }
     FREE_MP_INT_SIZE(exponent_i, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(modifier, NULL, DYNAMIC_TYPE_BIGINT);
@@ -192,8 +204,59 @@ int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial poly
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate, bool verified) {
-   return 0;
+int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
+    DECL_MP_INT_SIZE(exponent, 3072);
+    NEW_MP_INT_SIZE(exponent, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(exponent, 3072);
+    DECL_MP_INT_SIZE(factor, 3072);
+    NEW_MP_INT_SIZE(factor, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(factor, 3072);   
+
+    DECL_MP_INT_SIZE(large_prime, 3072);
+    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(large_prime, 3072);
+    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
+   
+    DECL_MP_INT_SIZE(value_output, 3072);
+    NEW_MP_INT_SIZE(value_output, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(value_output, 3072);
+
+    DECL_MP_INT_SIZE(commitment_output, 3072);
+    NEW_MP_INT_SIZE(commitment_output, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(commitment_output, 3072);
+    sp_set_int(commitment_output, 1);
+
+    DECL_MP_INT_SIZE(exponent_i, 3072);
+    NEW_MP_INT_SIZE(exponent_i, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(exponent_i, 3072);
+
+    DECL_MP_INT_SIZE(modifier, 3072);
+    NEW_MP_INT_SIZE(modifier, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(modifier, 3072);
+    sp_set_int(modifier, exponent_modifier);
+
+    for(size_t i = 0; i < polynomial.num_coefficients; i++) {
+        sp_set_int(exponent_i, i);
+        sp_exptmod(modifier, exponent_i, large_prime, exponent);
+        sp_exptmod(polynomial.coefficients[i].commitment, exponent, large_prime, factor);
+        esp_mp_mulmod(commitment_output, factor, large_prime, commitment_output);
+    }
+    g_pow_p(coordinate, value_output);
+    print_sp_int(value_output);
+    print_sp_int(commitment_output);
+    if(sp_cmp(value_output, commitment_output) == MP_EQ) {
+        return 1;
+    } else
+    {
+        return 0;
+    }
+    FREE_MP_INT_SIZE(exponent, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(exponent_i, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(modifier, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(factor, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(value_output, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(commitment_output, NULL, DYNAMIC_TYPE_BIGINT);
 }
 
 
