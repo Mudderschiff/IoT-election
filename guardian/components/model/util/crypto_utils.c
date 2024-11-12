@@ -239,10 +239,12 @@ int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polyn
         sp_set_int(exponent_i, i);
         sp_exptmod(modifier, exponent_i, large_prime, exponent);
         sp_exptmod(polynomial.coefficients[i].commitment, exponent, large_prime, factor);
-        esp_mp_mulmod(commitment_output, factor, large_prime, commitment_output);
+        sp_mulmod(commitment_output, factor, large_prime, commitment_output);
     }
     g_pow_p(coordinate, value_output);
+    ESP_LOGI("VERIFY_POLYNOMIAL", "Value output");
     print_sp_int(value_output);
+    ESP_LOGI("VERIFY_POLYNOMIAL", "Commitment output");
     print_sp_int(commitment_output);
     if(sp_cmp(value_output, commitment_output) == MP_EQ) {
         return 1;
@@ -414,18 +416,7 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
     NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(nonce, 256);
 
-    DECL_MP_INT_SIZE(value, 256);
-    NEW_MP_INT_SIZE(value, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(value, 256);
-
-    DECL_MP_INT_SIZE(commitment, 3072);
-    NEW_MP_INT_SIZE(commitment, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(commitment, 3072);
-
     for (int i = 0; i < polynomial->num_coefficients; i++) {
-        rand_q(value);
-        rand_q(nonce);
-        g_pow_p(value, commitment);
         polynomial->coefficients[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
         polynomial->coefficients[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
         
@@ -437,20 +428,16 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
             XMEMSET(polynomial->coefficients[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
             mp_init_size(polynomial->coefficients[i].commitment, MP_BITS_CNT(3072));
         }
+        rand_q(polynomial->coefficients[i].value);
+        g_pow_p(polynomial->coefficients[i].value, polynomial->coefficients[i].commitment);
+        rand_q(nonce);
 
-        sp_copy(nonce, polynomial->coefficients[i].value);
-        sp_copy(commitment, polynomial->coefficients[i].commitment);
-
-        make_schnorr_proof(nonce, commitment, nonce, &proof);
+        make_schnorr_proof(polynomial->coefficients[i].value, polynomial->coefficients[i].commitment, nonce, &proof);
         polynomial->coefficients[i].proof = proof;
     }
 
     sp_zero(nonce);
-    sp_zero(value);
-    sp_zero(commitment);
     FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(value, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(commitment, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 
