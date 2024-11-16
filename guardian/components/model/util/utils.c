@@ -22,10 +22,20 @@ void print_sp_int(sp_int *num) {
     free(buffer);
 }
 
-void int_to_bytes(int value, uint8_t *bytes) {
+void int_to_bytes(int value, unsigned char *bytes) {
     for (int i = 0; i < 4; i++) {
         bytes[3 - i] = (value >> (i * 8)) & 0xFF;
     }
+}
+
+// Function to print byte array
+void print_byte_array(const byte *array, int size) {
+    char buffer[size * 3 + 1]; // Each byte will be represented by 2 hex digits and a space
+    for (int i = 0; i < size; i++) {
+        sprintf(&buffer[i * 3], "%02x ", array[i]);
+    }
+    buffer[size * 3] = '\0'; // Null-terminate the string
+    ESP_LOGI("BYTE_ARRAY", "%s", buffer);
 }
 
 void free_ElectionKeyPair(ElectionKeyPair* key_pair) {

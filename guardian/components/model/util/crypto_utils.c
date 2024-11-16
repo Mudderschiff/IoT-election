@@ -39,6 +39,77 @@ void print_sp_int(sp_int *num) {
     free(buffer);
 }
 
+void int_to_bytes(int value, unsigned char *bytes) {
+    for (int i = 0; i < 4; i++) {
+        bytes[3 - i] = (value >> (i * 8)) & 0xFF;
+    }
+}
+
+// Function to print byte array
+void print_byte_array(const byte *array, int size) {
+    char buffer[size * 3 + 1]; // Each byte will be represented by 2 hex digits and a space
+    for (int i = 0; i < size; i++) {
+        sprintf(&buffer[i * 3], "%02x ", array[i]);
+    }
+    buffer[size * 3] = '\0'; // Null-terminate the string
+    ESP_LOGI("BYTE_ARRAY", "%s", buffer);
+}
+
+/**
+ * @brief Key derivation function
+ * @param salt: Salt used for the hashing
+ * @param message: Message to be hashed
+ * @param encrypted_message: Write Encrypted message back to encrypted_message
+ * @return 0 on success, 1 on failure
+ */
+int kdf(sp_int *salt, sp_int *message, sp_int *encrypted_message) {
+    // pad the message if it's not a multiple of 32 (BLOCK_SIZE)
+    byte *salt_bytes = (byte *)malloc(sp_unsigned_bin_size(salt));
+    if(salt_bytes == NULL) {
+        ESP_LOGE("KDF", "Failed to allocate memory for salt_bytes");
+        return 1;
+    }
+    sp_to_unsigned_bin(salt, salt_bytes);
+    int message_len = sp_unsigned_bin_size(message);
+    int remainder = message_len % BLOCK_SIZE;
+    int padded_size = (remainder == 0) ? message_len : (message_len + (BLOCK_SIZE - remainder));
+    byte *padded_message = (byte *)malloc(padded_size);
+    if(padded_message == NULL) {
+        ESP_LOGE("KDF", "Failed to allocate memory for padded_message");
+        return 1;
+    }
+    memset(padded_message, 0, padded_size);
+    sp_to_unsigned_bin_at_pos(0, message, padded_message);
+
+    byte *fixed_message = (byte *)malloc(MODIFIED_CHUNK_SIZE);
+    if(fixed_message == NULL) {
+        ESP_LOGE("KDF", "Failed to allocate memory for fixed_message");
+        return 1;
+    }
+    byte *data_key = (byte *)malloc(BLOCK_SIZE);
+    if(data_key == NULL) {
+        ESP_LOGE("KDF", "Failed to allocate memory for data_key");
+        return 1;
+    }
+    // add message size at the end of the message
+    int_to_bytes(padded_size, &fixed_message[MODIFIED_CHUNK_SIZE - 4]);
+    for(int i = 0; i < padded_size; i += BLOCK_SIZE) {
+        // add the block number to the message
+        int_to_bytes(i / BLOCK_SIZE, fixed_message);
+        memcpy(fixed_message + 4, padded_message + i, BLOCK_SIZE);
+        get_hmac(salt_bytes, fixed_message, data_key);
+        for(int j = 0; j < BLOCK_SIZE; j++) {
+            padded_message[i + j] ^= data_key[j];
+        }
+    }
+    sp_read_unsigned_bin(encrypted_message, padded_message, padded_size);
+    free(padded_message);
+    free(fixed_message);
+    free(data_key);
+    free(salt_bytes);
+    return 0;
+}
+
 /** 
  * @brief Compute Large number Modular Exponetiation with hardware Y = (G ^ X) mod P
  * @param g: Base
@@ -158,14 +229,14 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @return 0 on success, -1 on failure
  */
 int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
-    DECL_MP_INT_SIZE(modifier, 256);
-    NEW_MP_INT_SIZE(modifier, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(modifier, 256);
+    DECL_MP_INT_SIZE(modifier, 64);
+    NEW_MP_INT_SIZE(modifier, 64, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(modifier, 64);
     sp_set_int(modifier, exponent_modifier);
 
-    DECL_MP_INT_SIZE(exponent_i, 256);
-    NEW_MP_INT_SIZE(exponent_i, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(exponent_i, 256);
+    DECL_MP_INT_SIZE(exponent_i, 64);
+    NEW_MP_INT_SIZE(exponent_i, 64, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(exponent_i, 64);
 
     DECL_MP_INT_SIZE(exponent, 256);
     NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
@@ -226,13 +297,13 @@ int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polyn
     INIT_MP_INT_SIZE(commitment_output, 3072);
     sp_set_int(commitment_output, 1);
 
-    DECL_MP_INT_SIZE(exponent_i, 3072);
-    NEW_MP_INT_SIZE(exponent_i, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(exponent_i, 3072);
+    DECL_MP_INT_SIZE(exponent_i, 64);
+    NEW_MP_INT_SIZE(exponent_i, 64, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(exponent_i, 64);
 
-    DECL_MP_INT_SIZE(modifier, 3072);
-    NEW_MP_INT_SIZE(modifier, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(modifier, 3072);
+    DECL_MP_INT_SIZE(modifier, 64);
+    NEW_MP_INT_SIZE(modifier, 64, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(modifier, 64);
     sp_set_int(modifier, exponent_modifier);
 
     for(size_t i = 0; i < polynomial.num_coefficients; i++) {
@@ -267,128 +338,100 @@ int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polyn
  * @param key: key (key) in bytes
  * @return error_code
  */
-int get_hmac(byte key) {
-    /*
+int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out) {
     Hmac hmac;
+    // Initialise HMAC as SHA256
     if(wc_HmacSetKey(&hmac, WC_SHA256, key, sizeof(key)) != 0) {
         ESP_LOGE("HMAC", "Failed to initialise hmac");
         wc_HmacFree(&hmac);
         return -1;
     }
-    if(wc_HmacUpdate(&hmac, data, sizeof(data)) != 0) {
+    if(wc_HmacUpdate(&hmac, in, sizeof(in)) != 0) {
         ESP_LOGE("HMAC", "Failed to update data");
         wc_HmacFree(&hmac);
         return -1;
     }
-    if(wc_HmacFinal(&hmac, data_key) != 0) {
+    if(wc_HmacFinal(&hmac, out) != 0) {
         ESP_LOGE("HMAC", "Failed to compute hash");
         wc_HmacFree(&hmac);
         return -1;
     }
     wc_HmacFree(&hmac);
-    */
-    return 0;
-}
-
-/**
- * @brief Key Based Derivitive function in counter mode based on NIST SP 800-108 using HMAC as PRF
- * @param key: Session key
- * @param message: Encryption seed. Returns encrypted message after operation
- * @return error_code
- */
-int kdf(sp_int *key, sp_int *message, sp_int *keystream) {
-    /*
-     Hmac hmac;
-    byte hash[SHA256_DIGEST_SIZE];
-
-    int bits = sp_count_bits(message);
-    uint8_t bits_length[4];
-    int_to_bytes(bits, bits_length);
-
-    sp_copy(message, keystream);
-
-    int counter = bits / 256;
-    uint8_t counter_bytes[4];
-
-    if(wc_HmacSetKey(&hmac, WC_SHA256, key, sizeof(key)) != 0) {
-        ESP_LOGE("HMAC", "Failed to initialise hmac");
-        wc_HmacFree(&hmac);
-        return -1;
-    }
-
-    for(int i=0, i < counter, i++) {
-        // Convert counter into bytes representation
-        int_to_bytes(i, counter_bytes);
-
-        //Update HMAC with counter
-        if(wc_HmacUpdate(&hmac, counter_bytes, sizeof(counter_bytes)) != 0) {
-            ESP_LOGE("HMAC", "Failed to update data");
-            wc_HmacFree(&hmac);
-            return -1;
-        }
-        if(wc_HmacUpdate(&hmac, message, sizeof(message)) != 0) {
-            ESP_LOGE("HMAC", "Failed to update data");
-            wc_HmacFree(&hmac);
-            return -1;
-        }
-        if(wc_HmacUpdate(&hmac, bits_length, sizeof(bits_length)) != 0) {
-            ESP_LOGE("HMAC", "Failed to update data");
-            wc_HmacFree(&hmac);
-            return -1;
-        }
-        if (wc_HmacFinal(&hmac, hash) != 0) {
-            ESP_LOGE("HMAC", "Failed to finalize hmac");
-            wc_HmacFree(&hmac);
-        return -1;
-        }
-
-        for (int j = 0; j < SHA256_DIGEST_SIZE; j++) {
-            keystream[i * SHA256_DIGEST_SIZE + j] ^= hash[j];
-        }
-    }
-
-    wc_HmacFree(&hmac);
-    */
-   
     return 0;
 }
 
 
 /**
  * Encrypts a variable length message with a given random nonce and an ElGamal public key.
- * @param coordinate: message (m) to encrypt; must be in bytes.
+ * @param message: message (m) to encrypt; must be in bytes.
  * @param nonce: Randomly chosen nonce in [1, Q).
  * @param public_key: ElGamal public key.
  * @param encryption_seed: Encryption seed (Q) for election.
  * @param encrypted_coordinate: The encrypted message.
  */
-int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate) {
-    //DECL_MP_INT_SIZE(large_prime, 3072);
-    //NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    //INIT_MP_INT_SIZE(large_prime, 3072);
-    //sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
-    // DECL pad, pubkey_pow_n
+int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message) {
+    DECL_MP_INT_SIZE(large_prime, 3072);
+    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(large_prime, 3072);
+    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
 
-    //g_pow_p(nonce, pad); //alpha
-    //powmod(public_key, nonce, large_prime ,pubkey_pow_n); //beta
-    //hash(pad, pubkey_pow_n, session_key); //secret_key
-    
-    //size_t pad the coordinates
-    //int len = sp_unsigned_bin_size(coordinate);
-    //int padded_size = len + (BLOCK_SIZE - (len % BLOCK_SIZE));
-    //byte padded_coordinate[padded_size];
-    //memset(padded_coordinate, 0, padded_size);
-    //sp_to_unsigned_bin_at_pos(padded_size - len, coordinate, padded_coordinate);
+    DECL_MP_INT_SIZE(pubkey_pow_n, 3072);
+    NEW_MP_INT_SIZE(pubkey_pow_n, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(pubkey_pow_n, 3072);
 
-    //kdf(session_key, encryption_seed, data_key); // KDF in counter mode
-    /*
-    mac_key = get_hmac(
-        session_key.to_hex_bytes(), encryption_seed.to_hex_bytes(), bit_length
-    )
-    to_mac = pad.to_hex_bytes() + data
-    mac = get_hmac(mac_key, to_mac)
+    DECL_MP_INT_SIZE(session_key, 256);
+    NEW_MP_INT_SIZE(session_key, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(session_key, 256);
 
-    */
+    g_pow_p(nonce, encrypted_message->pad); //alpha
+    sp_exptmod(public_key, nonce, large_prime, pubkey_pow_n); //beta
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    hash(encrypted_message->pad, pubkey_pow_n, session_key);
+    FREE_MP_INT_SIZE(pubkey_pow_n, NULL, DYNAMIC_TYPE_BIGINT);
+
+    kdf(session_key, message, encrypted_message->data);
+
+    int message_size = sp_unsigned_bin_size(encrypted_message->data);
+    int seed_size = sp_unsigned_bin_size(encryption_seed);
+    // Pad the seed with 0 and add the message size at the end
+    byte *padded_seed = (byte *)malloc(seed_size + 8);
+    if (padded_seed == NULL) {
+        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for padded_seed");
+        return 1;
+    }
+    int_to_bytes(0,padded_seed);
+    sp_to_unsigned_bin_at_pos(4, encryption_seed, padded_seed);
+    int_to_bytes(message_size, &padded_seed[(seed_size + 4)]);
+
+    byte *tmp = (byte *)malloc(BLOCK_SIZE);
+    if (tmp == NULL) {
+        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for mac_key");
+        return 1;
+    }
+    byte *key = (byte *)malloc(BLOCK_SIZE);
+    if (key == NULL) {
+        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for key");
+        return 1;
+    }
+    sp_to_unsigned_bin(session_key, key);
+    get_hmac(key, padded_seed, tmp);
+    free(key);
+    free(padded_seed);
+    byte *to_mac = (byte *)malloc(sp_unsigned_bin_size(encrypted_message->pad) + sp_unsigned_bin_size(encrypted_message->data));
+    if (to_mac == NULL) {
+        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for to_mac");
+        return 1;
+    }
+    sp_to_unsigned_bin_at_pos(0, encrypted_message->pad, to_mac);
+    sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(encrypted_message->pad), encrypted_message->data, to_mac);
+    // init to_mac & mac
+    get_hmac(tmp, to_mac, tmp);
+    sp_read_unsigned_bin(encrypted_message->mac, tmp, BLOCK_SIZE);
+    print_sp_int(encrypted_message->pad);
+    print_sp_int(encrypted_message->data);
+    print_sp_int(encrypted_message->mac);
+    free(to_mac);
+    free(tmp);
     return 0;
 }
 
@@ -398,7 +441,7 @@ int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key
  * @param encryption_seed: Encryption seed (Q) for election.
  * @param plaintext: Decrypted plaintext message.
  */
-int hashed_elgamal_decrypt(sp_int *secret_key, sp_int *encryption_seed, sp_int *plaintext) {
+int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *secret_key, sp_int *encryption_seed, sp_int *message) {
     /*
 
         session_key = hash_elems(self.pad, pow_p(self.pad, secret_key))
@@ -428,6 +471,7 @@ int hashed_elgamal_decrypt(sp_int *secret_key, sp_int *encryption_seed, sp_int *
             data += bytes([a ^ b for (a, b) in zip(block, data_key)])
         return data
     */
+   return 0;
 }
 
 /**

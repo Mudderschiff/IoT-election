@@ -9,7 +9,9 @@
 #include "constants.h"
 
 
+
 #define BLOCK_SIZE 32
+#define MODIFIED_CHUNK_SIZE (BLOCK_SIZE + 8)
 
 typedef struct {
     sp_int* pubkey;
@@ -62,16 +64,17 @@ typedef struct {
 
 int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
 int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
-int hashed_elgamal_encrypt(sp_int *coordinate, sp_int *nonce, sp_int *public_key, sp_int *seed, sp_int *encrypted_coordinate);
-int hashed_elgamal_decrypt(sp_int *private_key, sp_int *seed, sp_int *encrypted_coordinate, sp_int *coordinate);
+int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message);
+int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *secret_key, sp_int *encryption_seed, sp_int *message);
 int generate_polynomial(ElectionPolynomial *polynomial);
 int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y);
 int g_pow_p(sp_int *seckey, sp_int *pubkey);
 int rand_q(sp_int *result);
 int hash(sp_int *a, sp_int *b, sp_int *result);
-int kdf(sp_int *key, sp_int *message, sp_int *keystream);
-int get_hmac(byte key);
+int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out);
 int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof);
 void print_sp_int(sp_int *num);
+void print_byte_array(const byte *array, int size);
+void int_to_bytes(int value, unsigned char *bytes);
 
 #endif // CRYPTO_UTILS_H

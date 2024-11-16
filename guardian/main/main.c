@@ -26,6 +26,7 @@ MQTT Broker: if all backups verified. combine_election_public_keys (pub key + co
 
 
 void app_main(void) {
+    ElectionPartialKeyPairBackup backup;
     ElectionKeyPair sender;
     ElectionKeyPair receiver;
     sender.guardian_id = 1;
@@ -36,8 +37,5 @@ void app_main(void) {
     DECL_MP_INT_SIZE(coordinate, 256);
     NEW_MP_INT_SIZE(coordinate, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(coordinate, 256);
-    compute_polynomial_coordinate(receiver.guardian_id, sender.polynomial, coordinate);
-    int verified = verify_polynomial_coordinate(receiver.guardian_id, sender.polynomial, coordinate);
-    ESP_LOGI("COORDINATE", "Verified: %d", verified);
-
+    generate_election_partial_key_backup(&sender, &receiver, &backup);
 }

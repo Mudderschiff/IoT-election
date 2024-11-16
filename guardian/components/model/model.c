@@ -20,7 +20,7 @@ int generate_election_key_pair(int quorum, ElectionKeyPair *key_pair) {
     }
     key_pair->polynomial.num_coefficients = quorum;
     key_pair->polynomial.coefficients = (Coefficient*)XMALLOC(quorum * sizeof(Coefficient), NULL, DYNAMIC_TYPE_BIGINT);
-    if (key_pair->polynomial.num_coefficients == NULL) {
+    if (key_pair->polynomial.coefficients == NULL) {
         ESP_LOGE("Generate Election Key Pair", "Failed to allocate memory for coefficients");
         return -1;
     }
@@ -48,6 +48,12 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
     NEW_MP_INT_SIZE(seed, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(seed, 256);
 
+    DECL_MP_INT_SIZE(id, 64);
+    NEW_MP_INT_SIZE(id, 64, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(id, 64);
+    sp_set_int(id, receiver->guardian_id);
+
+
     backup->sender = sender->guardian_id;
     backup->receiver = receiver->guardian_id;
     backup->encrypted_coordinate = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
@@ -56,11 +62,26 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
         mp_init_size(backup->encrypted_coordinate, MP_BITS_CNT(3072));
     }
     compute_polynomial_coordinate(receiver->guardian_id, sender->polynomial, coordinate);
-
     rand_q(nonce);
-    //get_backup_seed()
-    hash(receiver->guardian_id, receiver->guardian_id, seed);
-    hashed_elgamal_encrypt(coordinate, nonce, receiver->public_key, seed, backup->encrypted_coordinate);
+    hash(id, id, seed);
+    
+    HashedElGamalCiphertext cipher;
+    cipher.pad = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    cipher.data = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    cipher.mac = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+    if (cipher.pad != NULL) {
+        XMEMSET(cipher.pad, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        mp_init_size(cipher.pad, MP_BITS_CNT(3072));
+    }
+    if (cipher.data != NULL) {
+        XMEMSET(cipher.data, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        mp_init_size(cipher.data, MP_BITS_CNT(3072));
+    }
+    if (cipher.mac != NULL) {
+        XMEMSET(cipher.mac, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+        mp_init_size(cipher.mac, MP_BITS_CNT(3072));
+    }
+    hashed_elgamal_encrypt(coordinate, nonce, receiver->public_key, seed, &cipher);
 
     sp_zero(coordinate);
     sp_zero(nonce);
