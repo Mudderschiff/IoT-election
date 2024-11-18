@@ -72,6 +72,7 @@ int g_pow_p(sp_int *seckey, sp_int *pubkey);
 int rand_q(sp_int *result);
 int hash(sp_int *a, sp_int *b, sp_int *result);
 int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out);
+int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message);
 int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof);
 void print_sp_int(sp_int *num);
 void print_byte_array(const byte *array, int size);

@@ -55,56 +55,63 @@ void print_byte_array(const byte *array, int size) {
     ESP_LOGI("BYTE_ARRAY", "%s", buffer);
 }
 
+
+
 /**
- * @brief Key derivation function
+ * @brief generates a Keystream using a KDF then XORs it with the message
+ * @param key: Key used for the hashing
  * @param salt: Salt used for the hashing
  * @param message: Message to be hashed
  * @param encrypted_message: Write Encrypted message back to encrypted_message
  * @return 0 on success, 1 on failure
  */
-int kdf(sp_int *salt, sp_int *message, sp_int *encrypted_message) {
-    // pad the message if it's not a multiple of 32 (BLOCK_SIZE)
-    byte *salt_bytes = (byte *)malloc(sp_unsigned_bin_size(salt));
-    if(salt_bytes == NULL) {
-        ESP_LOGE("KDF", "Failed to allocate memory for salt_bytes");
-        return 1;
-    }
-    sp_to_unsigned_bin(salt, salt_bytes);
+int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message) {
+    // pad message with 0 if not multiple of 32
     int message_len = sp_unsigned_bin_size(message);
     int remainder = message_len % BLOCK_SIZE;
-    int padded_size = (remainder == 0) ? message_len : (message_len + (BLOCK_SIZE - remainder));
-    byte *padded_message = (byte *)malloc(padded_size);
+    int bit_len = (remainder == 0) ? message_len : message_len + (BLOCK_SIZE - remainder);
+    byte *padded_message = (byte *)malloc(bit_len);
     if(padded_message == NULL) {
         ESP_LOGE("KDF", "Failed to allocate memory for padded_message");
         return 1;
     }
-    memset(padded_message, 0, padded_size);
+    memset(padded_message, 0, bit_len);
     sp_to_unsigned_bin_at_pos(0, message, padded_message);
 
-    byte *fixed_message = (byte *)malloc(MODIFIED_CHUNK_SIZE);
-    if(fixed_message == NULL) {
-        ESP_LOGE("KDF", "Failed to allocate memory for fixed_message");
+    byte *key_bytes = (byte *)malloc(sp_unsigned_bin_size(key));
+    if(key_bytes == NULL) {
+        ESP_LOGE("KDF", "Failed to allocate memory for key_bytes");
         return 1;
     }
+    sp_to_unsigned_bin(key, key_bytes);
+
     byte *data_key = (byte *)malloc(BLOCK_SIZE);
     if(data_key == NULL) {
         ESP_LOGE("KDF", "Failed to allocate memory for data_key");
         return 1;
     }
-    // add message size at the end of the message
-    int_to_bytes(padded_size, &fixed_message[MODIFIED_CHUNK_SIZE - 4]);
-    for(int i = 0; i < padded_size; i += BLOCK_SIZE) {
-        // add the block number to the message
-        int_to_bytes(i / BLOCK_SIZE, fixed_message);
-        memcpy(fixed_message + 4, padded_message + i, BLOCK_SIZE);
-        get_hmac(salt_bytes, fixed_message, data_key);
+
+    int padded_salt = (sp_unsigned_bin_size(salt) + 8);
+    byte *salt_bytes = (byte *)malloc(padded_salt);
+    if(salt_bytes == NULL) {
+        ESP_LOGE("KDF", "Failed to allocate memory for salt_bytes");
+        return 1;
+    }
+    // Copy salt and add the bit length at the end
+    sp_to_unsigned_bin_at_pos(4, salt, salt_bytes);
+    int_to_bytes(bit_len, &salt_bytes[padded_salt - 4]);
+    for(int i = 0; i < bit_len; i += BLOCK_SIZE) {
+        // Add Counter to the beginning of the salt
+        int_to_bytes((i / BLOCK_SIZE) + 1, salt_bytes);
+        get_hmac(key_bytes, salt_bytes, data_key);
         for(int j = 0; j < BLOCK_SIZE; j++) {
             padded_message[i + j] ^= data_key[j];
         }
     }
-    sp_read_unsigned_bin(encrypted_message, padded_message, padded_size);
+
+    sp_read_unsigned_bin(encrypted_message, padded_message, bit_len);
     free(padded_message);
-    free(fixed_message);
+    free(key_bytes);
     free(data_key);
     free(salt_bytes);
     return 0;
@@ -388,50 +395,50 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
     FREE_MP_INT_SIZE(pubkey_pow_n, NULL, DYNAMIC_TYPE_BIGINT);
+    
+    kdf_xor(session_key, encryption_seed, message, encrypted_message->data);
 
-    kdf(session_key, message, encrypted_message->data);
-
-    int message_size = sp_unsigned_bin_size(encrypted_message->data);
-    int seed_size = sp_unsigned_bin_size(encryption_seed);
-    // Pad the seed with 0 and add the message size at the end
-    byte *padded_seed = (byte *)malloc(seed_size + 8);
-    if (padded_seed == NULL) {
-        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for padded_seed");
+    byte * key_bytes = (byte *)malloc(sp_unsigned_bin_size(session_key));
+    if(key_bytes == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_ENCRYPT", "Failed to allocate memory for key_bytes");
         return 1;
     }
-    int_to_bytes(0,padded_seed);
-    sp_to_unsigned_bin_at_pos(4, encryption_seed, padded_seed);
-    int_to_bytes(message_size, &padded_seed[(seed_size + 4)]);
+    sp_to_unsigned_bin(session_key, key_bytes);
+
+    int padded_size = sp_unsigned_bin_size(encryption_seed) + 8;
+    byte * seed_bytes = (byte *)malloc(padded_size);
+    if(seed_bytes == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_ENCRYPT", "Failed to allocate memory for seed_bytes");
+        return 1;
+    }
+    int_to_bytes(0, seed_bytes);
+    sp_to_unsigned_bin_at_pos(4, encryption_seed, seed_bytes);
+    int_to_bytes(sp_unsigned_bin_size(message), &seed_bytes[padded_size - 4]);
 
     byte *tmp = (byte *)malloc(BLOCK_SIZE);
-    if (tmp == NULL) {
-        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for mac_key");
+    if(tmp == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_ENCRYPT", "Failed to allocate memory for mac_key");
         return 1;
     }
-    byte *key = (byte *)malloc(BLOCK_SIZE);
-    if (key == NULL) {
-        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for key");
-        return 1;
-    }
-    sp_to_unsigned_bin(session_key, key);
-    get_hmac(key, padded_seed, tmp);
-    free(key);
-    free(padded_seed);
+
+    get_hmac(key_bytes, seed_bytes, tmp);
     byte *to_mac = (byte *)malloc(sp_unsigned_bin_size(encrypted_message->pad) + sp_unsigned_bin_size(encrypted_message->data));
-    if (to_mac == NULL) {
-        ESP_LOGE("PADDED_COORDINATE", "Failed to allocate memory for to_mac");
+    if(to_mac == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_ENCRYPT", "Failed to allocate memory for to_mac");
         return 1;
     }
     sp_to_unsigned_bin_at_pos(0, encrypted_message->pad, to_mac);
     sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(encrypted_message->pad), encrypted_message->data, to_mac);
-    // init to_mac & mac
     get_hmac(tmp, to_mac, tmp);
     sp_read_unsigned_bin(encrypted_message->mac, tmp, BLOCK_SIZE);
     print_sp_int(encrypted_message->pad);
     print_sp_int(encrypted_message->data);
     print_sp_int(encrypted_message->mac);
-    free(to_mac);
+    free(key_bytes);
+    free(seed_bytes);
     free(tmp);
+    free(to_mac);
+    FREE_MP_INT_SIZE(session_key, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 
@@ -442,10 +449,24 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
  * @param plaintext: Decrypted plaintext message.
  */
 int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *secret_key, sp_int *encryption_seed, sp_int *message) {
-    /*
+    DECL_MP_INT_SIZE(session_key, 256);
+    NEW_MP_INT_SIZE(session_key, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(session_key, 256);
 
-        session_key = hash_elems(self.pad, pow_p(self.pad, secret_key))
-        data_bytes = to_padded_bytes(self.data)
+    DECL_MP_INT_SIZE(large_prime, 3072);
+    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(large_prime, 3072);
+    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
+
+    DECL_MP_INT_SIZE(pubkey_pow_n, 3072);
+    NEW_MP_INT_SIZE(pubkey_pow_n, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(pubkey_pow_n, 3072);
+
+    sp_exptmod(encrypted_message->pad, secret_key, large_prime, pubkey_pow_n);
+    hash(encrypted_message->pad, pubkey_pow_n, session_key);
+    //get_hmac(session_key, encrypted_message->data, encrypted_message->mac);
+
+    /*
 
         (ciphertext_chunks, bit_length) = _get_chunks(data_bytes)
         mac_key = get_hmac(
