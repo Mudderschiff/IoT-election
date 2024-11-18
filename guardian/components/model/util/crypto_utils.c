@@ -464,34 +464,55 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
 
     sp_exptmod(encrypted_message->pad, secret_key, large_prime, pubkey_pow_n);
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
-    //get_hmac(session_key, encrypted_message->data, encrypted_message->mac);
 
-    /*
+    byte * key_bytes = (byte *)malloc(sp_unsigned_bin_size(session_key));
+    if(key_bytes == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_DECRYPT", "Failed to allocate memory for key_bytes");
+        return 1;
+    }
+    sp_to_unsigned_bin(session_key, key_bytes);
+    byte * seed_bytes = (byte *)malloc(sp_unsigned_bin_size(encryption_seed) + 8);
+    if(seed_bytes == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_DECRYPT", "Failed to allocate memory for seed_bytes");
+        return 1;
+    }
+    int_to_bytes(0, seed_bytes);
+    sp_to_unsigned_bin_at_pos(4, encryption_seed, seed_bytes);
+    int_to_bytes(sp_unsigned_bin_size(encrypted_message->data), &seed_bytes[sp_unsigned_bin_size(encryption_seed) + 4]);
+    byte *tmp = (byte *)malloc(BLOCK_SIZE);
+    if(tmp == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_DECRYPT", "Failed to allocate memory for mac_key");
+        return 1;
+    }
+    get_hmac(key_bytes, seed_bytes, tmp);
+    byte *to_mac = (byte *)malloc(sp_unsigned_bin_size(encrypted_message->pad) + sp_unsigned_bin_size(encrypted_message->data));
+    if(to_mac == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_DECRYPT", "Failed to allocate memory for to_mac");
+        return 1;
+    }
+    sp_to_unsigned_bin_at_pos(0, encrypted_message->pad, to_mac);
+    sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(encrypted_message->pad), encrypted_message->data, to_mac);
+    get_hmac(tmp, to_mac, tmp);
+    byte *mac = (byte *)malloc(sp_unsigned_bin_size(encrypted_message->mac));
+    if(mac == NULL) {
+        ESP_LOGE("HASHED_ELGAMAL_DECRYPT", "Failed to allocate memory for mac");
+        return 1;
+    }
+    sp_to_unsigned_bin(encrypted_message->mac, mac);
 
-        (ciphertext_chunks, bit_length) = _get_chunks(data_bytes)
-        mac_key = get_hmac(
-            session_key.to_hex_bytes(),
-            encryption_seed.to_hex_bytes(),
-            bit_length,
-        )
-        to_mac = self.pad.to_hex_bytes() + data_bytes
-        mac = bytes_to_hex(get_hmac(mac_key, to_mac))
-
-        if mac != self.mac:
-            log_error("MAC verification failed in decryption.")
-            return None
-
-        data = b""
-        for i, block in enumerate(ciphertext_chunks):
-            data_key = get_hmac(
-                session_key.to_hex_bytes(),
-                encryption_seed.to_hex_bytes(),
-                bit_length,
-                (i + 1),
-            )
-            data += bytes([a ^ b for (a, b) in zip(block, data_key)])
-        return data
-    */
+    if (memcmp(tmp, mac, BLOCK_SIZE) != 0) {
+        ESP_LOGE("HASHED_ELGAMAL_DECRYPT", "MAC verification failed in decryption.");
+        return -1;
+    }
+    kdf_xor(session_key, encryption_seed, encrypted_message->data, message);
+    free(key_bytes);
+    free(seed_bytes);
+    free(tmp);
+    free(to_mac);
+    free(mac);
+    FREE_MP_INT_SIZE(session_key, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(pubkey_pow_n, NULL, DYNAMIC_TYPE_BIGINT);
    return 0;
 }
 
