@@ -29,6 +29,7 @@ void app_main(void) {
     ElectionPartialKeyPairBackup backup;
     ElectionKeyPair sender;
     ElectionKeyPair receiver;
+    ElectionPartialKeyVerification verification;
     sender.guardian_id = 1;
     receiver.guardian_id = 2;
     generate_election_key_pair(2, &sender);
@@ -38,4 +39,7 @@ void app_main(void) {
     NEW_MP_INT_SIZE(coordinate, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(coordinate, 256);
     generate_election_partial_key_backup(&sender, &receiver, &backup);
+    verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
+    ESP_LOGI("APP_MAIN", "Verification: %d", verification.verified);
+    ESP_LOGI("APP_MAIN", "Sender: %d", verification.sender);
 }
