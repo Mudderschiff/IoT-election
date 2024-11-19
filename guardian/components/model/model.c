@@ -130,6 +130,8 @@ int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPai
     sp_zero(encryption_seed);
     FREE_MP_INT_SIZE(encryption_seed, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(coordinate, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(gid, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(bid, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 

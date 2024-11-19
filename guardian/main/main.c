@@ -36,8 +36,8 @@ void app_main(void) {
     ElectionPartialKeyPairBackup backup;
     generate_election_partial_key_backup(&sender, &receiver, &backup);
 
-    //ElectionPartialKeyVerification verification;
-    //verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
-    //ESP_LOGI("APP_MAIN", "Verification: %d", verification.verified);
-    //ESP_LOGI("APP_MAIN", "Sender: %d", verification.sender);
+    ElectionPartialKeyVerification verification;
+    verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
+    ESP_LOGI("APP_MAIN", "Verification: %d", verification.verified);
+    ESP_LOGI("APP_MAIN", "Sender: %d", verification.sender);
 }

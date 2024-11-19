@@ -205,7 +205,6 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     word32 a_size = sp_unsigned_bin_size(a);
     word32 b_size = sp_unsigned_bin_size(b); 
     word32 tmp_size = a_size + b_size;
-    ESP_LOGI("HASH_ELEMS", "tmp_size: %d", tmp_size);
     
     byte *tmp = (byte *)malloc(tmp_size);
     if (tmp == NULL) {
@@ -315,6 +314,7 @@ int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polyn
     sp_set_int(modifier, exponent_modifier);
 
     for(size_t i = 0; i < polynomial.num_coefficients; i++) {
+        //Not accelerated Operator lenght to small
         sp_set_int(exponent_i, i);
         sp_exptmod(modifier, exponent_i, large_prime, exponent);
         sp_exptmod(polynomial.coefficients[i].commitment, exponent, large_prime, factor);
@@ -459,7 +459,7 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
     NEW_MP_INT_SIZE(pubkey_pow_n, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(pubkey_pow_n, 3072);
 
-    sp_exptmod(encrypted_message->pad, secret_key, large_prime, pubkey_pow_n);
+    esp_mp_exptmod(encrypted_message->pad, secret_key, large_prime, pubkey_pow_n);
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
 
     byte * key_bytes = (byte *)malloc(sp_unsigned_bin_size(session_key));
