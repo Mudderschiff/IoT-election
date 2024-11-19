@@ -41,9 +41,15 @@ typedef struct {
 } ElectionKeyPair;
  
  typedef struct {
+    sp_int* pad;
+    sp_int* data;
+    sp_int* mac;
+} HashedElGamalCiphertext;
+
+ typedef struct {
     int sender;
     int receiver;
-    sp_int* encrypted_coordinate;
+    HashedElGamalCiphertext encrypted_coordinate;
  } ElectionPartialKeyPairBackup;
 
  
@@ -54,11 +60,7 @@ typedef struct {
     bool verified;
  } ElectionPartialKeyVerification;
 
-typedef struct {
-    sp_int* pad;
-    sp_int* data;
-    sp_int* mac;
-} HashedElGamalCiphertext;
+
 
 
 

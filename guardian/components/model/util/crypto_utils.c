@@ -205,6 +205,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     word32 a_size = sp_unsigned_bin_size(a);
     word32 b_size = sp_unsigned_bin_size(b); 
     word32 tmp_size = a_size + b_size;
+    ESP_LOGI("HASH_ELEMS", "tmp_size: %d", tmp_size);
     
     byte *tmp = (byte *)malloc(tmp_size);
     if (tmp == NULL) {
@@ -212,7 +213,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
         return -1; // Return an error code
     }
     // Concatenate the two mp_ints
-    ret = sp_to_unsigned_bin(a, tmp);
+    ret = sp_to_unsigned_bin_at_pos(0, a, tmp);
     ret = sp_to_unsigned_bin_at_pos(a_size,b, tmp);
 
     // Conveniencefunction. Handles Initialisation, Update and Finalisation
@@ -389,13 +390,9 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
     DECL_MP_INT_SIZE(session_key, 256);
     NEW_MP_INT_SIZE(session_key, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(session_key, 256);
-
     g_pow_p(nonce, encrypted_message->pad); //alpha
-    sp_exptmod(public_key, nonce, large_prime, pubkey_pow_n); //beta
-    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    esp_mp_exptmod(public_key, nonce, large_prime, pubkey_pow_n); //beta
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
-    FREE_MP_INT_SIZE(pubkey_pow_n, NULL, DYNAMIC_TYPE_BIGINT);
-    
     kdf_xor(session_key, encryption_seed, message, encrypted_message->data);
 
     byte * key_bytes = (byte *)malloc(sp_unsigned_bin_size(session_key));
@@ -431,14 +428,14 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
     sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(encrypted_message->pad), encrypted_message->data, to_mac);
     get_hmac(tmp, to_mac, tmp);
     sp_read_unsigned_bin(encrypted_message->mac, tmp, BLOCK_SIZE);
-    print_sp_int(encrypted_message->pad);
-    print_sp_int(encrypted_message->data);
-    print_sp_int(encrypted_message->mac);
+
     free(key_bytes);
     free(seed_bytes);
     free(tmp);
     free(to_mac);
     FREE_MP_INT_SIZE(session_key, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(pubkey_pow_n, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 
