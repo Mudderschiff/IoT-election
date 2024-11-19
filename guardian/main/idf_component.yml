@@ -1,5 +1,7 @@
 ## IDF Component Manager Manifest File
 dependencies:
+  protocol_examples_common:
+    path: ${IDF_PATH}/examples/common_components/protocol_examples_common
   lvgl_esp32_drivers:
     git: git@github.com:Mudderschiff/lvgl_esp32_drivers.git
   lvgl/lvgl: "^7.9.0"

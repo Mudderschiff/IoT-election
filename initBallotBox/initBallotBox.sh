@@ -9,5 +9,6 @@ mosquitto -c config/mosquitto.conf &
 # Run node-red
 node-red &
 
-conda activate myenv &
-python election.py &
+#conda init &
+#conda activate myenv &
+#python election.py &

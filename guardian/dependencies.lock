@@ -17,6 +17,12 @@ dependencies:
       path: .
       type: git
     version: 733271a547fb33baa5fb9bcb5041c02d56c6afdd
-manifest_hash: 6087400ef0550783773d06455a12b1967d35f69195afa941a5a23cdf514954b1
+  protocol_examples_common:
+    component_hash: null
+    source:
+      path: /home/mudderschiff/esp/v5.2.2/esp-idf/examples/common_components/protocol_examples_common
+      type: local
+    version: '*'
+manifest_hash: 50a6fe774b1f341b5eef1828fcea7615b3a4d9faeccd6b1eb913a89ca829550d
 target: esp32
 version: 1.0.0
