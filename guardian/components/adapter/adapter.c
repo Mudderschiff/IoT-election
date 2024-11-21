@@ -118,7 +118,6 @@ void mqtt_app_start(void)
 
     esp_mqtt_client_config_t mqtt_cfg = {
         .broker.address.uri = "mqtt://192.168.12.1:1883",
-        .credentials.client_id = client_id,
     };
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
