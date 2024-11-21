@@ -1,9 +1,8 @@
 #include "adapter.h"
 
-static const char *TAG = "mqtt_example";
-static char client_id[64];
-static int sequence_order = -1;
-
+static const char *TAG = "Adapter";
+uint64_t mac_int = 0;
+ElectionKeyPair key_pair;
 
 void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -31,15 +30,24 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
     int msg_id;
     switch ((esp_mqtt_event_id_t)event_id)
     {
+    case MQTT_EVENT_BEFORE_CONNECT:
+        ESP_LOGI(TAG, "MQTT_EVENT_BEFORE_CONNECT");
+        uint8_t mac[6] = {0};
+        esp_efuse_mac_get_default(mac);
+        uint64_t mac_int = 0;
+        for (int i = 0; i < 6; i++) {
+            mac_int = (mac_int << 8) | mac[i];
+        }
+        key_pair.guardian_id = mac_int;
+        break;
     case MQTT_EVENT_CONNECTED:
-        char topic[256];
-        snprintf(topic, sizeof(topic), "clients/%s/register", client_id);
-        msg_id = esp_mqtt_client_publish(client, topic, "true", 0, 2, 1);
-        ESP_LOGI(TAG, "sent publish successful, topic=%s, msg_id=%d", topic, msg_id);
-        
-        snprintf(topic, sizeof(topic), "clients/%s/sequence_order", client_id);
-        msg_id = esp_mqtt_client_subscribe(client, topic, 2);
-        ESP_LOGI(TAG, "sent subscribe successful, topic=%s, msg_id=%d", topic, msg_id);
+        msg_id = esp_mqtt_client_subscribe(client, "ceremony_details", 1);
+        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        msg_id = esp_mqtt_client_subscribe(client, "+/pub_key", 1);
+        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        msg_id = esp_mqtt_client_subscribe(client, "+/backups/+", 1);
+        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        msg_id = esp_mqtt_client_subscribe(client, "+/verifications/+", 1); 
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -57,29 +65,6 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
         ESP_LOGI(TAG, "TOPIC=%.*s", event->topic_len, event->topic);
         ESP_LOGI(TAG, "DATA=%.*s", event->data_len, event->data);
-        char expected_prefix[256];
-        snprintf(expected_prefix, sizeof(expected_prefix), "clients/%s", client_id);
-        if (strncmp(event->topic, expected_prefix, strlen(expected_prefix)) == 0 &&
-        strstr(event->topic, "/sequence_order") != NULL)
-        {
-            cJSON *json = cJSON_Parse(event->data);
-            if (json == NULL)
-            {
-                ESP_LOGE(TAG, "Failed to parse JSON");
-                break;
-            }
-
-            cJSON *sequence_order_item = cJSON_GetObjectItem(json, "sequence_order");
-            if (cJSON_IsNumber(sequence_order_item))
-            {
-                sequence_order = sequence_order_item->valueint;
-                ESP_LOGI(TAG, "Sequence Order: %d", sequence_order);
-            }
-            else
-            {
-                ESP_LOGE(TAG, "sequence_order not found or not a number");
-            }
-        }
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -111,11 +96,6 @@ void mqtt_subscribe_public_key(void)
 
 void mqtt_app_start(void)
 {
-    uint8_t mac[6] = {0};
-    esp_efuse_mac_get_default(mac);
-    snprintf(client_id, sizeof(client_id), "ESP_%02x%02x%02x", mac[3], mac[4], mac[5]);
-    ESP_LOGI(TAG, "Client ID: %s", client_id);
-
     esp_mqtt_client_config_t mqtt_cfg = {
         .broker.address.uri = "mqtt://192.168.12.1:1883",
     };

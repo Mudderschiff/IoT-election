@@ -1,5 +1,6 @@
 #include "model.h"
 #include "adapter.h"
+#include "serialize.h"
 #include "freertos/task.h"
 #include "freertos/FreeRTOS.h"
 #include "nvs_flash.h"
@@ -9,7 +10,12 @@
 static const char *TAG = "mqtt_example";
 
 void app_main(void)
-{   
+{
+    ElectionKeyPair key_pair;
+    key_pair.guardian_id = 1;
+    generate_election_key_pair(3, &key_pair);
+    char* json_strung = serialize_election_key_pair(&key_pair);
+    ESP_LOGI(TAG, "Key pair: %s", json_strung);
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);
     esp_log_level_set("mqtt_example", ESP_LOG_VERBOSE);
@@ -26,9 +32,9 @@ void app_main(void)
      * Read "Establishing Wi-Fi or Ethernet Connection" section in
      * examples/protocols/README.md for more information about this function.
      */
-    ESP_ERROR_CHECK(example_connect());
+    //ESP_ERROR_CHECK(example_connect());
 
     // Each guardian connect to broker
-    mqtt_app_start();
+    //mqtt_app_start();
 
 }

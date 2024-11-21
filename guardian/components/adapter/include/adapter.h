@@ -2,7 +2,7 @@
 #define ADAPTER_H
 
 #include "adapter.h"
-#include "adapter.h"
+#include "model.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
