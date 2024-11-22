@@ -49,7 +49,6 @@ typedef struct {
  } ElectionPartialKeyVerification;
 */
 
-
 cJSON* schnorr_proof_to_json(SchnorrProof* proof) {
     cJSON* json = cJSON_CreateObject();
     int size;
@@ -142,25 +141,73 @@ char* serialize_election_key_pair(ElectionKeyPair* key_pair) {
     return serialized;
 }
 
+cJSON* hashed_elgamal_ciphertext_to_json(HashedElGamalCiphertext* ciphertext) {
+    cJSON* json = cJSON_CreateObject();
+    int size;
+    sp_radix_size(ciphertext->pad, 16, &size);
+    char* buffer = (char*)malloc(size);
+    if(buffer == NULL) {
+        cJSON_Delete(json);
+        return NULL;
+    }
+    sp_tohex(ciphertext->pad, buffer);
+    cJSON_AddStringToObject(json, "pad", buffer);
+    sp_radix_size(ciphertext->data, 16, &size);
+    buffer = (char*)realloc(buffer, size);
+    if(buffer == NULL) {
+        cJSON_Delete(json);
+        return NULL;
+    }
+    sp_tohex(ciphertext->data, buffer);
+    cJSON_AddStringToObject(json, "data", buffer);
+    sp_radix_size(ciphertext->mac, 16, &size);
+    buffer = (char*)realloc(buffer, size);
+    if(buffer == NULL) {
+        cJSON_Delete(json);
+        return NULL;
+    }
+    sp_tohex(ciphertext->mac, buffer);
+    cJSON_AddStringToObject(json, "mac", buffer);
+    free(buffer);
+    return json;
+}
+
+char* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* backup) {
+    cJSON* json = cJSON_CreateObject();
+    cJSON_AddNumberToObject(json, "sender", backup->sender);
+    cJSON_AddNumberToObject(json, "receiver", backup->receiver);
+    cJSON* hash = hashed_elgamal_ciphertext_to_json(&backup->encrypted_coordinate);
+    cJSON_AddItemToObject(json, "HashedElGamalCiphertext", hash);
+    char *serialized = cJSON_PrintUnformatted(json);
+    cJSON_Delete(json);
+    return serialized;
+}
+
+char* serialize_election_partial_key_verification(ElectionPartialKeyVerification* verification) {
+    cJSON* json = cJSON_CreateObject();
+    cJSON_AddNumberToObject(json, "sender", verification->sender);
+    cJSON_AddNumberToObject(json, "receiver", verification->receiver);
+    cJSON_AddNumberToObject(json, "verifier", verification->verifier);
+    cJSON_AddBoolToObject(json, "verified", verification->verified);
+    char *serialized = cJSON_PrintUnformatted(json);
+    cJSON_Delete(json);
+    return serialized;
+}
+
+
 /*
 
 ElectionKeyPair* deserialize_election_key_pair(const char* json_string) {
 
 }
 
-char* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* backup) {
 
-
-}
 
 ElectionPartialKeyPairBackup* deserialize_election_partial_key_backup(const char* json_string) {
 
 }
 
-char* serialize_election_partial_key_verification(ElectionPartialKeyVerification* verification) {
 
-
-}
 
 
 ElectionPartialKeyVerification* deserialize_election_partial_key_verification(const char* json_string) {
