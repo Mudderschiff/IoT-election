@@ -49,7 +49,7 @@ typedef struct {
  } ElectionPartialKeyVerification;
 */
 
-cJSON* schnorr_proof_to_json(SchnorrProof* proof) {
+static cJSON* schnorr_proof_to_json(SchnorrProof* proof) {
     cJSON* json = cJSON_CreateObject();
     int size;
     sp_radix_size(proof->pubkey, 16, &size);
@@ -88,7 +88,7 @@ cJSON* schnorr_proof_to_json(SchnorrProof* proof) {
     return json;
 }
 
-cJSON* coefficient_to_json(Coefficient* coefficient) {
+static cJSON* coefficient_to_json(Coefficient* coefficient) {
     cJSON* json = cJSON_CreateObject();
     int size;
     sp_radix_size(coefficient->value, 16, &size);
@@ -113,7 +113,7 @@ cJSON* coefficient_to_json(Coefficient* coefficient) {
     return json;
 }
 
-cJSON* election_polynomial_to_json(ElectionPolynomial* polynomial) {
+static cJSON* election_polynomial_to_json(ElectionPolynomial* polynomial) {
     cJSON* json = cJSON_CreateObject();
     cJSON_AddNumberToObject(json, "num_polynomial", polynomial->num_coefficients);
     cJSON* coefficients = cJSON_CreateArray();
@@ -141,7 +141,7 @@ char* serialize_election_key_pair(ElectionKeyPair* key_pair) {
     return serialized;
 }
 
-cJSON* hashed_elgamal_ciphertext_to_json(HashedElGamalCiphertext* ciphertext) {
+static cJSON* hashed_elgamal_ciphertext_to_json(HashedElGamalCiphertext* ciphertext) {
     cJSON* json = cJSON_CreateObject();
     int size;
     sp_radix_size(ciphertext->pad, 16, &size);

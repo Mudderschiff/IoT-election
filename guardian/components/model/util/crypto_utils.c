@@ -22,6 +22,7 @@
 #include "crypto_utils.h"
 
 
+
 void print_sp_int(sp_int *num) {   
     int size = sp_unsigned_bin_size(num);
     char *buffer = (char *)malloc(size * 2 + 1);
@@ -125,7 +126,7 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
  * @param y: Result
  * @return 0 on success, -1 on failure
  */
-int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
+static int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
     return esp_mp_exptmod(g,x,p,y);
 }
 
@@ -135,7 +136,7 @@ int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
  * @param pubkey: Result
  * @return 0 on success, -1 on failure
  */
-int g_pow_p(sp_int *seckey, sp_int *pubkey) {
+static int g_pow_p(sp_int *seckey, sp_int *pubkey) {
     int ret;
     DECL_MP_INT_SIZE(large_prime, 3072);
     NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
@@ -513,42 +514,6 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
    return 0;
 }
 
-/**
- * @brief Generates a polynomial for sharing election keys
- * @param coefficients:  Number of coefficients of polynomial
- * @param Polynomial used to share election keys. Contains value, commitment, and proof
- * @return 0 on success, -1 on failure
- */
-int generate_polynomial(ElectionPolynomial *polynomial) {
-    SchnorrProof proof;
-    DECL_MP_INT_SIZE(nonce, 256);
-    NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(nonce, 256);
-
-    for (int i = 0; i < polynomial->num_coefficients; i++) {
-        polynomial->coefficients[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-        polynomial->coefficients[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-        
-        if (polynomial->coefficients[i].value) {
-            XMEMSET(polynomial->coefficients[i].value, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-            mp_init_size(polynomial->coefficients[i].value, MP_BITS_CNT(256));
-        }
-        if (polynomial->coefficients[i].commitment) {
-            XMEMSET(polynomial->coefficients[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-            mp_init_size(polynomial->coefficients[i].commitment, MP_BITS_CNT(3072));
-        }
-        rand_q(polynomial->coefficients[i].value);
-        g_pow_p(polynomial->coefficients[i].value, polynomial->coefficients[i].commitment);
-        rand_q(nonce);
-
-        make_schnorr_proof(polynomial->coefficients[i].value, polynomial->coefficients[i].commitment, nonce, &proof);
-        polynomial->coefficients[i].proof = proof;
-    }
-
-    sp_zero(nonce);
-    FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
-    return 0;
-}
 
 /**
  * @brief Given an ElGamal keypair and a nonce, generates a proof that the prover knows the secret key without revealing it.
@@ -558,7 +523,7 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
  * @param proof: The Schnorr proof
  * @return 0 on success, -1 on failure
  */
-int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof) {
+static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof) {
     proof->pubkey = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
     proof->commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
     proof->challenge = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
@@ -597,5 +562,43 @@ int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrPro
 
     sp_zero(q);
     FREE_MP_INT_SIZE(q, NULL, DYNAMIC_TYPE_BIGINT);
+    return 0;
+}
+
+
+/**
+ * @brief Generates a polynomial for sharing election keys
+ * @param coefficients:  Number of coefficients of polynomial
+ * @param Polynomial used to share election keys. Contains value, commitment, and proof
+ * @return 0 on success, -1 on failure
+ */
+int generate_polynomial(ElectionPolynomial *polynomial) {
+    SchnorrProof proof;
+    DECL_MP_INT_SIZE(nonce, 256);
+    NEW_MP_INT_SIZE(nonce, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(nonce, 256);
+
+    for (int i = 0; i < polynomial->num_coefficients; i++) {
+        polynomial->coefficients[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+        polynomial->coefficients[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+        
+        if (polynomial->coefficients[i].value) {
+            XMEMSET(polynomial->coefficients[i].value, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
+            mp_init_size(polynomial->coefficients[i].value, MP_BITS_CNT(256));
+        }
+        if (polynomial->coefficients[i].commitment) {
+            XMEMSET(polynomial->coefficients[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
+            mp_init_size(polynomial->coefficients[i].commitment, MP_BITS_CNT(3072));
+        }
+        rand_q(polynomial->coefficients[i].value);
+        g_pow_p(polynomial->coefficients[i].value, polynomial->coefficients[i].commitment);
+        rand_q(nonce);
+
+        make_schnorr_proof(polynomial->coefficients[i].value, polynomial->coefficients[i].commitment, nonce, &proof);
+        polynomial->coefficients[i].proof = proof;
+    }
+
+    sp_zero(nonce);
+    FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
