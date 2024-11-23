@@ -517,28 +517,21 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
  * @return 0 on success, -1 on failure
  */
 static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof) {
-    proof->pubkey = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-    proof->commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-    proof->challenge = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    proof->response = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(4096)), NULL, DYNAMIC_TYPE_BIGINT);
+    proof->pubkey = NULL;
+    NEW_MP_INT_SIZE(proof->pubkey, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->pubkey, 3072);
 
-    if (proof->pubkey != NULL) {
-        XMEMSET(proof->pubkey, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-    }
-    if (proof->commitment != NULL) {
-        XMEMSET(proof->commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-    }
-    if (proof->challenge != NULL) {
-        XMEMSET(proof->challenge, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-    }
-    if (proof->response != NULL) {
-        XMEMSET(proof->response, 0, MP_INT_SIZEOF(MP_BITS_CNT(4096)));
-    }
+    proof->commitment = NULL;
+    NEW_MP_INT_SIZE(proof->commitment, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->commitment, 3072);
 
-    mp_init_size(proof->pubkey, MP_BITS_CNT(3072));
-    mp_init_size(proof->commitment, MP_BITS_CNT(3072));
-    mp_init_size(proof->challenge, MP_BITS_CNT(256));
-    mp_init_size(proof->response, MP_BITS_CNT(4096));
+    proof->challenge = NULL;
+    NEW_MP_INT_SIZE(proof->challenge, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->challenge, 256);
+
+    proof->response = NULL;
+    NEW_MP_INT_SIZE(proof->response, 4096, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->response, 4096);
 
     sp_copy(pubkey, proof->pubkey);
     g_pow_p(nonce, proof->commitment);
@@ -572,17 +565,13 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
     INIT_MP_INT_SIZE(nonce, 256);
 
     for (int i = 0; i < polynomial->num_coefficients; i++) {
-        polynomial->coefficients[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-        polynomial->coefficients[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+        polynomial->coefficients[i].value = NULL;
+        NEW_MP_INT_SIZE(polynomial->coefficients[i].value, 256, NULL, DYNAMIC_TYPE_BIGINT);
+        INIT_MP_INT_SIZE(polynomial->coefficients[i].value, 256);
+        polynomial->coefficients[i].commitment = NULL;
+        NEW_MP_INT_SIZE(polynomial->coefficients[i].commitment, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+        INIT_MP_INT_SIZE(polynomial->coefficients[i].commitment, 3072);
         
-        if (polynomial->coefficients[i].value) {
-            XMEMSET(polynomial->coefficients[i].value, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-            mp_init_size(polynomial->coefficients[i].value, MP_BITS_CNT(256));
-        }
-        if (polynomial->coefficients[i].commitment) {
-            XMEMSET(polynomial->coefficients[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-            mp_init_size(polynomial->coefficients[i].commitment, MP_BITS_CNT(3072));
-        }
         rand_q(polynomial->coefficients[i].value);
         g_pow_p(polynomial->coefficients[i].value, polynomial->coefficients[i].commitment);
         rand_q(nonce);

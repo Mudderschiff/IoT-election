@@ -8,16 +8,14 @@
  * @return 0 on success, -1 on failure
  */
 int generate_election_key_pair(int quorum, ElectionKeyPair *key_pair) {
-    key_pair->private_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    key_pair->public_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-    if (key_pair->private_key != NULL) {
-        XMEMSET(key_pair->private_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-        mp_init_size(key_pair->private_key, MP_BITS_CNT(256));
-    }
-    if (key_pair->public_key != NULL) {
-        XMEMSET(key_pair->public_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-        mp_init_size(key_pair->public_key, MP_BITS_CNT(3072));
-    }
+    key_pair->public_key = NULL;
+    NEW_MP_INT_SIZE(key_pair->public_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(key_pair->public_key, 3072);
+
+    key_pair->private_key = NULL;
+    NEW_MP_INT_SIZE(key_pair->private_key, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(key_pair->private_key, 256);
+    
     key_pair->polynomial.num_coefficients = quorum;
     key_pair->polynomial.coefficients = (Coefficient*)XMALLOC(quorum * sizeof(Coefficient), NULL, DYNAMIC_TYPE_BIGINT);
     if (key_pair->polynomial.coefficients == NULL) {
@@ -57,21 +55,18 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
 
     memcpy(backup->sender, sender->guardian_id, sizeof(sender->guardian_id));
     memcpy(backup->receiver, receiver->guardian_id, sizeof(receiver->guardian_id));
-    backup->encrypted_coordinate.pad = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-    backup->encrypted_coordinate.data = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    backup->encrypted_coordinate.mac = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    if (backup->encrypted_coordinate.pad != NULL) {
-        XMEMSET(backup->encrypted_coordinate.pad, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-        mp_init_size(backup->encrypted_coordinate.pad, MP_BITS_CNT(3072));
-    }
-    if (backup->encrypted_coordinate.data != NULL) {
-        XMEMSET(backup->encrypted_coordinate.data, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-        mp_init_size(backup->encrypted_coordinate.data, MP_BITS_CNT(256));
-    }
-    if (backup->encrypted_coordinate.mac != NULL) {
-        XMEMSET(backup->encrypted_coordinate.mac, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-        mp_init_size(backup->encrypted_coordinate.mac, MP_BITS_CNT(256));
-    }
+
+    backup->encrypted_coordinate.pad = NULL;
+    NEW_MP_INT_SIZE(backup->encrypted_coordinate.pad, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(backup->encrypted_coordinate.pad, 3072);
+
+    backup->encrypted_coordinate.data = NULL;
+    NEW_MP_INT_SIZE(backup->encrypted_coordinate.data, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(backup->encrypted_coordinate.data, 256);
+
+    backup->encrypted_coordinate.mac = NULL;
+    NEW_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256);
 
     compute_polynomial_coordinate(receiver->guardian_id, sender->polynomial, coordinate);
     rand_q(nonce);
