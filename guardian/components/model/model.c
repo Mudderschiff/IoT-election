@@ -50,14 +50,13 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
     NEW_MP_INT_SIZE(seed, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(seed, 256);
 
-    DECL_MP_INT_SIZE(id, 32);
-    NEW_MP_INT_SIZE(id, 32, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(id, 32);
-    sp_set_int(id, receiver->guardian_id);
+    DECL_MP_INT_SIZE(id, 48);
+    NEW_MP_INT_SIZE(id, 48, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(id, 48);
+    sp_read_unsigned_bin(id, receiver->guardian_id, sizeof(receiver->guardian_id));
 
-
-    backup->sender = sender->guardian_id;
-    backup->receiver = receiver->guardian_id;
+    memcpy(backup->sender, sender->guardian_id, sizeof(sender->guardian_id));
+    memcpy(backup->receiver, receiver->guardian_id, sizeof(receiver->guardian_id));
     backup->encrypted_coordinate.pad = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
     backup->encrypted_coordinate.data = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
     backup->encrypted_coordinate.mac = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
@@ -78,10 +77,6 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
     rand_q(nonce);
     hash(id, id, seed);
     hashed_elgamal_encrypt(coordinate, nonce, receiver->public_key, seed, &backup->encrypted_coordinate);
-    print_sp_int(backup->encrypted_coordinate.pad);
-    print_sp_int(backup->encrypted_coordinate.data);
-    print_sp_int(backup->encrypted_coordinate.mac);
-
     sp_zero(coordinate);
     sp_zero(nonce);
     sp_zero(seed);
@@ -108,18 +103,18 @@ int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPai
     NEW_MP_INT_SIZE(coordinate, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(coordinate, 3072);
 
-    DECL_MP_INT_SIZE(gid, 32);
-    NEW_MP_INT_SIZE(gid, 32, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(gid, 32);
-    DECL_MP_INT_SIZE(bid, 32);
-    NEW_MP_INT_SIZE(bid, 32, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(bid, 32);
-    sp_set_int(gid, receiver->guardian_id);
-    sp_set_int(bid, backup->receiver);
+    DECL_MP_INT_SIZE(gid, 48);
+    NEW_MP_INT_SIZE(gid, 48, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(gid, 48);
+    DECL_MP_INT_SIZE(bid, 48);
+    NEW_MP_INT_SIZE(bid, 48, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(bid, 48);
+    sp_read_unsigned_bin(gid, receiver->guardian_id, sizeof(receiver->guardian_id));
+    sp_read_unsigned_bin(bid, backup->receiver, sizeof(backup->receiver));
     
-    verification->sender = backup->sender;
-    verification->receiver = backup->receiver;
-    verification->verifier = receiver->guardian_id;
+    memcpy(verification->sender, backup->sender, sizeof(backup->sender));
+    memcpy(verification->receiver, backup->receiver, sizeof(backup->receiver));
+    memcpy(verification->verifier, receiver->guardian_id, sizeof(receiver->guardian_id));
     verification->verified = false;
     //get_backup_seed()
     hash(gid, bid, encryption_seed);

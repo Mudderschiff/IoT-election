@@ -32,13 +32,6 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
     {
     case MQTT_EVENT_BEFORE_CONNECT:
         ESP_LOGI(TAG, "MQTT_EVENT_BEFORE_CONNECT");
-        uint8_t mac[6] = {0};
-        esp_efuse_mac_get_default(mac);
-        uint64_t mac_int = 0;
-        for (int i = 0; i < 6; i++) {
-            mac_int = (mac_int << 8) | mac[i];
-        }
-        key_pair.guardian_id = mac_int;
         break;
     case MQTT_EVENT_CONNECTED:
         msg_id = esp_mqtt_client_subscribe(client, "ceremony_details", 1);

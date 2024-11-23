@@ -34,7 +34,7 @@ typedef struct {
 
 // contains also private key. Be careful when sending!
 typedef struct {
-    int guardian_id;
+    uint8_t guardian_id[6];
     sp_int* public_key;
     sp_int* private_key;
     ElectionPolynomial polynomial;
@@ -47,22 +47,22 @@ typedef struct {
 } HashedElGamalCiphertext;
 
  typedef struct {
-    int sender;
-    int receiver;
+    uint8_t sender[6];
+    uint8_t receiver[6];
     HashedElGamalCiphertext encrypted_coordinate;
  } ElectionPartialKeyPairBackup;
 
  
  typedef struct {
-    int sender;
-    int receiver;
-    int verifier;
+    uint8_t sender[6];
+    uint8_t receiver[6];
+    uint8_t verifier[6];
     bool verified;
  } ElectionPartialKeyVerification;
 
 
-int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
-int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
+int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
+int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
 int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message);
 int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *secret_key, sp_int *encryption_seed, sp_int *message);
 int generate_polynomial(ElectionPolynomial *polynomial);

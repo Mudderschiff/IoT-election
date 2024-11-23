@@ -49,6 +49,15 @@ typedef struct {
  } ElectionPartialKeyVerification;
 */
 
+char uint8_to_string(uint8_t* array) {
+    char hex[sizeof(array) * 2 + 1];
+    for(int i = 0; i < sizeof(array); i++) {
+        sprintf(&hex[2*i], "%02x", array[i]);
+    }
+    hex[sizeof(array) * 2] = '\0';
+    return hex;
+}
+
 static cJSON* schnorr_proof_to_json(SchnorrProof* proof) {
     cJSON* json = cJSON_CreateObject();
     int size;
@@ -127,7 +136,7 @@ static cJSON* election_polynomial_to_json(ElectionPolynomial* polynomial) {
 
 char* serialize_election_key_pair(ElectionKeyPair* key_pair) {
     cJSON* json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json, "guardian_id", key_pair->guardian_id);
+    //cJSON_AddStringToObject(json, "guardian_id", uint8_to_string(&key_pair->guardian_id));
     int hex_size;
     sp_radix_size(key_pair->public_key, 16, &hex_size);
     char* hex_str = (char*)malloc(hex_size);
@@ -174,8 +183,8 @@ static cJSON* hashed_elgamal_ciphertext_to_json(HashedElGamalCiphertext* ciphert
 
 char* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* backup) {
     cJSON* json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json, "sender", backup->sender);
-    cJSON_AddNumberToObject(json, "receiver", backup->receiver);
+    //cJSON_AddStringToObject(json, "sender", uint8_to_string(&backup->sender));
+    //cJSON_AddStringToObject(json, "receiver", uint8_to_string(&backup->sender));
     cJSON* hash = hashed_elgamal_ciphertext_to_json(&backup->encrypted_coordinate);
     cJSON_AddItemToObject(json, "HashedElGamalCiphertext", hash);
     char *serialized = cJSON_PrintUnformatted(json);
@@ -185,9 +194,9 @@ char* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* backup
 
 char* serialize_election_partial_key_verification(ElectionPartialKeyVerification* verification) {
     cJSON* json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json, "sender", verification->sender);
-    cJSON_AddNumberToObject(json, "receiver", verification->receiver);
-    cJSON_AddNumberToObject(json, "verifier", verification->verifier);
+    //cJSON_AddStringToObject(json, "sender", uint8_to_string(&verification->sender));
+    //cJSON_AddStringToObject(json, "receiver", uint8_to_string(&verification->receiver));
+    //cJSON_AddStringToObject(json, "verifier", uint8_to_string(&verification->verifier));
     cJSON_AddBoolToObject(json, "verified", verification->verified);
     char *serialized = cJSON_PrintUnformatted(json);
     cJSON_Delete(json);

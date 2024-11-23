@@ -11,22 +11,24 @@ static const char *TAG = "mqtt_example";
 
 void app_main(void)
 {
+    uint8_t mac[6] = {0};
+    esp_efuse_mac_get_default(mac);
     ElectionPartialKeyPairBackup backup;
     ElectionPartialKeyVerification verification;
     ElectionKeyPair sender;
     ElectionKeyPair receiver;
-    sender.guardian_id = 1;
-    receiver.guardian_id = 2;
+    memcpy(sender.guardian_id, mac, 6);
+    memcpy(receiver.guardian_id, mac, 6);
     generate_election_key_pair(3, &sender);
     generate_election_key_pair(3, &receiver);
     char* json_strung = serialize_election_key_pair(&sender);
     generate_election_partial_key_backup(&sender, &receiver, &backup);
     char* json_strung_backup = serialize_election_partial_key_backup(&backup);
-    verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
-    char* json_strung_verification = serialize_election_partial_key_verification(&verification);
+    //verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
+    //char* json_strung_verification = serialize_election_partial_key_verification(&verification);
     ESP_LOGI(TAG, "Key pair sender: %s", json_strung);
     ESP_LOGI(TAG, "Backup: %s", json_strung_backup);
-    ESP_LOGI(TAG, "Verification: %s", json_strung_verification);
+    //ESP_LOGI(TAG, "Verification: %s", json_strung_verification);
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);
     esp_log_level_set("mqtt_example", ESP_LOG_VERBOSE);

@@ -25,13 +25,11 @@
 
 void print_sp_int(sp_int *num) {   
     int size = sp_unsigned_bin_size(num);
-    char *buffer = (char *)malloc(size * 2 + 1);
+    char *buffer = (char *)calloc(size * 2 + 1, sizeof(char));
     if (buffer == NULL) {
         ESP_LOGE("Print mp_int", "Failed to allocate memory for buffer");
         return;
     }
-    memset(buffer, 0, size * 2 + 1); // Initialize the buffer to zeros
-
     if (sp_toradix(num, buffer, 16) == MP_OKAY) {
         ESP_LOGI("Print mp_int", "mp_int value: %s", buffer);
     } else {
@@ -71,12 +69,11 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
     int message_len = sp_unsigned_bin_size(message);
     int remainder = message_len % BLOCK_SIZE;
     int bit_len = (remainder == 0) ? message_len : message_len + (BLOCK_SIZE - remainder);
-    byte *padded_message = (byte *)malloc(bit_len);
+    byte *padded_message = (byte *)calloc(bit_len, sizeof(byte));
     if(padded_message == NULL) {
         ESP_LOGE("KDF", "Failed to allocate memory for padded_message");
         return 1;
     }
-    memset(padded_message, 0, bit_len);
     sp_to_unsigned_bin_at_pos(0, message, padded_message);
 
     byte *key_bytes = (byte *)malloc(sp_unsigned_bin_size(key));
@@ -236,11 +233,11 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
-    DECL_MP_INT_SIZE(modifier, 64);
-    NEW_MP_INT_SIZE(modifier, 64, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(modifier, 64);
-    sp_set_int(modifier, exponent_modifier);
+int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
+    DECL_MP_INT_SIZE(modifier, 48);
+    NEW_MP_INT_SIZE(modifier, 48, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(modifier, 48);
+    sp_read_unsigned_bin(modifier, exponent_modifier, sizeof(exponent_modifier));
 
     DECL_MP_INT_SIZE(exponent_i, 64);
     NEW_MP_INT_SIZE(exponent_i, 64, NULL, DYNAMIC_TYPE_BIGINT);
@@ -283,7 +280,7 @@ int compute_polynomial_coordinate(int exponent_modifier, ElectionPolynomial poly
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
+int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
     DECL_MP_INT_SIZE(exponent, 3072);
     NEW_MP_INT_SIZE(exponent, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 3072);
@@ -312,7 +309,7 @@ int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polyn
     DECL_MP_INT_SIZE(modifier, 64);
     NEW_MP_INT_SIZE(modifier, 64, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(modifier, 64);
-    sp_set_int(modifier, exponent_modifier);
+    sp_read_unsigned_bin(modifier, exponent_modifier, sizeof(exponent_modifier));
 
     for(size_t i = 0; i < polynomial.num_coefficients; i++) {
         //Not accelerated Operator lenght to small
@@ -322,10 +319,6 @@ int verify_polynomial_coordinate(int exponent_modifier, ElectionPolynomial polyn
         sp_mulmod(commitment_output, factor, large_prime, commitment_output);
     }
     g_pow_p(coordinate, value_output);
-    ESP_LOGI("VERIFY_POLYNOMIAL", "Value output");
-    print_sp_int(value_output);
-    ESP_LOGI("VERIFY_POLYNOMIAL", "Commitment output");
-    print_sp_int(commitment_output);
     if(sp_cmp(value_output, commitment_output) == MP_EQ) {
         return 1;
     } else
