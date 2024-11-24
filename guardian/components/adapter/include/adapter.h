@@ -12,7 +12,6 @@
 #include "esp_event.h"
 #include "esp_netif.h"
 #include "protocol_examples_common.h"
-#include "cJSON.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

@@ -1,3 +1,3 @@
-idf_component_register(SRCS "adapter.c" "util/serialize.c"
+idf_component_register(SRCS "adapter.c" "util/serialize.c" "util/buff.pb-c.c"
                     INCLUDE_DIRS "include" "util/include"
-                    REQUIRES mqtt model protocol_examples_common json)
+                    REQUIRES mqtt model protocol_examples_common protobuf-c)

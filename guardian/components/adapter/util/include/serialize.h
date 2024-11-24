@@ -1,13 +1,13 @@
-#ifndef CJSON_H
-#define CJSON_H
+#ifndef SERIALIZE_H
+#define SERIALIZE_H
 
-#include "cJSON.h"
 #include "crypto_utils.h"
+#include "buff.pb-c.h"
 
-char* serialize_election_key_pair(ElectionKeyPair* key_pair);
-char* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* backup);
-char* serialize_election_partial_key_verification(ElectionPartialKeyVerification* verification);
+uint8_t* serialize_election_partial_key_verification(ElectionPartialKeyVerification* verification, unsigned* len);
+int deserialize_election_partial_key_verification(uint8_t* buffer, unsigned len, ElectionPartialKeyVerification* verification);
 
-#endif // CJSON_H
+
+#endif // SERIALIZE_H
 
 

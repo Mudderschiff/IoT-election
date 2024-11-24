@@ -5,6 +5,7 @@
 #include "freertos/FreeRTOS.h"
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
+#include "buff.pb-c.h"
 
 
 static const char *TAG = "mqtt_example";
@@ -21,14 +22,24 @@ void app_main(void)
     memcpy(receiver.guardian_id, mac, 6);
     generate_election_key_pair(3, &sender);
     generate_election_key_pair(3, &receiver);
-    char* json_strung = serialize_election_key_pair(&sender);
     generate_election_partial_key_backup(&sender, &receiver, &backup);
-    char* json_strung_backup = serialize_election_partial_key_backup(&backup);
     verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
-    char* json_strung_verification = serialize_election_partial_key_verification(&verification);
-    ESP_LOGI(TAG, "Key pair sender: %s", json_strung);
-    ESP_LOGI(TAG, "Backup: %s", json_strung_backup);
-    ESP_LOGI(TAG, "Verification: %s", json_strung_verification);
+    ESP_LOGI(TAG, "Verification: %d", verification.verified);
+    ESP_LOGI(TAG, "Sender");
+    print_byte_array(verification.sender, 6);
+    ESP_LOGI(TAG, "Receiver");
+    print_byte_array(verification.receiver, 6);
+    unsigned len;
+    uint8_t* buffer = serialize_election_partial_key_verification(&verification, &len);
+    print_byte_array(buffer, len);
+    ElectionPartialKeyVerification verification2;
+    deserialize_election_partial_key_verification(buffer, len, &verification2);
+    ESP_LOGI(TAG, "Verification: %d", verification2.verified);
+    ESP_LOGI(TAG, "Sender");
+    print_byte_array(verification2.sender, 6);
+    ESP_LOGI(TAG, "Receiver");
+    print_byte_array(verification2.receiver, 6);
+
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);
     esp_log_level_set("mqtt_example", ESP_LOG_VERBOSE);
