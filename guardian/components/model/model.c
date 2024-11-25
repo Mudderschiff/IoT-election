@@ -68,11 +68,10 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
     NEW_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256);
 
-    compute_polynomial_coordinate(receiver->guardian_id, sender->polynomial, coordinate);
+    compute_polynomial_coordinate(receiver->guardian_id, &sender->polynomial, coordinate);
     rand_q(nonce);
     hash(id, id, seed);
     hashed_elgamal_encrypt(coordinate, nonce, receiver->public_key, seed, &backup->encrypted_coordinate);
-    sp_zero(coordinate);
     sp_zero(nonce);
     sp_zero(seed);
     FREE_MP_INT_SIZE(coordinate, NULL, DYNAMIC_TYPE_BIGINT);
@@ -115,7 +114,7 @@ int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPai
     hash(gid, bid, encryption_seed);
     // decrypt encrypted_coordinate
     hashed_elgamal_decrypt(&backup->encrypted_coordinate, receiver->private_key, encryption_seed, coordinate);
-    verification->verified = verify_polynomial_coordinate(backup->receiver, sender->polynomial, coordinate);
+    verification->verified = verify_polynomial_coordinate(backup->receiver, &sender->polynomial, coordinate);
 
     sp_zero(encryption_seed);
     FREE_MP_INT_SIZE(encryption_seed, NULL, DYNAMIC_TYPE_BIGINT);

@@ -577,6 +577,12 @@
     #endif
 #endif
 
+
+//#define DEBUG_WOLFSSL
+//#define DEBUG_WOLFSSL_VERBOSE
+//#define WOLFSSL_ESP32_CRYPT_DEBUG
+//#define WOLFSSL_ESP32_HW_LOCK_DEBUG
+
 /* Debug options:
 See wolfssl/wolfcrypt/port/Espressif/esp32-crypt.h for details on debug options
 

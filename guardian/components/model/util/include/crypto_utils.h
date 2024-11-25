@@ -61,8 +61,8 @@ typedef struct {
  } ElectionPartialKeyVerification;
 
 
-int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
-int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate);
+int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
+int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
 int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message);
 int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *secret_key, sp_int *encryption_seed, sp_int *message);
 int generate_polynomial(ElectionPolynomial *polynomial);

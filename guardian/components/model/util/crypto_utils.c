@@ -144,13 +144,12 @@ static int g_pow_p(sp_int *seckey, sp_int *pubkey) {
     NEW_MP_INT_SIZE(generator, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(generator, 3072);
     sp_read_unsigned_bin(generator, g_3072, sizeof(g_3072));
+
     ret = esp_mp_exptmod(generator,seckey,large_prime,pubkey);
     if(ret != 0) {
         ESP_LOGE("G_POW_P", "Failed to compute g^x mod p");
         ESP_LOGE("G_POW_P", "Error code: %d", ret);
     }
-    sp_zero(large_prime);
-    sp_zero(generator);
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(generator, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
@@ -162,7 +161,12 @@ static int g_pow_p(sp_int *seckey, sp_int *pubkey) {
  * @param result: The random number
  * @return 0 on success, -1 on failure
  */
-int rand_q(mp_int *result) {
+int rand_q(sp_int *result) {
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
+
     int sz = 32;    
     unsigned char *block = (unsigned char *)malloc(sz * sizeof(unsigned char));
     if (block == NULL) {
@@ -172,19 +176,11 @@ int rand_q(mp_int *result) {
 
     esp_fill_random(block, sz);
     sp_read_unsigned_bin(result, block, sz);
-    // Possible optimization might not clear the random number
-    memset(block, 0, sz); 
-    free(block);
-
-    DECL_MP_INT_SIZE(small_prime, 256);
-    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(small_prime, 256);
-    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
-
     sp_mod(result, small_prime, result);
 
     // Clear
-    sp_zero(small_prime);
+    memset(block, 0, sz); 
+    free(block);
     FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
@@ -220,7 +216,6 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     }
 
     ret = sp_read_unsigned_bin(result, tmp, WC_SHA256_DIGEST_SIZE);   
-    memset(tmp, 0, tmp_size);
     free(tmp);
     return ret;
 }
@@ -233,36 +228,34 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
+int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate) {
     DECL_MP_INT_SIZE(modifier, 48);
     NEW_MP_INT_SIZE(modifier, 48, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(modifier, 48);
     sp_read_unsigned_bin(modifier, exponent_modifier, sizeof(exponent_modifier));
 
-    DECL_MP_INT_SIZE(exponent_i, 64);
-    NEW_MP_INT_SIZE(exponent_i, 64, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(exponent_i, 64);
+    DECL_MP_INT_SIZE(exponent_i, 48);
+    NEW_MP_INT_SIZE(exponent_i, 48, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(exponent_i, 48);
 
     DECL_MP_INT_SIZE(exponent, 256);
     NEW_MP_INT_SIZE(exponent, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 256);
-    sp_zero(exponent);
 
     DECL_MP_INT_SIZE(factor, 256);
     NEW_MP_INT_SIZE(factor, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(factor, 256);
-    sp_zero(factor);
 
     DECL_MP_INT_SIZE(small_prime, 256);
     NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(small_prime, 256);
     sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
-    for (size_t i = 0; i < polynomial.num_coefficients; i++)
+    for (size_t i = 0; i < polynomial->num_coefficients; i++)
     {   
         sp_set_int(exponent_i, i);
         // Not Accelerated. Operator lenght to small
         sp_exptmod(modifier, exponent_i, small_prime, exponent);
-        sp_mulmod(polynomial.coefficients[i].value, exponent, small_prime, factor);
+        sp_mulmod(polynomial->coefficients[i].value, exponent, small_prime, factor);
         sp_addmod(coordinate, factor, small_prime, coordinate);
     }
     FREE_MP_INT_SIZE(exponent_i, NULL, DYNAMIC_TYPE_BIGINT);
@@ -280,7 +273,7 @@ int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
  */
-int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial polynomial, sp_int *coordinate) {
+int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate) {
     DECL_MP_INT_SIZE(exponent, 3072);
     NEW_MP_INT_SIZE(exponent, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(exponent, 3072);
@@ -311,11 +304,11 @@ int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial 
     INIT_MP_INT_SIZE(modifier, 64);
     sp_read_unsigned_bin(modifier, exponent_modifier, sizeof(exponent_modifier));
 
-    for(size_t i = 0; i < polynomial.num_coefficients; i++) {
+    for(size_t i = 0; i < polynomial->num_coefficients; i++) {
         //Not accelerated Operator lenght to small
         sp_set_int(exponent_i, i);
         sp_exptmod(modifier, exponent_i, large_prime, exponent);
-        sp_exptmod(polynomial.coefficients[i].commitment, exponent, large_prime, factor);
+        sp_exptmod(polynomial->coefficients[i].commitment, exponent, large_prime, factor);
         sp_mulmod(commitment_output, factor, large_prime, commitment_output);
     }
     g_pow_p(coordinate, value_output);
@@ -386,6 +379,7 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
     INIT_MP_INT_SIZE(session_key, 256);
     g_pow_p(nonce, encrypted_message->pad); //alpha
     esp_mp_exptmod(public_key, nonce, large_prime, pubkey_pow_n); //beta
+
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
     kdf_xor(session_key, encryption_seed, message, encrypted_message->data);
 
@@ -546,7 +540,6 @@ static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, Sch
     sp_mul(seckey,proof->challenge,proof->response);
     sp_addmod(nonce,proof->response,q,proof->response);
 
-    sp_zero(q);
     FREE_MP_INT_SIZE(q, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }

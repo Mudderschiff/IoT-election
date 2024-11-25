@@ -6,7 +6,7 @@
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
 #include "buff.pb-c.h"
-
+#include "esp_heap_caps.h"
 
 static const char *TAG = "mqtt_example";
 
@@ -24,26 +24,26 @@ void app_main(void)
     generate_election_key_pair(3, &receiver);
     generate_election_partial_key_backup(&sender, &receiver, &backup);
     verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
-    ESP_LOGI(TAG, "Backup receiver");
-    print_byte_array(backup.receiver, 6);
-    ESP_LOGI(TAG, "Backup encrypted_coordinate.pad");
-    print_sp_int(backup.encrypted_coordinate.pad);
-    ESP_LOGI(TAG, "Backup encrypted_coordinate.data");
-    print_sp_int(backup.encrypted_coordinate.data);
-    ESP_LOGI(TAG, "Backup encrypted_coordinate.mac");
-    print_sp_int(backup.encrypted_coordinate.mac);
-    unsigned len;
-    uint8_t* buffer = serialize_election_partial_key_backup(&backup, &len);
-    ElectionPartialKeyPairBackup backup2;
-    deserialize_election_partial_key_backup(buffer, len, &backup2);
-    ESP_LOGI(TAG, "Deserialised Backup receiver");
-    print_byte_array(backup2.receiver, 6);
-    ESP_LOGI(TAG, "Deserialised Backup encrypted_coordinate.pad");
-    print_sp_int(backup2.encrypted_coordinate.pad);
-    ESP_LOGI(TAG, "Deserialised Backup encrypted_coordinate.data");
-    print_sp_int(backup2.encrypted_coordinate.data);
-    ESP_LOGI(TAG, "Deserialised Backup encrypted_coordinate.mac");
-    print_sp_int(backup2.encrypted_coordinate.mac);
+    ESP_LOGI(TAG, "Verification verified: %d", verification.verified);
+    //ESP_LOGI(TAG, "Backup encrypted_coordinate.pad");
+    //print_sp_int(backup.encrypted_coordinate.pad);
+    //ESP_LOGI(TAG, "Backup encrypted_coordinate.data");
+    //print_sp_int(backup.encrypted_coordinate.data);
+    //ESP_LOGI(TAG, "Backup encrypted_coordinate.mac");
+    //print_sp_int(backup.encrypted_coordinate.mac);
+    //unsigned len;
+    //uint8_t* buffer = serialize_election_partial_key_backup(&backup, &len);
+    //heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
+
+    //ElectionPartialKeyPairBackup backup2;
+    //deserialize_election_partial_key_backup(buffer, len, &backup2);
+    //ESP_LOGI(TAG, "Deserialised Backup receiver");
+    //ESP_LOGI(TAG, "Deserialised Backup encrypted_coordinate.pad");
+    //print_sp_int(backup2.encrypted_coordinate.pad);
+    //ESP_LOGI(TAG, "Deserialised Backup encrypted_coordinate.data");
+    //print_sp_int(backup2.encrypted_coordinate.data);
+    //ESP_LOGI(TAG, "Deserialised Backup encrypted_coordinate.mac");
+    //print_sp_int(backup2.encrypted_coordinate.mac);
 
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);

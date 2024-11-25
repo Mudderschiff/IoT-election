@@ -1,6 +1,6 @@
 #include "serialize.h"
 #include "buff.pb-c.h"
-
+#include "esp_heap_caps.h"
 
 /*
 typedef struct {
@@ -98,6 +98,9 @@ uint8_t* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* bac
     *len = election_partial_key_pair_backup_proto__get_packed_size(&proto);
     uint8_t* buffer = (uint8_t *)calloc(*len, sizeof(char));
     election_partial_key_pair_backup_proto__pack(&proto, buffer);
+    free(hash.pad.data);
+    free(hash.data.data);
+    free(hash.mac.data);
     return buffer;
 }
 
@@ -125,28 +128,28 @@ int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, Elect
     memcpy(backup->sender, msg->sender.data, sizeof(backup->sender));
     memcpy(backup->receiver, msg->receiver.data, sizeof(backup->receiver));
 
+    heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
     int bit_len;
     bit_len = (hash->pad.len) * 8;
     backup->encrypted_coordinate.pad = NULL;
     NEW_MP_INT_SIZE(backup->encrypted_coordinate.pad, bit_len, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(backup->encrypted_coordinate.pad, bit_len);
-    int err = sp_read_unsigned_bin(backup->encrypted_coordinate.pad, hash->pad.data, bit_len);
-    if(err != 0) {
-        ESP_LOGE("Deserialize ElectionPartialKeyPairBackup", "Failed to read pad");
-        return 1;
-    }
+    int err = sp_read_unsigned_bin(backup->encrypted_coordinate.pad, hash->pad.data, hash->pad.len);
+    ESP_LOGI("Deserialize ElectionPartialKeyPairBackup", "err: %d", err);
 
     bit_len = (hash->data.len) * 8;
+    ESP_LOGI("Deserialize ElectionPartialKeyPairBackup", "bit_len: %d", bit_len);
     backup->encrypted_coordinate.data = NULL;
     NEW_MP_INT_SIZE(backup->encrypted_coordinate.data, bit_len, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(backup->encrypted_coordinate.data, bit_len);
-    sp_read_unsigned_bin(backup->encrypted_coordinate.data, hash->data.data, bit_len);
+    sp_read_unsigned_bin(backup->encrypted_coordinate.data, hash->data.data, hash->data.len);
 
     bit_len = (hash->mac.len) * 8;
+    ESP_LOGI("Deserialize ElectionPartialKeyPairBackup", "bit_len: %d", bit_len);
     backup->encrypted_coordinate.mac = NULL;
     NEW_MP_INT_SIZE(backup->encrypted_coordinate.mac, bit_len, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(backup->encrypted_coordinate.mac, bit_len);
-    sp_read_unsigned_bin(backup->encrypted_coordinate.mac, hash->mac.data, bit_len);
+    sp_read_unsigned_bin(backup->encrypted_coordinate.mac, hash->mac.data, hash->mac.len);
 
     election_partial_key_pair_backup_proto__free_unpacked(msg, NULL);
     return 0;
