@@ -209,14 +209,21 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     ret = sp_to_unsigned_bin_at_pos(0, a, tmp);
     ret = sp_to_unsigned_bin_at_pos(a_size,b, tmp);
 
+    byte *result_byte = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
+    if (tmp_result == NULL) {
+        ESP_LOGE("HASH_ELEMS", "Failed to allocate memory for result_byte");
+        return -1; // Return an error code
+    }
+
     // Conveniencefunction. Handles Initialisation, Update and Finalisation
-    if ((ret = wc_Sha256Hash(tmp, tmp_size, tmp)) != 0) {
+    if ((ret = wc_Sha256Hash(tmp, tmp_size, result_byte)) != 0) {
         WOLFSSL_MSG("Hashing Failed");
         return ret;
     }
 
-    ret = sp_read_unsigned_bin(result, tmp, WC_SHA256_DIGEST_SIZE);   
+    ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE);   
     free(tmp);
+    free(result_byte);
     return ret;
 }
 
@@ -377,9 +384,9 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
     DECL_MP_INT_SIZE(session_key, 256);
     NEW_MP_INT_SIZE(session_key, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(session_key, 256);
-    g_pow_p(nonce, encrypted_message->pad); //alpha
     esp_mp_exptmod(public_key, nonce, large_prime, pubkey_pow_n); //beta
-
+    vTaskDelay(1 / portTICK_PERIOD_MS);
+    g_pow_p(nonce, encrypted_message->pad); //alpha
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
     kdf_xor(session_key, encryption_seed, message, encrypted_message->data);
 

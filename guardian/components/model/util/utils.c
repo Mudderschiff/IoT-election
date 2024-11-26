@@ -5,6 +5,7 @@
  * @param num: The number to print
  * @return void
 */
+/*
 void print_sp_int(sp_int *num) {   
     int size = sp_unsigned_bin_size(num);
     char *buffer = (char *)calloc(size * 2 + 1, sizeof(char));
@@ -19,7 +20,9 @@ void print_sp_int(sp_int *num) {
     }
     free(buffer);
 }
+*/
 
+/*
 void int_to_bytes(int value, unsigned char *bytes) {
     for (int i = 0; i < 4; i++) {
         bytes[3 - i] = (value >> (i * 8)) & 0xFF;
@@ -35,6 +38,8 @@ void print_byte_array(const byte *array, int size) {
     buffer[size * 3] = '\0'; // Null-terminate the string
     ESP_LOGI("BYTE_ARRAY", "%s", buffer);
 }
+*/
+
 
 void free_ElectionKeyPair(ElectionKeyPair* key_pair) {
     if (key_pair == NULL) return;

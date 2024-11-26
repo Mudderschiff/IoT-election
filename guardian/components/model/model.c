@@ -1,5 +1,5 @@
 #include "model.h"
-
+#include "esp_heap_caps.h"
 
 /**
  * @brief Generates election key pair, proof, and polynomial
@@ -67,10 +67,14 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
     backup->encrypted_coordinate.mac = NULL;
     NEW_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256);
+    ESP_LOGI("Generate Election Partial Key Backup", "After init");
+    heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
 
     compute_polynomial_coordinate(receiver->guardian_id, &sender->polynomial, coordinate);
     rand_q(nonce);
     hash(id, id, seed);
+    ESP_LOGI("Generate Election Partial Key Backup", "Before hash");
+    heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
     hashed_elgamal_encrypt(coordinate, nonce, receiver->public_key, seed, &backup->encrypted_coordinate);
     sp_zero(nonce);
     sp_zero(seed);

@@ -98,9 +98,6 @@ uint8_t* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* bac
     *len = election_partial_key_pair_backup_proto__get_packed_size(&proto);
     uint8_t* buffer = (uint8_t *)calloc(*len, sizeof(char));
     election_partial_key_pair_backup_proto__pack(&proto, buffer);
-    free(hash.pad.data);
-    free(hash.data.data);
-    free(hash.mac.data);
     return buffer;
 }
 

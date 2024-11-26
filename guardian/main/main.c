@@ -7,33 +7,44 @@
 #include "protocol_examples_common.h"
 #include "buff.pb-c.h"
 #include "esp_heap_caps.h"
+#include "esp_task_wdt.h"
 
 static const char *TAG = "mqtt_example";
 
 void app_main(void)
-{
+{   
     uint8_t mac[6] = {0};
     esp_efuse_mac_get_default(mac);
     ElectionPartialKeyPairBackup backup;
-    ElectionPartialKeyVerification verification;
+    //ElectionPartialKeyVerification verification;
     ElectionKeyPair sender;
     ElectionKeyPair receiver;
     memcpy(sender.guardian_id, mac, 6);
     memcpy(receiver.guardian_id, mac, 6);
     generate_election_key_pair(3, &sender);
     generate_election_key_pair(3, &receiver);
+
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     generate_election_partial_key_backup(&sender, &receiver, &backup);
-    verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
-    ESP_LOGI(TAG, "Verification verified: %d", verification.verified);
+    
+
+
+    //vTaskDelay(1000 / portTICK_PERIOD_MS);
+    //verify_election_partial_key_backup(&receiver, &sender, &backup, &verification);
+    //ESP_LOGI(TAG, "Verification verified: %d", verification.verified);
     //ESP_LOGI(TAG, "Backup encrypted_coordinate.pad");
     //print_sp_int(backup.encrypted_coordinate.pad);
     //ESP_LOGI(TAG, "Backup encrypted_coordinate.data");
     //print_sp_int(backup.encrypted_coordinate.data);
     //ESP_LOGI(TAG, "Backup encrypted_coordinate.mac");
     //print_sp_int(backup.encrypted_coordinate.mac);
-    //unsigned len;
-    //uint8_t* buffer = serialize_election_partial_key_backup(&backup, &len);
     //heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
+
+    //unsigned len;
+    //uint8_t* buffer = serialize_election_partial_key_verification(&verification, &len);
+    
+    //uint8_t* buffer = serialize_election_partial_key_verification(&verification, &len);
+    //uint8_t* buffer = serialize_election_partial_key_backup(&backup, &len);
 
     //ElectionPartialKeyPairBackup backup2;
     //deserialize_election_partial_key_backup(buffer, len, &backup2);
