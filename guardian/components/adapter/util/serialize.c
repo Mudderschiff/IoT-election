@@ -1,6 +1,5 @@
 #include "serialize.h"
-#include "buff.pb-c.h"
-#include "esp_heap_caps.h"
+
 
 /*
 typedef struct {
@@ -125,29 +124,33 @@ int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, Elect
     memcpy(backup->sender, msg->sender.data, sizeof(backup->sender));
     memcpy(backup->receiver, msg->receiver.data, sizeof(backup->receiver));
 
-    heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
     int bit_len;
     bit_len = (hash->pad.len) * 8;
     backup->encrypted_coordinate.pad = NULL;
-    NEW_MP_INT_SIZE(backup->encrypted_coordinate.pad, bit_len, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(backup->encrypted_coordinate.pad, bit_len);
-    int err = sp_read_unsigned_bin(backup->encrypted_coordinate.pad, hash->pad.data, hash->pad.len);
-    ESP_LOGI("Deserialize ElectionPartialKeyPairBackup", "err: %d", err);
+    backup->encrypted_coordinate.pad = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(backup->encrypted_coordinate.pad != NULL) {
+        XMEMSET(backup->encrypted_coordinate.pad, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(backup->encrypted_coordinate.pad, MP_BITS_CNT(bit_len));
+    }     
+    sp_read_unsigned_bin(backup->encrypted_coordinate.pad, hash->pad.data, hash->pad.len);         
 
     bit_len = (hash->data.len) * 8;
-    ESP_LOGI("Deserialize ElectionPartialKeyPairBackup", "bit_len: %d", bit_len);
     backup->encrypted_coordinate.data = NULL;
-    NEW_MP_INT_SIZE(backup->encrypted_coordinate.data, bit_len, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(backup->encrypted_coordinate.data, bit_len);
-    sp_read_unsigned_bin(backup->encrypted_coordinate.data, hash->data.data, hash->data.len);
+    backup->encrypted_coordinate.data = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(backup->encrypted_coordinate.data != NULL) {
+        XMEMSET(backup->encrypted_coordinate.data, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(backup->encrypted_coordinate.data, MP_BITS_CNT(bit_len));
+    }     
+    sp_read_unsigned_bin(backup->encrypted_coordinate.data, hash->data.data, hash->data.len);   
 
     bit_len = (hash->mac.len) * 8;
-    ESP_LOGI("Deserialize ElectionPartialKeyPairBackup", "bit_len: %d", bit_len);
     backup->encrypted_coordinate.mac = NULL;
-    NEW_MP_INT_SIZE(backup->encrypted_coordinate.mac, bit_len, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(backup->encrypted_coordinate.mac, bit_len);
-    sp_read_unsigned_bin(backup->encrypted_coordinate.mac, hash->mac.data, hash->mac.len);
-
+    backup->encrypted_coordinate.mac = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(backup->encrypted_coordinate.mac != NULL) {
+        XMEMSET(backup->encrypted_coordinate.mac, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(backup->encrypted_coordinate.mac, MP_BITS_CNT(bit_len));
+    }     
+    sp_read_unsigned_bin(backup->encrypted_coordinate.mac, hash->mac.data, hash->mac.len);                                                                                                                               
     election_partial_key_pair_backup_proto__free_unpacked(msg, NULL);
     return 0;
 }

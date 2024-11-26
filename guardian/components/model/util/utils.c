@@ -40,6 +40,41 @@ void print_byte_array(const byte *array, int size) {
 }
 */
 
+/*
+ typedef struct {
+    uint8_t sender[6];
+    uint8_t receiver[6];
+    HashedElGamalCiphertext encrypted_coordinate;
+ } ElectionPartialKeyPairBackup;
+
+ 
+ typedef struct {
+    uint8_t sender[6];
+    uint8_t receiver[6];
+    uint8_t verifier[6];
+    bool verified;
+ } ElectionPartialKeyVerification;
+*/
+
+void free_ElectionPartialKeyBackup(ElectionPartialKeyPairBackup* backup) {
+    if (backup == NULL) return;
+
+    if (backup->encrypted_coordinate.pad != NULL) {
+        FREE_MP_INT_SIZE(backup->encrypted_coordinate.pad, NULL, DYNAMIC_TYPE_BIGINT);
+        backup->encrypted_coordinate.pad = NULL;
+    }
+
+    if (backup->encrypted_coordinate.data != NULL) {
+        FREE_MP_INT_SIZE(backup->encrypted_coordinate.data, NULL, DYNAMIC_TYPE_BIGINT);
+        backup->encrypted_coordinate.data = NULL;
+    }
+
+    if (backup->encrypted_coordinate.mac != NULL) {
+        FREE_MP_INT_SIZE(backup->encrypted_coordinate.mac, NULL, DYNAMIC_TYPE_BIGINT);
+        backup->encrypted_coordinate.mac = NULL;
+    }
+}
+
 
 void free_ElectionKeyPair(ElectionKeyPair* key_pair) {
     if (key_pair == NULL) return;

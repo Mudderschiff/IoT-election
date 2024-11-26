@@ -210,7 +210,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     ret = sp_to_unsigned_bin_at_pos(a_size,b, tmp);
 
     byte *result_byte = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
-    if (tmp_result == NULL) {
+    if (result_byte == NULL) {
         ESP_LOGE("HASH_ELEMS", "Failed to allocate memory for result_byte");
         return -1; // Return an error code
     }
@@ -520,7 +520,7 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
 static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof) {
     proof->pubkey = NULL;
     NEW_MP_INT_SIZE(proof->pubkey, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(proof->pubkey, 3072);
+    sp_init_copy(proof->pubkey, pubkey);
 
     proof->commitment = NULL;
     NEW_MP_INT_SIZE(proof->commitment, 3072, NULL, DYNAMIC_TYPE_BIGINT);
@@ -534,7 +534,6 @@ static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, Sch
     NEW_MP_INT_SIZE(proof->response, 4096, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(proof->response, 4096);
 
-    sp_copy(pubkey, proof->pubkey);
     g_pow_p(nonce, proof->commitment);
     hash(pubkey, proof->commitment, proof->challenge);
 
