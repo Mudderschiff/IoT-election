@@ -1,6 +1,85 @@
 #include "serialize.h"
 
 
+
+uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
+    ElectionKeyPairProto proto = ELECTION_KEY_PAIR_PROTO__INIT;
+    ElectionPolynomialProto polynomial = ELECTION_POLYNOMIAL_PROTO__INIT;
+    CoefficientProto **coeff;
+    
+    //CoefficientProto* coeff = (CoefficientProto*)malloc(sizeof(CoefficientProto));
+
+    proto.guardian_id.len = sizeof(key_pair->guardian_id);
+    proto.guardian_id.data = key_pair->guardian_id;
+    proto.public_key.len = sp_unsigned_bin_size(key_pair->public_key);
+    proto.public_key.data = (uint8_t*)malloc(proto.public_key.len);
+    sp_to_unsigned_bin(key_pair->public_key, proto.public_key.data);
+
+    coeff = (CoefficientProto**)malloc(sizeof(CoefficientProto*) * key_pair->polynomial.num_coefficients);
+    for(int i = 0; i < key_pair->polynomial.num_coefficients; i++) {
+        coeff[i] = (CoefficientProto*)malloc(sizeof(CoefficientProto));
+        coefficient_proto__init(coeff[i]);
+        coeff[i]->value.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].value);
+        coeff[i]->value.data = (uint8_t*)malloc(coeff[i]->value.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].value, coeff[i]->value.data);
+
+        coeff[i]->commitment.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].commitment);
+        coeff[i]->commitment.data = (uint8_t*)malloc(coeff[i]->commitment.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].commitment, coeff[i]->commitment.data);
+
+        coeff[i]->proof = (SchnorrProofProto*)malloc(sizeof(SchnorrProofProto));
+        schnorr_proof_proto__init(coeff[i]->proof);
+
+        coeff[i]->proof->pubkey.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.pubkey);
+        coeff[i]->proof->pubkey.data = (uint8_t*)malloc(coeff[i]->proof->pubkey.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.pubkey, coeff[i]->proof->pubkey.data);
+
+        coeff[i]->proof->commitment.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.commitment);
+        coeff[i]->proof->commitment.data = (uint8_t*)malloc(coeff[i]->proof->commitment.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.commitment, coeff[i]->proof->commitment.data);
+
+        coeff[i]->proof->challenge.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.challenge);
+        coeff[i]->proof->challenge.data = (uint8_t*)malloc(coeff[i]->proof->challenge.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.challenge, coeff[i]->proof->challenge.data);
+
+        coeff[i]->proof->response.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.response);
+        coeff[i]->proof->response.data = (uint8_t*)malloc(coeff[i]->proof->response.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.response, coeff[i]->proof->response.data);
+
+        //coeff[i]->proof = &proof;
+
+        /*
+        
+        
+        coeff->proof->pubkey.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.pubkey);
+        coeff->proof->pubkey.data = (uint8_t*)malloc(coeff->proof->pubkey.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.pubkey, coeff->proof->pubkey.data);
+
+        coeff->proof->commitment.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.commitment);
+        coeff->proof->commitment.data = (uint8_t*)malloc(coeff->proof->commitment.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.commitment, coeff->proof->commitment.data);
+
+        coeff->proof->challenge.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.challenge);
+        coeff->proof->challenge.data = (uint8_t*)malloc(coeff->proof->challenge.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.challenge, coeff->proof->challenge.data);
+
+        coeff->proof->response.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.response);
+        coeff->proof->response.data = (uint8_t*)malloc(coeff->proof->response.len);
+        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.response, coeff->proof->response.data);
+
+        */
+    }
+    polynomial.n_coefficients = key_pair->polynomial.num_coefficients;
+    polynomial.coefficients = coeff;
+
+    proto.polynomial = &polynomial;
+
+    *len = election_key_pair_proto__get_packed_size(&proto);
+    uint8_t* buffer = (uint8_t *)calloc(*len, sizeof(char));
+    election_key_pair_proto__pack(&proto, buffer);
+    return buffer;
+}
+
 /*
 typedef struct {
     sp_int* pubkey;
@@ -28,21 +107,104 @@ typedef struct {
     sp_int* private_key;
     ElectionPolynomial polynomial;
 } ElectionKeyPair;
- 
- typedef struct {
-    sp_int* pad;
-    sp_int* data;
-    sp_int* mac;
-} HashedElGamalCiphertext;
-
- typedef struct {
-    uint8_t sender[6];
-    uint8_t receiver[6];
-    HashedElGamalCiphertext encrypted_coordinate;
- } ElectionPartialKeyPairBackup;
-
 
 */
+
+
+int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* proof) {
+    int bit_len;
+    bit_len = (proto->pubkey.len) * 8;
+    proof->pubkey = NULL;
+    proof->pubkey = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(proof->pubkey != NULL) {
+        XMEMSET(proof->pubkey, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(proof->pubkey, MP_BITS_CNT(bit_len));
+    }
+    sp_read_unsigned_bin(proof->pubkey, proto->pubkey.data, proto->pubkey.len); 
+
+    bit_len = (proto->commitment.len) * 8;
+    proof->commitment = NULL;
+    proof->commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(proof->commitment != NULL) {
+        XMEMSET(proof->commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(proof->commitment, MP_BITS_CNT(bit_len));
+    }
+    sp_read_unsigned_bin(proof->commitment, proto->commitment.data, proto->commitment.len);
+
+    bit_len = (proto->challenge.len) * 8;
+    proof->challenge = NULL;
+    proof->challenge = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(proof->challenge != NULL) {
+        XMEMSET(proof->challenge, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(proof->challenge, MP_BITS_CNT(bit_len));
+    }
+    sp_read_unsigned_bin(proof->challenge, proto->challenge.data, proto->challenge.len);
+
+    bit_len = (proto->response.len) * 8;
+    proof->response = NULL;
+    proof->response = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(proof->response != NULL) {
+        XMEMSET(proof->response, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(proof->response, MP_BITS_CNT(bit_len));
+    }
+    sp_read_unsigned_bin(proof->response, proto->response.data, proto->response.len);
+    return 0;
+}
+
+
+int deserialize_election_polynomial(ElectionPolynomialProto* poly, ElectionPolynomial* polynomial) {
+    polynomial->num_coefficients = poly->num_coefficients;
+    int bit_len;
+    //polynomial->coefficients = (Coefficient*)malloc(sizeof(Coefficient) * polynomial->num_coefficients);
+    for(int i = 0; i < polynomial->num_coefficients; i++) {
+
+        bit_len = (poly->coefficients[i]->value.len) * 8;
+        polynomial->coefficients[i].value = NULL;
+        polynomial->coefficients[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+        if(polynomial->coefficients[i].value != NULL) {
+            XMEMSET(polynomial->coefficients[i].value, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+            sp_init_size(polynomial->coefficients[i].value, MP_BITS_CNT(bit_len));
+        }
+        sp_read_unsigned_bin(polynomial->coefficients[i].value, poly->coefficients[i]->value.data, poly->coefficients[i]->value.len);
+
+        bit_len = (poly->coefficients[i]->commitment.len) * 8;
+        polynomial->coefficients[i].commitment = NULL;
+        polynomial->coefficients[i].commitment = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+        if(polynomial->coefficients[i].commitment != NULL) {
+            XMEMSET(polynomial->coefficients[i].commitment, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+            sp_init_size(polynomial->coefficients[i].commitment, MP_BITS_CNT(bit_len));
+        }
+        sp_read_unsigned_bin(polynomial->coefficients[i].commitment, poly->coefficients[i]->commitment.data, poly->coefficients[i]->commitment.len);
+
+        deserialize_schnorr_proof(poly->coefficients[i]->proof, &polynomial->coefficients[i].proof);
+    }
+    return 0;
+}
+
+int deserialize_election_key_pair(uint8_t* buffer, unsigned len, ElectionKeyPair* key_pair) {
+    ElectionKeyPairProto* proto = election_key_pair_proto__unpack(NULL, len, buffer);
+    if(proto == NULL) {
+        ESP_LOGE("Deserialize ElectionKeyPair", "Failed to unpack proto");
+        return 1;
+    }
+
+    memcpy(key_pair->guardian_id, proto->guardian_id.data, sizeof(key_pair->guardian_id));
+
+    int bit_len;
+    bit_len = (proto->public_key.len) * 8;
+    key_pair->public_key = NULL;
+    key_pair->public_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);
+    if(key_pair->public_key != NULL) {
+        XMEMSET(key_pair->public_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(bit_len)));
+        sp_init_size(key_pair->public_key, MP_BITS_CNT(bit_len));
+    }
+    sp_read_unsigned_bin(key_pair->public_key, proto->public_key.data, proto->public_key.len);
+    deserialize_election_polynomial(proto->polynomial, &key_pair->polynomial);
+
+    election_key_pair_proto__free_unpacked(proto, NULL);
+    return 0;
+}
+
 
 uint8_t* serialize_election_partial_key_verification(ElectionPartialKeyVerification* verification, unsigned* len) {
     ElectionPartialKeyVerificationProto proto = ELECTION_PARTIAL_KEY_VERIFICATION_PROTO__INIT;
@@ -74,7 +236,6 @@ int deserialize_election_partial_key_verification(uint8_t* buffer, unsigned len,
 }
 
 
-
 uint8_t* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* backup, unsigned* len) {
     ElectionPartialKeyPairBackupProto proto = ELECTION_PARTIAL_KEY_PAIR_BACKUP_PROTO__INIT;
     proto.sender.len = sizeof(backup->sender);
@@ -100,19 +261,6 @@ uint8_t* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* bac
     return buffer;
 }
 
-/*
- typedef struct {
-    sp_int* pad;
-    sp_int* data;
-    sp_int* mac;
-} HashedElGamalCiphertext;
-
- typedef struct {
-    uint8_t sender[6];
-    uint8_t receiver[6];
-    HashedElGamalCiphertext encrypted_coordinate;
- } ElectionPartialKeyPairBackup;
-*/
 
 int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, ElectionPartialKeyPairBackup* backup) {
     ElectionPartialKeyPairBackupProto* msg = election_partial_key_pair_backup_proto__unpack(NULL, len, buffer);

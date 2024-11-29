@@ -46,12 +46,20 @@ void int_to_bytes(int value, unsigned char *bytes) {
 
 // Function to print byte array
 void print_byte_array(const byte *array, int size) {
-    char buffer[size * 3 + 1]; // Each byte will be represented by 2 hex digits and a space
+    char *buffer = (char *)calloc(size * 3 + 1, sizeof(char));
+    if (buffer == NULL)
+    {
+        ESP_LOGE("BYTE_ARRAY", "Failed to allocate memory for buffer");
+        return;
+    }
+    
+    //char buffer[size * 3 + 1]; // Each byte will be represented by 2 hex digits and a space
     for (int i = 0; i < size; i++) {
         sprintf(&buffer[i * 3], "%02x ", array[i]);
     }
     buffer[size * 3] = '\0'; // Null-terminate the string
     ESP_LOGI("BYTE_ARRAY", "%s", buffer);
+    free(buffer);
 }
 
 
