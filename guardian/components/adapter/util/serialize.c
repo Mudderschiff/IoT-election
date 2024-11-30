@@ -16,6 +16,7 @@ uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
     sp_to_unsigned_bin(key_pair->public_key, proto.public_key.data);
 
     coeff = (CoefficientProto**)malloc(sizeof(CoefficientProto*) * key_pair->polynomial.num_coefficients);
+
     for(int i = 0; i < key_pair->polynomial.num_coefficients; i++) {
         coeff[i] = (CoefficientProto*)malloc(sizeof(CoefficientProto));
         coefficient_proto__init(coeff[i]);
@@ -45,31 +46,10 @@ uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
         coeff[i]->proof->response.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.response);
         coeff[i]->proof->response.data = (uint8_t*)malloc(coeff[i]->proof->response.len);
         sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.response, coeff[i]->proof->response.data);
-
-        //coeff[i]->proof = &proof;
-
-        /*
-        
-        
-        coeff->proof->pubkey.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.pubkey);
-        coeff->proof->pubkey.data = (uint8_t*)malloc(coeff->proof->pubkey.len);
-        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.pubkey, coeff->proof->pubkey.data);
-
-        coeff->proof->commitment.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.commitment);
-        coeff->proof->commitment.data = (uint8_t*)malloc(coeff->proof->commitment.len);
-        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.commitment, coeff->proof->commitment.data);
-
-        coeff->proof->challenge.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.challenge);
-        coeff->proof->challenge.data = (uint8_t*)malloc(coeff->proof->challenge.len);
-        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.challenge, coeff->proof->challenge.data);
-
-        coeff->proof->response.len = sp_unsigned_bin_size(key_pair->polynomial.coefficients[i].proof.response);
-        coeff->proof->response.data = (uint8_t*)malloc(coeff->proof->response.len);
-        sp_to_unsigned_bin(key_pair->polynomial.coefficients[i].proof.response, coeff->proof->response.data);
-
-        */
     }
     polynomial.n_coefficients = key_pair->polynomial.num_coefficients;
+    polynomial.num_coefficients = key_pair->polynomial.num_coefficients;
+
     polynomial.coefficients = coeff;
 
     proto.polynomial = &polynomial;
@@ -79,36 +59,6 @@ uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
     election_key_pair_proto__pack(&proto, buffer);
     return buffer;
 }
-
-/*
-typedef struct {
-    sp_int* pubkey;
-    sp_int* commitment;
-    sp_int* challenge;
-    sp_int* response;
-    
-} SchnorrProof;
-
-typedef struct {
-    sp_int* value;
-    sp_int* commitment;
-    SchnorrProof proof;
-} Coefficient;
-
-typedef struct {
-    int num_coefficients;
-    Coefficient* coefficients;
-} ElectionPolynomial;
-
-// contains also private key. Be careful when sending!
-typedef struct {
-    uint8_t guardian_id[6];
-    sp_int* public_key;
-    sp_int* private_key;
-    ElectionPolynomial polynomial;
-} ElectionKeyPair;
-
-*/
 
 
 int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* proof) {
@@ -155,9 +105,8 @@ int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* proof) {
 int deserialize_election_polynomial(ElectionPolynomialProto* poly, ElectionPolynomial* polynomial) {
     polynomial->num_coefficients = poly->num_coefficients;
     int bit_len;
-    //polynomial->coefficients = (Coefficient*)malloc(sizeof(Coefficient) * polynomial->num_coefficients);
+    polynomial->coefficients = (Coefficient*)malloc(sizeof(Coefficient) * polynomial->num_coefficients);
     for(int i = 0; i < polynomial->num_coefficients; i++) {
-
         bit_len = (poly->coefficients[i]->value.len) * 8;
         polynomial->coefficients[i].value = NULL;
         polynomial->coefficients[i].value = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(bit_len)), NULL, DYNAMIC_TYPE_BIGINT);

@@ -20,9 +20,9 @@ void app_main(void)
     generate_election_key_pair(3, &sender);
     
     ESP_LOGI("ElectionKeyPair", "Generated Election Key Pair");
-    print_sp_int(sender.public_key);
-    print_sp_int(sender.polynomial.coefficients[0].value);
-    print_sp_int(sender.polynomial.coefficients[0].commitment);
+    //print_sp_int(sender.public_key);
+    //print_sp_int(sender.polynomial.coefficients[0].value);
+    //print_sp_int(sender.polynomial.coefficients[0].commitment);
     print_sp_int(sender.polynomial.coefficients[0].proof.pubkey);
     print_sp_int(sender.polynomial.coefficients[0].proof.commitment);
     print_sp_int(sender.polynomial.coefficients[0].proof.challenge);
@@ -32,20 +32,21 @@ void app_main(void)
     ElectionKeyPair sender2;
 
     uint8_t* buffer = serialize_election_key_pair(&sender, &len);
-    print_byte_array(buffer, len);
+    //print_byte_array(buffer, len);
     
-    /*
+    
     deserialize_election_key_pair(buffer, len, &sender2);
     ESP_LOGI("ElectionKeyPair", "Deserialized Election Key Pair");
-    print_sp_int(sender2.public_key);
-    print_sp_int(sender2.polynomial.coefficients[0].value);
-    print_sp_int(sender2.polynomial.coefficients[0].commitment);
+    //print_sp_int(sender2.public_key);
+    //print_sp_int(sender2.polynomial.coefficients[0].value);
+    //print_sp_int(sender2.polynomial.coefficients[0].commitment);
+    //print_sp_int(sender2.polynomial.coefficients[0].value);
+    //print_sp_int(sender2.polynomial.coefficients[0].commitment);
     print_sp_int(sender2.polynomial.coefficients[0].proof.pubkey);
     print_sp_int(sender2.polynomial.coefficients[0].proof.commitment);
     print_sp_int(sender2.polynomial.coefficients[0].proof.challenge);
     print_sp_int(sender2.polynomial.coefficients[0].proof.response);
 
-    */
 
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);
