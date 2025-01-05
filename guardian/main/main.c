@@ -13,40 +13,6 @@ static const char *TAG = "mqtt_example";
 
 void app_main(void)
 {   
-    uint8_t mac[6] = {0};
-    esp_efuse_mac_get_default(mac);
-    ElectionKeyPair sender;
-    memcpy(sender.guardian_id, mac, 6);
-    generate_election_key_pair(3, &sender);
-    
-    ESP_LOGI("ElectionKeyPair", "Generated Election Key Pair");
-    //print_sp_int(sender.public_key);
-    //print_sp_int(sender.polynomial.coefficients[0].value);
-    //print_sp_int(sender.polynomial.coefficients[0].commitment);
-    print_sp_int(sender.polynomial.coefficients[0].proof.pubkey);
-    print_sp_int(sender.polynomial.coefficients[0].proof.commitment);
-    print_sp_int(sender.polynomial.coefficients[0].proof.challenge);
-    print_sp_int(sender.polynomial.coefficients[0].proof.response);
-
-    unsigned len;
-    ElectionKeyPair sender2;
-
-    uint8_t* buffer = serialize_election_key_pair(&sender, &len);
-    //print_byte_array(buffer, len);
-    
-    
-    deserialize_election_key_pair(buffer, len, &sender2);
-    ESP_LOGI("ElectionKeyPair", "Deserialized Election Key Pair");
-    //print_sp_int(sender2.public_key);
-    //print_sp_int(sender2.polynomial.coefficients[0].value);
-    //print_sp_int(sender2.polynomial.coefficients[0].commitment);
-    //print_sp_int(sender2.polynomial.coefficients[0].value);
-    //print_sp_int(sender2.polynomial.coefficients[0].commitment);
-    print_sp_int(sender2.polynomial.coefficients[0].proof.pubkey);
-    print_sp_int(sender2.polynomial.coefficients[0].proof.commitment);
-    print_sp_int(sender2.polynomial.coefficients[0].proof.challenge);
-    print_sp_int(sender2.polynomial.coefficients[0].proof.response);
-
 
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);
@@ -64,9 +30,9 @@ void app_main(void)
      * Read "Establishing Wi-Fi or Ethernet Connection" section in
      * examples/protocols/README.md for more information about this function.
      */
-    //ESP_ERROR_CHECK(example_connect());
+    ESP_ERROR_CHECK(example_connect());
 
     // Each guardian connect to broker
-    //mqtt_app_start();
+    mqtt_app_start();
 
 }

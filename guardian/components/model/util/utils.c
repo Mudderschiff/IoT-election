@@ -40,21 +40,6 @@ void print_byte_array(const byte *array, int size) {
 }
 */
 
-/*
- typedef struct {
-    uint8_t sender[6];
-    uint8_t receiver[6];
-    HashedElGamalCiphertext encrypted_coordinate;
- } ElectionPartialKeyPairBackup;
-
- 
- typedef struct {
-    uint8_t sender[6];
-    uint8_t receiver[6];
-    uint8_t verifier[6];
-    bool verified;
- } ElectionPartialKeyVerification;
-*/
 
 void free_ElectionPartialKeyBackup(ElectionPartialKeyPairBackup* backup) {
     if (backup == NULL) return;

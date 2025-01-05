@@ -61,7 +61,7 @@ uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
 }
 
 
-int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* proof) {
+static int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* proof) {
     int bit_len;
     bit_len = (proto->pubkey.len) * 8;
     proof->pubkey = NULL;
@@ -102,7 +102,7 @@ int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* proof) {
 }
 
 
-int deserialize_election_polynomial(ElectionPolynomialProto* poly, ElectionPolynomial* polynomial) {
+static int deserialize_election_polynomial(ElectionPolynomialProto* poly, ElectionPolynomial* polynomial) {
     polynomial->num_coefficients = poly->num_coefficients;
     int bit_len;
     polynomial->coefficients = (Coefficient*)malloc(sizeof(Coefficient) * polynomial->num_coefficients);
@@ -138,6 +138,9 @@ int deserialize_election_key_pair(uint8_t* buffer, unsigned len, ElectionKeyPair
     }
 
     memcpy(key_pair->guardian_id, proto->guardian_id.data, sizeof(key_pair->guardian_id));
+
+    //Private key is never deserialized and should be empty anyway when sent over the network. This is to not free a non-allocated pointer
+    key_pair->private_key = NULL;
 
     int bit_len;
     bit_len = (proto->public_key.len) * 8;

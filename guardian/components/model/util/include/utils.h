@@ -9,6 +9,7 @@
 
 //void int_to_bytes(int value, unsigned char *bytes);
 //void print_sp_int(sp_int *num);
+void free_ElectionPartialKeyPairBackup(ElectionPartialKeyPairBackup* backup);
 void free_ElectionKeyPair(ElectionKeyPair *key_pair);
 void free_ElectionPolynomial(ElectionPolynomial *polynomial);
 void free_Coefficient(Coefficient *coefficient);

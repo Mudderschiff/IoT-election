@@ -89,12 +89,6 @@ election_builder = ElectionBuilder(
 print("Created with number_of_guardians:", NUMBER_OF_GUARDIANS)
 print("Created with quorum:", QUORUM)
 
-ceremony_details = {
-    "Quorum": QUORUM,
-    "Max_guardians": NUMBER_OF_GUARDIANS
-}
-ceremony_details_json = json.dumps(ceremony_details)
-
 #Step 1 Key ceremony, one is choosen as mediator
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 # Add message callbacks that will only trigger on a specific subscription match.
@@ -102,5 +96,8 @@ mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_message = on_message
 mqttc.connect("192.168.12.1", 1883, 60)
 # Send election information. Set retain flag in order for newly subscribed clients to receive the election information.
-mqttc.publish("ceremony_details", ceremony_details_json, 2, True)
+message = f"{QUORUM},{NUMBER_OF_GUARDIANS}"
+mqttc.publish("ceremony_details", message, 2, True)
 mqttc.loop_forever()
+
+
