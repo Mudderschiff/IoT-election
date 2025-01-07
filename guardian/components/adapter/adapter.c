@@ -5,12 +5,6 @@ uint8_t mac[6] = {0};
 int quorum = 0;
 int max_guardians = 0;
 
-
-typedef struct {
-    uint8_t sender_id[6];
-    ElectionPartialKeyPairBackup backup;
-} GuardianBackupEntry;
-
 typedef struct {
     uint8_t sender_id[6];
     ElectionPartialKeyVerification verification;
@@ -21,7 +15,7 @@ int backup_count = 0;
 int verification_count = 0;
 
 ElectionKeyPair *key_pair_map;
-GuardianBackupEntry *backup_map;
+ElectionPartialKeyPairBackup *backup_map;
 GuardianVerificationEntry *verification_map;
 
 void handle_ceremony_details(esp_mqtt_client_handle_t client, const char *data, int data_len);
@@ -31,10 +25,10 @@ void handle_verification(esp_mqtt_client_handle_t client, const char *data, int 
 
 void add_key_pair(ElectionKeyPair *key_pair);
 ElectionKeyPair* find_key_pair(uint8_t *guardian_id);
-void remove_key_pair(uint8_t *guardian_id);
-void add_backup(uint8_t *guardian_id, ElectionPartialKeyPairBackup *backup);
-GuardianBackupEntry* find_backup(uint8_t *guardian_id);
-void delete_backup(uint8_t *guardian_id);
+void delete_key_pair(uint8_t *guardian_id);
+void add_backup(ElectionPartialKeyPairBackup *backup);
+ElectionPartialKeyPairBackup* find_backup(uint8_t *sender_id, uint8_t *receiver_id);
+void delete_backup(uint8_t *sender_id, uint8_t *receiver_id);
 void add_verification(uint8_t *guardian_id, ElectionPartialKeyVerification *verification);
 GuardianVerificationEntry* find_verification(uint8_t *guardian_id);
 void delete_verification(uint8_t *guardian_id);
@@ -147,7 +141,7 @@ void handle_ceremony_details(esp_mqtt_client_handle_t client, const char *data, 
     memcpy(guardian.guardian_id, mac, 6);
 
     key_pair_map = malloc(max_guardians * sizeof(ElectionKeyPair));
-    backup_map = malloc(max_guardians * sizeof(GuardianBackupEntry));
+    backup_map = malloc(max_guardians * max_guardians * sizeof(ElectionPartialKeyPairBackup));
     verification_map = malloc(max_guardians * sizeof(GuardianVerificationEntry));
 
     ESP_LOGI(TAG, "Quorum: %d, Max Guardians: %d", quorum, max_guardians);
@@ -174,15 +168,13 @@ void handle_public_key(esp_mqtt_client_handle_t client, const char *data, int da
     if(entry == NULL) {
         add_key_pair(&sender);
     }
-    GuardianBackupEntry *backup_entry = find_backup(sender.guardian_id);
+    ElectionKeyPair *own_entry = find_key_pair(mac);
+
+    ElectionPartialKeyPairBackup *backup_entry = find_backup(sender.guardian_id, own_entry->guardian_id); ;
     if(backup_entry == NULL)
     {
-        ElectionKeyPair *own_entry = find_key_pair(mac);
-        if(own_entry == NULL) {
-            ESP_LOGE(TAG, "Own entry not found");
-        }
         generate_election_partial_key_backup(own_entry, &sender, &backup);
-        add_backup(sender.guardian_id, &backup);
+        add_backup(&backup);
         void *buffer;
         size_t len;
         buffer = serialize_election_partial_key_backup(&backup, &len);
@@ -253,7 +245,7 @@ ElectionKeyPair* find_key_pair(uint8_t *guardian_id) {
 }
 
 // Function to delete an entry from the key pair map
-void remove_key_pair(uint8_t *guardian_id) {
+void delete_key_pair(uint8_t *guardian_id) {
     for (int i = 0; i < key_pair_count; i++) {
         if (memcmp(key_pair_map[i].guardian_id, guardian_id, 6) == 0) {
             free_ElectionKeyPair(&key_pair_map[i]);
@@ -269,32 +261,35 @@ void remove_key_pair(uint8_t *guardian_id) {
 }
 
 // Similar functions can be implemented for the backup and verification maps
-void add_backup(uint8_t *sender_id, ElectionPartialKeyPairBackup *backup) {
-    if (backup_count < max_guardians) {
-        memcpy(backup_map[backup_count].sender_id, sender_id, 6);
-        backup_map[backup_count].backup = *backup;
-        backup_count++;
+void add_backup(ElectionPartialKeyPairBackup *backup) {
+    ElectionPartialKeyPairBackup *existing_backup = find_backup(backup->sender, backup->receiver);
+    if(existing_backup == NULL) {
+        if (backup_count < max_guardians * max_guardians) {
+            backup_map[backup_count++] = *backup;
+        } else {
+            printf("Backup map is full\n");
+        }
     } else {
-        printf("Backup map is full\n");
+        *existing_backup = *backup;
     }
 }
 
-GuardianBackupEntry* find_backup(uint8_t *sender_id) {
+ElectionPartialKeyPairBackup* find_backup(uint8_t *sender_id, uint8_t *receiver_id) {
     for (int i = 0; i < backup_count; i++) {
-        if (memcmp(backup_map[i].sender_id, sender_id, 6) == 0) {
+        if (memcmp(backup_map[i].sender, sender_id, 6) == 0 &&
+            memcmp(backup_map[i].receiver, receiver_id, 6) == 0) {
             return &backup_map[i];
         }
     }
     return NULL;
 }
 
-void delete_backup(uint8_t *sender_id) {
-    for (int i = 0; i < backup_count; i++) {
-        if (memcmp(backup_map[i].sender_id, sender_id, 6) == 0) {
-            memmove(&backup_map[i], &backup_map[i + 1], (backup_count - i - 1) * sizeof(GuardianBackupEntry));
-            backup_count--;
-            return;
-        }
+void delete_backup(uint8_t *sender_id, uint8_t *receiver_id) {
+    ElectionPartialKeyPairBackup *backup = find_backup(sender_id, receiver_id);
+    if (backup != NULL) {
+        int index = backup - backup_map;
+        memmove(&backup_map[index], &backup_map[index + 1], (backup_count - index - 1) * sizeof(ElectionPartialKeyPairBackup));
+        backup_count--;
     }
 }
 
