@@ -5,18 +5,13 @@ uint8_t mac[6] = {0};
 int quorum = 0;
 int max_guardians = 0;
 
-typedef struct {
-    uint8_t sender_id[6];
-    ElectionPartialKeyVerification verification;
-} GuardianVerificationEntry;
-
 int key_pair_count = 0;
 int backup_count = 0;
 int verification_count = 0;
 
 ElectionKeyPair *key_pair_map;
 ElectionPartialKeyPairBackup *backup_map;
-GuardianVerificationEntry *verification_map;
+ElectionPartialKeyVerification *verification_map;
 
 void handle_ceremony_details(esp_mqtt_client_handle_t client, const char *data, int data_len);
 void handle_public_key(esp_mqtt_client_handle_t client, const char *data, int data_len);
@@ -29,9 +24,9 @@ void delete_key_pair(uint8_t *guardian_id);
 void add_backup(ElectionPartialKeyPairBackup *backup);
 ElectionPartialKeyPairBackup* find_backup(uint8_t *sender_id, uint8_t *receiver_id);
 void delete_backup(uint8_t *sender_id, uint8_t *receiver_id);
-void add_verification(uint8_t *guardian_id, ElectionPartialKeyVerification *verification);
-GuardianVerificationEntry* find_verification(uint8_t *guardian_id);
-void delete_verification(uint8_t *guardian_id);
+void add_verification(ElectionPartialKeyVerification *verification);
+ElectionPartialKeyVerification* find_verification(uint8_t *sender_id, uint8_t *receiver_id, uint8_t *verifier);
+void delete_verification(uint8_t *sender_id, uint8_t *receiver_id, uint8_t *verifier);
 
 
 void log_error_if_nonzero(const char *message, int error_code)
@@ -142,7 +137,7 @@ void handle_ceremony_details(esp_mqtt_client_handle_t client, const char *data, 
 
     key_pair_map = malloc(max_guardians * sizeof(ElectionKeyPair));
     backup_map = malloc(max_guardians * max_guardians * sizeof(ElectionPartialKeyPairBackup));
-    verification_map = malloc(max_guardians * sizeof(GuardianVerificationEntry));
+    verification_map = malloc(max_guardians * max_guardians * max_guardians * sizeof(ElectionPartialKeyVerification));
 
     ESP_LOGI(TAG, "Quorum: %d, Max Guardians: %d", quorum, max_guardians);
 
@@ -293,34 +288,42 @@ void delete_backup(uint8_t *sender_id, uint8_t *receiver_id) {
     }
 }
 
-void add_verification(uint8_t *sender_id, ElectionPartialKeyVerification *verification) {
-    if (verification_count < max_guardians) {
-        memcpy(verification_map[verification_count].sender_id, sender_id, 6);
-        verification_map[verification_count].verification = *verification;
-        verification_count++;
+void add_verification(ElectionPartialKeyVerification *verification) {
+    ElectionPartialKeyVerification *existing_verification = find_verification(verification->sender, verification->receiver, verification->verifier);
+    if (existing_verification == NULL) {
+        if(backup_count < max_guardians) {
+            verification_map[verification_count] = *verification;
+            verification_count++;
+        } else {
+            printf("Verification map is full\n");
+        }
     } else {
-        printf("Verification map is full\n");
+        *existing_verification = *verification;
     }
 }
 
-GuardianVerificationEntry* find_verification(uint8_t *sender_id) {
+
+ElectionPartialKeyVerification* find_verification(uint8_t *sender_id, uint8_t *receiver_id, uint8_t *verifier) {
     for (int i = 0; i < verification_count; i++) {
-        if (memcmp(verification_map[i].sender_id, sender_id, 6) == 0) {
+        if (memcmp(verification_map[i].sender, sender_id, 6) == 0 && 
+            memcmp(verification_map[i].receiver, receiver_id, 6) == 0 && 
+            memcmp(verification_map[i].verifier, verifier, 6) == 0) {
             return &verification_map[i];
         }
     }
     return NULL;
 }
 
-void delete_verification(uint8_t *sender_id) {
-    for (int i = 0; i < verification_count; i++) {
-        if (memcmp(verification_map[i].sender_id, sender_id, 6) == 0) {
-            memmove(&verification_map[i], &verification_map[i + 1], (verification_count - i - 1) * sizeof(GuardianVerificationEntry));
-            verification_count--;
-            return;
-        }
+
+void delete_verification(uint8_t *sender_id, uint8_t *receiver_id, uint8_t *verifier) {
+    ElectionPartialKeyVerification *verification = find_verification(sender_id, receiver_id, verifier);
+    if (verification != NULL) {
+        int index = verification - verification_map;
+        memmove(&verification_map[index], &verification_map[index + 1], (verification_count - index - 1) * sizeof(ElectionPartialKeyVerification));
+        verification_count--;
     }
 }
+
 
 void mqtt_app_start(void)
 {
