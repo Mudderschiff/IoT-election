@@ -3,11 +3,12 @@
 static const char *TAG = "Adapter";
 uint8_t mac[6] = {0};
 int quorum = 0;
-int max_guardians = 0;
+
 
 int key_pair_count = 0;
 int backup_count = 0;
 int verification_count = 0;
+int max_guardians;
 
 ElectionKeyPair *key_pair_map;
 ElectionPartialKeyPairBackup *backup_map;
@@ -18,6 +19,7 @@ void handle_public_key(esp_mqtt_client_handle_t client, const char *data, int da
 void handle_backup(esp_mqtt_client_handle_t client, const char *data, int data_len);
 void handle_verification(esp_mqtt_client_handle_t client, const char *data, int data_len);
 
+void initialize_helpermap(int max_guardians_value);
 void add_key_pair(ElectionKeyPair *key_pair);
 ElectionKeyPair* find_key_pair(uint8_t *guardian_id);
 void delete_key_pair(uint8_t *guardian_id);
@@ -135,15 +137,22 @@ void handle_ceremony_details(esp_mqtt_client_handle_t client, const char *data, 
     ElectionKeyPair guardian;
     memcpy(guardian.guardian_id, mac, 6);
 
+    ESP_LOGI(TAG, "Quorum: %d, Max Guardians: %d", quorum, max_guardians);
+    initialize_helpermap(max_guardians);
     key_pair_map = malloc(max_guardians * sizeof(ElectionKeyPair));
     backup_map = malloc(max_guardians * max_guardians * sizeof(ElectionPartialKeyPairBackup));
     verification_map = malloc(max_guardians * max_guardians * max_guardians * sizeof(ElectionPartialKeyVerification));
 
-    ESP_LOGI(TAG, "Quorum: %d, Max Guardians: %d", quorum, max_guardians);
-
 
     generate_election_key_pair(quorum, &guardian);
+    if(find_key_pair(guardian.guardian_id) == NULL) {
+        ESP_LOGI(TAG,"Key pair not found");
+    }
+
     add_key_pair(&guardian);
+    if(find_key_pair(guardian.guardian_id) != NULL) {
+        ESP_LOGI(TAG,"Key pair found");
+    }
     
     buffer = serialize_election_key_pair(&guardian, &len);
 
@@ -181,6 +190,8 @@ void handle_public_key(esp_mqtt_client_handle_t client, const char *data, int da
     {
         ESP_LOGI(TAG, "Backup already exists");
     }
+    free_ElectionKeyPair(&sender);
+    free_ElectionPartialKeyPairBackup(&backup);
 }
 
 void handle_backup(esp_mqtt_client_handle_t client, const char *data, int data_len)
@@ -218,7 +229,6 @@ void handle_verification(esp_mqtt_client_handle_t client, const char *data, int 
     // Parse the data and store the verification
 }
 
-
 // Function to add an entry to the key pair map
 void add_key_pair(ElectionKeyPair *key_pair) {
     if (key_pair_count < max_guardians) {
@@ -241,18 +251,16 @@ ElectionKeyPair* find_key_pair(uint8_t *guardian_id) {
 
 // Function to delete an entry from the key pair map
 void delete_key_pair(uint8_t *guardian_id) {
-    for (int i = 0; i < key_pair_count; i++) {
-        if (memcmp(key_pair_map[i].guardian_id, guardian_id, 6) == 0) {
-            free_ElectionKeyPair(&key_pair_map[i]);
-            // Shift remaining elements to the left
-            for (int j = i; j < key_pair_count - 1; j++) {
-                key_pair_map[j] = key_pair_map[j + 1];
-            }
-            key_pair_count--;
-            return;
-        }
+    ElectionKeyPair *key_pair = find_key_pair(guardian_id);
+    if (key_pair != NULL) {
+        int index = key_pair - key_pair_map;
+        free_ElectionKeyPair(&key_pair_map[index]);
+        // Shift remaining elements to the left
+        memmove(&key_pair_map[index], &key_pair_map[index + 1], (key_pair_count - index - 1) * sizeof(ElectionKeyPair));
+        key_pair_count--;
+    } else {
+        printf("Guardian ID not found\n");
     }
-    printf("Guardian ID not found\n");
 }
 
 // Similar functions can be implemented for the backup and verification maps
@@ -282,6 +290,7 @@ ElectionPartialKeyPairBackup* find_backup(uint8_t *sender_id, uint8_t *receiver_
 void delete_backup(uint8_t *sender_id, uint8_t *receiver_id) {
     ElectionPartialKeyPairBackup *backup = find_backup(sender_id, receiver_id);
     if (backup != NULL) {
+        free_ElectionPartialKeyPairBackup(backup);
         int index = backup - backup_map;
         memmove(&backup_map[index], &backup_map[index + 1], (backup_count - index - 1) * sizeof(ElectionPartialKeyPairBackup));
         backup_count--;
