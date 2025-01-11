@@ -67,6 +67,7 @@ int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPai
     backup->encrypted_coordinate.mac = NULL;
     NEW_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(backup->encrypted_coordinate.mac, 256);
+
     compute_polynomial_coordinate(receiver->guardian_id, &sender->polynomial, coordinate);
     rand_q(nonce);
     hash(id, id, seed);

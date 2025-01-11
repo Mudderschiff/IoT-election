@@ -41,7 +41,7 @@ void print_byte_array(const byte *array, int size) {
 */
 
 
-void free_ElectionPartialKeyBackup(ElectionPartialKeyPairBackup* backup) {
+void free_ElectionPartialKeyPairBackup(ElectionPartialKeyPairBackup* backup) {
     if (backup == NULL) return;
 
     if (backup->encrypted_coordinate.pad != NULL) {
