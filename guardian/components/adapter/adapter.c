@@ -99,6 +99,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
             }
         } else if(strncmp(event->topic, "backups", event->topic_len) == 0) {
             // Verify all backups. If verify fails send challenge
+            bool all_verified = true;
             for (int i = 0; i < max_guardians; i++) {
                 ElectionPartialKeyPairBackup *backup = &backup_map[i];
                 ElectionPartialKeyVerification verification;
@@ -110,6 +111,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 {
                     ESP_LOGI(TAG, "Proof failed");
                     // send challenge
+                    all_verified = false;
                 } else {
                     ESP_LOGI(TAG, "Proof verified");
                     //add_backup(backup);
@@ -118,6 +120,15 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 //esp_mqtt_client_publish(client, "verifications", buffer, len, 2, 0);
 
                 //free(buffer);
+            }
+            if(all_verified)
+            {
+                ESP_LOGI(TAG, "All backups verified");
+                byte *joint_key = (byte*)malloc(384 * sizeof(byte));
+                elgamal_combine_public_keys(&guardian, pubkey_map, pubkey_count, joint_key);
+                esp_mqtt_client_publish(client, "joint_key", (char *)joint_key, 384, 2, 0);
+                free(joint_key);
+                //esp_mqtt_client_unsubscribe(client, "backups");
             }
 
         }

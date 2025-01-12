@@ -592,3 +592,4 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
     FREE_MP_INT_SIZE(nonce, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
+
