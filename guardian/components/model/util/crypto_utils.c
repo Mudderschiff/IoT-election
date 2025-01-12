@@ -73,18 +73,10 @@ void print_byte_array(const byte *array, int size) {
  * @return 0 on success, 1 on failure
  */
 int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message) {
-    // heap size
-    ESP_LOGI("KDF", "Heap summary:");
-    ESP_LOGI("KDF", "  Free heap size: %d", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-    ESP_LOGI("KDF", "  Minimum free heap size: %d", heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT));
-    ESP_LOGI("KDF", "  Largest free block: %d", heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
-
     // pad message with 0 if not multiple of 32
     int message_len = sp_unsigned_bin_size(message);
     int remainder = message_len % BLOCK_SIZE;
     int bit_len = (remainder == 0) ? message_len : message_len + (BLOCK_SIZE - remainder);
-    ESP_LOGI("KDF", "Message length: %d", message_len);
-    ESP_LOGI("KDF", "Bit length: %d", bit_len);
     byte *padded_message = (byte *)calloc(bit_len, sizeof(byte));
     if(padded_message == NULL) {
         ESP_LOGE("KDF", "Failed to allocate memory for padded_message");
