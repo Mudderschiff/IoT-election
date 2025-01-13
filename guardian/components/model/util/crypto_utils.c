@@ -124,15 +124,25 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
 }
 
 /** 
- * @brief Compute Large number Modular Exponetiation with hardware Y = (G ^ X) mod P
+ * @brief Compute Large number Modular Exponetiation with hardware Y = (G ^ X) mod P. If the inputs are to small switches to unaccelerated version
  * @param g: Base
  * @param x: Exponent
  * @param p: Modulus
  * @param y: Result
  * @return 0 on success, -1 on failure
  */
-static int powmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
-    return esp_mp_exptmod(g,x,p,y);
+static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
+    int ret;
+    ret = esp_mp_exptmod(g,x,p,y);
+    if(ret == INPUT_CASE_ERROR) {
+        ESP_LOGI("MODEXPT", "Input are too small switching to software exptmod");
+        ret = sp_exptmod(g,x,p,y);
+        if (ret != MP_OKAY) {
+            ESP_LOGE("MULMOD", "Error code: %d", ret);
+            return -1;
+        } 
+    }
+    return ret;
 }
 
 /**
@@ -269,7 +279,7 @@ int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial
     {   
         sp_set_int(exponent_i, i);
         // Not Accelerated. Operator lenght to small
-        sp_exptmod(modifier, exponent_i, small_prime, exponent);
+        exptmod(modifier, exponent_i, small_prime, exponent);
         sp_mulmod(polynomial->coefficients[i].value, exponent, small_prime, factor);
         sp_addmod(coordinate, factor, small_prime, coordinate);
     }
@@ -322,8 +332,8 @@ int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial*
     for(size_t i = 0; i < polynomial->num_coefficients; i++) {
         //Not accelerated Operator lenght to small
         sp_set_int(exponent_i, i);
-        sp_exptmod(modifier, exponent_i, large_prime, exponent);
-        sp_exptmod(polynomial->coefficients[i].commitment, exponent, large_prime, factor);
+        exptmod(modifier, exponent_i, large_prime, exponent);
+        exptmod(polynomial->coefficients[i].commitment, exponent, large_prime, factor);
         sp_mulmod(commitment_output, factor, large_prime, commitment_output);
     }
     g_pow_p(coordinate, value_output);
@@ -593,3 +603,71 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
     return 0;
 }
 
+/**
+ * @brief Modular Multiplication. If the input parameters are to small switches to the software method
+ * @param a: First element
+ * @param b: Second element
+ * @param c: Modulus
+ * @param result: The result of the multiplication
+ */
+static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
+    int ret;
+    ret = esp_mp_mulmod(a, b, c, result);
+    if(ret == INPUT_CASE_ERROR) {
+        ESP_LOGI("MULMOD", "Input are too smal switching to software mulmod");
+        ret = mp_mulmod(a, b, c, result);
+        if (ret != MP_OKAY) {
+            ESP_LOGE("MULMOD", "Error code: %d", ret);
+            return -1;
+        } 
+    }
+    return ret;
+}
+
+int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
+    DECL_MP_INT_SIZE(large_prime, 3072);
+    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(large_prime, 3072);
+    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
+
+    DECL_MP_INT_SIZE(product, 3072);
+    NEW_MP_INT_SIZE(product, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(product, 3072);
+    sp_set_int(product, 1);
+    //sp_set_int(joint_key->joint_key, 1);
+
+    for(size_t i = 0; i < count; i++) {
+        //print_sp_int(joint_key->joint_key);
+        print_sp_int(pubkey_map[i].public_key);
+        //imputs to small
+        mulmod(product, pubkey_map[i].public_key, large_prime, product);
+    }
+    sp_copy(product, joint_key->joint_key);
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    return 0;
+}
+
+int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
+    Sha256 sha256[1];
+    byte* commitment = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
+    if(wc_InitSha256(sha256) != 0) {
+        ESP_LOGE("HASH_KEYS", "Failed to initialise sha256");
+        return -1;
+    } else {
+        for(size_t i = 0; i < count; i++) {
+            int size = sp_unsigned_bin_size(pubkey_map[i].public_key);
+            byte* elem = (byte *)malloc(size);
+            sp_to_unsigned_bin(pubkey_map[i].public_key, elem);
+            if(wc_Sha256Update(sha256, elem, size) != 0) {
+                ESP_LOGE("HASH_KEYS", "Failed to update sha256");
+                return -1;
+            }
+        }
+        if(wc_Sha256Final(sha256, commitment) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to finalise sha256");
+            return -1;
+        }
+        sp_read_unsigned_bin(joint_key->commitment_hash, commitment, WC_SHA256_DIGEST_SIZE);
+    }
+    return 0;
+}

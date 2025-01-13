@@ -124,23 +124,21 @@ int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPai
     return 0;
 }
 
+int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
+    joint_key->joint_key = NULL;
+    NEW_MP_INT_SIZE(joint_key->joint_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(joint_key->joint_key, 3072);
+    
+    joint_key->commitment_hash = NULL;
+    NEW_MP_INT_SIZE(joint_key->commitment_hash, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(joint_key->commitment_hash, 256);
+    
+    ElectionKeyPair *extend = (ElectionKeyPair*)XMALLOC((count + 1) * sizeof(ElectionKeyPair), NULL, DYNAMIC_TYPE_BIGINT);
+    memcpy(extend, pubkey_map, count * sizeof(ElectionKeyPair));
+    extend[count] = *guardian;
 
-int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, byte* joint_key) {
-    DECL_MP_INT_SIZE(large_prime, 3072);
-    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(large_prime, 3072);
-    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
-    DECL_MP_INT_SIZE(product, 3072);
-    NEW_MP_INT_SIZE(product, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(product, 3072);
-    sp_set_int(product, 1);
-
-    esp_mp_mulmod(product, guardian->public_key, large_prime, product);
-    for(size_t i = 0; i < count; i++) {
-        esp_mp_mulmod(product, pubkey_map[i].public_key, large_prime, product);
-    }
-
-    sp_to_unsigned_bin(product, joint_key);
-    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    elgamal_combine_public_keys(extend, count + 1, joint_key);
+    hash_keys(extend, count + 1, joint_key);
     return 0;
 }
+

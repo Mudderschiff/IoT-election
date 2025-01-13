@@ -60,7 +60,13 @@ typedef struct {
     bool verified;
  } ElectionPartialKeyVerification;
 
+ typedef struct {
+    sp_int* joint_key;
+    sp_int* commitment_hash;
+ } ElectionJointKey;
 
+int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
+int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
 int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
 int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
 int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message);
@@ -68,6 +74,7 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
 int generate_polynomial(ElectionPolynomial *polynomial);
 int rand_q(sp_int *result);
 int hash(sp_int *a, sp_int *b, sp_int *result);
+int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
 int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out);
 int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message);
 void print_sp_int(sp_int *num);

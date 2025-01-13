@@ -89,9 +89,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 size_t len;
 
                 generate_election_partial_key_backup(sender, &guardian, &backup);
-
                 buffer = serialize_election_partial_key_backup(&backup, &len);
-                ESP_LOGI(TAG, "Sending backup to %02x:%02x:%02x:%02x:%02x:%02x", backup.receiver[0], backup.receiver[1], backup.receiver[2], backup.receiver[3], backup.receiver[4], backup.receiver[5]);
                 esp_mqtt_client_publish(client, "backups", buffer, len, 2, 0);
 
                 free(buffer);
@@ -103,32 +101,30 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
             for (int i = 0; i < max_guardians; i++) {
                 ElectionPartialKeyPairBackup *backup = &backup_map[i];
                 ElectionPartialKeyVerification verification;
-                //void *buffer;
-                //size_t len;
+                void *buffer;
+                size_t len;
 
                 verify_election_partial_key_backup(&guardian, find_key_pair(backup->sender), backup, &verification);
                 if(verification.verified == 0)
                 {
                     ESP_LOGI(TAG, "Proof failed");
                     // send challenge
+                    buffer = serialize_election_partial_key_verification(&verification, &len);
+                    esp_mqtt_client_publish(client, "challenge", buffer, len, 2, 0);
+                    free(buffer);
                     all_verified = false;
                 } else {
                     ESP_LOGI(TAG, "Proof verified");
-                    //add_backup(backup);
                 }
-                //buffer = serialize_election_partial_key_verification(&verification, &len);
-                //esp_mqtt_client_publish(client, "verifications", buffer, len, 2, 0);
-
-                //free(buffer);
             }
             if(all_verified)
             {
                 ESP_LOGI(TAG, "All backups verified");
                 byte *joint_key = (byte*)malloc(384 * sizeof(byte));
-                elgamal_combine_public_keys(&guardian, pubkey_map, pubkey_count, joint_key);
+                //elgamal_combine_public_keys(&guardian, pubkey_map, pubkey_count, joint_key);
                 esp_mqtt_client_publish(client, "joint_key", (char *)joint_key, 384, 2, 0);
                 free(joint_key);
-                //esp_mqtt_client_unsubscribe(client, "backups");
+                esp_mqtt_client_unsubscribe(client, "backups");
             }
 
         }
@@ -153,6 +149,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 esp_mqtt_client_unsubscribe(client, "ceremony_details");
                 esp_mqtt_client_subscribe(client, "pub_keys", 1);
                 esp_mqtt_client_subscribe(client, "backups", 1);
+                esp_mqtt_client_subscribe(client, "challenge", 1);
                 publish_public_key(client, event->data, event->data_len);
             }
         }
