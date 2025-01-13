@@ -365,13 +365,4 @@ void mqtt_app_start(void)
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
     esp_mqtt_client_start(client);
 
-    
-    //Round 2
-    //Each guardian generates partial key backups and publishes them to designated topics
-    //Each guardian verifies the received partial key backups and publishes verification results
-    //Guardians generate a partial key backup for each guardian and share with that designated key with that guardian. Then each designated guardian sends a verification back to the sender. The sender then publishes to the group when all verifications are received.
-    //Each guardian must generate election partial key backup for each other guardian. The guardian will use their polynomial and the designated guardian's sequence_order to create the value.
-
-    //Round 3
-    //The final step is to publish the joint election key after all keys and backups have been shared.
 }
