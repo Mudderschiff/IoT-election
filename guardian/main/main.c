@@ -30,29 +30,10 @@ void app_main(void)
      * Read "Establishing Wi-Fi or Ethernet Connection" section in
      * examples/protocols/README.md for more information about this function.
      */
-    //ESP_ERROR_CHECK(example_connect());
-    ElectionKeyPair sender;
-    ElectionKeyPair receiver;
-    ElectionKeyPair *pubkey_map;
-    ElectionJointKey joint_key;
-    uint8_t sender_id[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
-    uint8_t receiver_id[6] = {0x06, 0x05, 0x04, 0x03, 0x02, 0x01};
-    memcpy(sender.guardian_id, sender_id, 6);
-    memcpy(receiver.guardian_id, receiver_id, 6);
-
-
-    generate_election_key_pair(1, &sender);
-    generate_election_key_pair(1, &receiver);
-    pubkey_map = (ElectionKeyPair*)malloc(2 * sizeof(ElectionKeyPair));
-    pubkey_map[0] = sender;
-    pubkey_map[1] = receiver;
-
-    combine_election_public_keys(&sender, pubkey_map, 2, &joint_key);
-    print_sp_int(joint_key.joint_key);
-    print_sp_int(joint_key.commitment_hash);
+    ESP_ERROR_CHECK(example_connect());
 
 
     // Each guardian connect to broker
-    //mqtt_app_start();
+    mqtt_app_start();
 
 }

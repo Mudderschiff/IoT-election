@@ -634,12 +634,8 @@ int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, Elect
     NEW_MP_INT_SIZE(product, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(product, 3072);
     sp_set_int(product, 1);
-    //sp_set_int(joint_key->joint_key, 1);
 
     for(size_t i = 0; i < count; i++) {
-        //print_sp_int(joint_key->joint_key);
-        print_sp_int(pubkey_map[i].public_key);
-        //imputs to small
         mulmod(product, pubkey_map[i].public_key, large_prime, product);
     }
     sp_copy(product, joint_key->joint_key);

@@ -120,11 +120,14 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
             if(all_verified)
             {
                 ESP_LOGI(TAG, "All backups verified");
-                byte *joint_key = (byte*)malloc(384 * sizeof(byte));
-                //elgamal_combine_public_keys(&guardian, pubkey_map, pubkey_count, joint_key);
-                esp_mqtt_client_publish(client, "joint_key", (char *)joint_key, 384, 2, 0);
-                free(joint_key);
-                esp_mqtt_client_unsubscribe(client, "backups");
+                ElectionJointKey joint_key;
+                combine_election_public_keys(&guardian, pubkey_map, pubkey_count, &joint_key); 
+                int size = sp_unsigned_bin_size(joint_key.joint_key) + sp_unsigned_bin_size(joint_key.commitment_hash);
+                byte *buffer = malloc(size);
+                sp_to_unsigned_bin(joint_key.joint_key, buffer);
+                sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(joint_key.joint_key), joint_key.commitment_hash, buffer);
+                esp_mqtt_client_publish(client, "joint_key", (char*)buffer, size, 2, 0);
+                free(buffer);
             }
 
         }
