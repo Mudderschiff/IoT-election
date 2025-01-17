@@ -142,3 +142,32 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
     return 0;
 }
 
+int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTallySelections *selections, DecryptionShare *share) {
+    share->decryption_share = NULL;
+    NEW_MP_INT_SIZE(share->decryption_share, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(share->decryption_share, 3072);
+
+    share->commitment = NULL;
+    NEW_MP_INT_SIZE(share->commitment, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(share->commitment, 256);
+
+    share->guardian_id = NULL;
+    NEW_MP_INT_SIZE(share->guardian_id, 48, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(share->guardian_id, 48);
+
+    sp_copy(share->guardian_id, guardian->guardian_id);
+    sp_copy(share., guardian->private_key);
+
+    for(int i = 0; i < selections->num_selections; i++) {
+        compute_decryption_share_for_contest();
+        //sp_copy(selections->selections[i].ciphertext.pad, share->decryption_share);
+        //sp_copy(selections->selections[i].ciphertext.data, share->commitment);
+        //sp_read_unsigned_bin(share->guardian_id, guardian->guardian_id, sizeof(guardian->guardian_id));
+    }
+
+
+
+    //sp_read_unsigned_bin(share->guardian_id, guardian->guardian_id, sizeof(guardian->guardian_id));
+    //compute_decryption_share(selections, guardian, share);
+    return 0;
+}

@@ -78,6 +78,27 @@ typedef struct {
 } CiphertextTallySelections;
 
 
+typedef struct {
+    uint8_t guardian_id[6];
+    sp_int* decryption_share;
+    sp_int* proof_pad;
+    sp_int* proof_data;
+    sp_int* proof_challenge;
+    sp_int* proof_response;
+} CiphertextDecryptionSelection;
+
+typedef struct{
+    uint8_t guardian_id[6];
+    sp_int* decryption_hash;
+    CiphertextDecryptionSelection* selections;
+} CiphertextDecryptionContest;
+
+typedef struct {
+    uint8_t guardian_id[6];
+    sp_int* public_key;
+    CiphertextDecryptionContest* contests;
+} DecryptionShare;
+
 
 int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
 int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);

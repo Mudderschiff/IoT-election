@@ -249,34 +249,7 @@ def buildElection() -> None:
 	contests = ciphertext_tally.contests
 	parsed_data = parse_ciphertext_tally_selections(contests['referendum-single-vote'])
 	serialized_message = parsed_data.SerializeToString()
-	mqttc.publish("ciphertally", serialized_message, 2, True)
-	#print(parsed_data)
-	#contests = ciphertext_tally.contests
-	#selections = contest.selections
-	#ciphertext_tally_selections = tally_pb2.CiphertextTallySelections()
-
-	#for selection in selections.values():
-#		tally_selection = ciphertext_tally_selections.selections.add()
-	#	tally_selection.object_id = selection.object_id
-	#	tally_selection.description_hash = bytes.fromhex(selection.description_hash)
-	#	tally_selection.ciphertext_pad = bytes.fromhex(selection.ciphertext.pad)
-	#	tally_selection.ciphertext_data = bytes.fromhex(selection.ciphertext.data)
-		#print(tally_selection)
-		
-	
-	#serialized_message = ciphertext_tally_selections.SerializeToString()
-	#mqttc.publish("ciphertally", serialized_message, 2, True)
-
-  
-	#
-	#
-	#c_tally.description_hash = b'
-	#c_tally.ciphertext_pad = b'
-	#c_tally.ciphertext_data = b'
-	#serialized_message = c_tally.SerializeToString()
-	#
-
-
+	mqttc.publish("ciphertally", serialized_message, 0, True)
 
 	
 	
