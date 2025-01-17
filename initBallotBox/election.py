@@ -120,17 +120,19 @@ lagrange_coefficients: LagrangeCoefficientsRecord
 def parse_ciphertext_tally_selection(data):
     selection = tally_pb2.CiphertextTallySelectionProto()
     print("Object id")
-    print(data.object_id)
     print("description hash")
-    print(data.description_hash)
+    description_hash = data.description_hash
+    print(description_hash)
     print("Ciphertext pad")
-    print(data.ciphertext.pad)
+    ciphertext_pad = data.ciphertext.pad
+    print(ciphertext_pad)
     print("ciphertext data")
-    print(data.ciphertext.data)
+    ciphertext_data = data.ciphertext.data
+    print(ciphertext_data)
     selection.object_id = data.object_id
-    selection.description_hash = bytes.fromhex(data.description_hash)
-    selection.ciphertext_pad = bytes.fromhex(data.ciphertext.pad)
-    selection.ciphertext_data = bytes.fromhex(data.ciphertext.data)
+    selection.description_hash = description_hash.value.to_bytes((description_hash.value.bit_length() + 7) // 8, byteorder='big')
+    selection.ciphertext_pad = ciphertext_pad.value.to_bytes((ciphertext_pad.value.bit_length() + 7) // 8, byteorder='big')
+    selection.ciphertext_data = ciphertext_data.value.to_bytes((ciphertext_data.value.bit_length() + 7) // 8, byteorder='big')
     return selection
 
 def parse_ciphertext_tally_selections(data):
