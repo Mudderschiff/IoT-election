@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+message CiphertextTallySelectionProto {
+	required string object_id = 1;
+	required bytes description_hash = 2;
+	required bytes ciphertext_pad = 3;
+	required bytes ciphertext_data = 4;
+}
+
+message CiphertextTallySelectionsProto {
+	required int32 num_selections = 1;
+	repeated CiphertextTallySelectionProto selections = 2;
+}
+
+
+message CiphertextDecryptionSelectionProto {
+	required string object_id = 1;
+	required bytes guardian_id = 2;
+	required bytes share = 3;
+	required bytes proof_pad = 4;
+	required bytes proof_data = 5;
+	required bytes proof_challenge = 6;
+	required bytes proof_response = 7;
+}
+
+message CiphertextDecryptionContestProto {
+    required bytes guardian_id = 1;
+	required bytes description_hash = 2;
+	required int32 num_selections = 3;
+	repeated CiphertextDecryptionSelectionProto selections = 4;
+}

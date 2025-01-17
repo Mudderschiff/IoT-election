@@ -257,6 +257,33 @@ int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, Elect
 
 
 
+int deserialize_ciphertext_tally_selections(uint8_t *buffer, unsigned len, CiphertextTallySelections* selections) {
+    CiphertextTallySelectionsProto *sel = ciphertext_tally_selections_proto__unpack(NULL, len, buffer);
+    if (selections == NULL) {
+        fprintf(stderr, "Error unpacking CiphertextTallySelections\n");
+        return -1;
+    }
+    selections->num_selections = sel->num_selections;
+    ESP_LOGI("Deserialize CiphertextTallySelections", "Number of selections: %d", selections->num_selections);
+    selections->selections = (CiphertextTallySelection*)malloc(sizeof(CiphertextTallySelection) * selections->num_selections);
+    for(int i = 0; i < selections->num_selections; i++) {
+        selections->selections[i].object_id = strdup(sel->selections[i]->object_id);
+        selections->selections[i].description_hash = NULL;
+        selections->selections[i].ciphertext_pad = NULL;
+        selections->selections[i].ciphertext_data = NULL;
+        selections->selections[i].description_hash = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+        sp_read_unsigned_bin(selections->selections[i].description_hash, sel->selections[i]->description_hash.data, sel->selections[i]->description_hash.len);
+        print_sp_int(selections->selections[i].description_hash);
+        selections->selections[i].ciphertext_pad = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+        sp_read_unsigned_bin(selections->selections[i].ciphertext_pad, sel->selections[i]->ciphertext_pad.data, sel->selections[i]->ciphertext_pad.len);
+        print_sp_int(selections->selections[i].ciphertext_pad);
+        selections->selections[i].ciphertext_data = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+        sp_read_unsigned_bin(selections->selections[i].ciphertext_data, sel->selections[i]->ciphertext_data.data, sel->selections[i]->ciphertext_data.len);
+        print_sp_int(selections->selections[i].ciphertext_data);
+    }
 
+    ciphertext_tally_selections_proto__free_unpacked(sel, NULL);
+    return 0;
+}
 
 

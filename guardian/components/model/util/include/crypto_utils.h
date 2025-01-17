@@ -65,6 +65,20 @@ typedef struct {
     sp_int* commitment_hash;
  } ElectionJointKey;
 
+typedef struct {
+    char* object_id;
+	sp_int* description_hash;
+	sp_int* ciphertext_pad;
+	sp_int* ciphertext_data;
+} CiphertextTallySelection;
+
+typedef struct {
+    int num_selections;
+    CiphertextTallySelection* selections;
+} CiphertextTallySelections;
+
+
+
 int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
 int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
 int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);

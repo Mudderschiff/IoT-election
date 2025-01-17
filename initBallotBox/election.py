@@ -1,3 +1,4 @@
+import tally_pb2
 import json
 import electionguard
 import binascii
@@ -116,6 +117,33 @@ decryption_mediator: DecryptionMediator
 lagrange_coefficients: LagrangeCoefficientsRecord
 
 
+def parse_ciphertext_tally_selection(data):
+    selection = tally_pb2.CiphertextTallySelectionProto()
+    print("Object id")
+    print(data.object_id)
+    print("description hash")
+    print(data.description_hash)
+    print("Ciphertext pad")
+    print(data.ciphertext.pad)
+    print("ciphertext data")
+    print(data.ciphertext.data)
+    selection.object_id = data.object_id
+    selection.description_hash = bytes.fromhex(data.description_hash)
+    selection.ciphertext_pad = bytes.fromhex(data.ciphertext.pad)
+    selection.ciphertext_data = bytes.fromhex(data.ciphertext.data)
+    return selection
+
+def parse_ciphertext_tally_selections(data):
+    selections = tally_pb2.CiphertextTallySelectionsProto()
+    selections.num_selections = len(data.selections)
+    print("Num selections")
+    print(selections.num_selections)
+    for value in data.selections.values():
+        selection = parse_ciphertext_tally_selection(value)
+        selections.selections.append(selection)
+    return selections
+
+
 def createManifest() -> Manifest:
 	print("Created with number_of_guardians:", NUMBER_OF_GUARDIANS)
 	print("Created with quorum:", QUORUM)
@@ -178,48 +206,73 @@ def buildElection() -> None:
 
 	
 	internal_manifest, context = get_optional(election_builder.build())
-	constants = create_constants(
-    5809605995369958062859502533304574370686975176362895236661486152287203730997089013490246327149176617979883979879665474146725235639037470348294494756855649315623483381532284382829985865022634153578375633183351018921091870438603777296285300005007798125066694887162528853877672530170996389357750706590940588953424536914526358486709688983421547257618538163834967140534985203755017132605692672822700384056871677888971931895590561928921294273236194685526463354686525653654114179791182933523021406079633254465546599561197242920973013822820114343447081949390370753277569017722080197289385153614111846483012304466313627319490653728075778475634253896521588120585027626201092035118691290007496293626942041424997480127725248684036863793198217924529520768114832049450715656899658126803689999781406220992057283178444017598705139849562007174360175183917956509707878788742084753622778956841724673565867858641107428015367836415614107464499199,
-    115792089237316195423570985008687907853269984665640564039457584007913129639747,  # pow(2, 256) - 189
-    50172736614702193476010968685027850385725009984025754056752351897843540836809501857582622501011043805624882442705121527957457314216703019848506491542416048680150015176751863502045767527184617294497075084910496276997695216972542566310098645323089311784649009927959528878514066350803601544489238112989830818502071033067514117524130744776601302690867843065480705069205775202884218033343131500721992545187412682323348381061850505196518376963582336101914422155939209672462687958072229481112658285666828397567126306616634605158427548433669022805035656789286025402739180974848575290263903285848610951762542336807674715790221593229762571552817379724296274946311992728575342565996306922533232201850750304201504286745236639979257233112859066599580409049888412420870663129590514968528298497578450985177891114800807166167122028381365269811600460476934437467434,
-    3983976838916583196990814207322510921320016467946417533216999154309346787158720745756708248623554944941202173601872329574166373683909547590349567059887290235949592851779429018520595520234297752071717586124672451539896760499203413787244838790030191769295209586115971156675352412376249718705430315603172039092707904550561519064313499331843446952946564189902025255748380139209555571060994585339534962548340004251462419027674037527180756962099450195292537848904334229156066064209226803823602255101468813019466466208165853013917347257777537304347349735373163087810141891329611178020461116524438016075431298306107501342366508266827438534566861633359768082249446920430439681449905774361889853764938857878702552850700522179471524761958893751061483523094674764719754250107548869925353603911589083937977401963462791699327224813999144150047728455687970145475131554558843766807046314831942872482690705753882915485571147817424402984387346,
-	)
 	
 	device = ElectionFactory.get_encryption_device()
 	encrypter = EncryptionMediator(internal_manifest, context, device)
 	 
+	#print(internal_manifest.get_ballot_style(ballot-style-single-vote)) 
+	
 	plaintext_ballots = BallotFactory().generate_fake_plaintext_ballots_for_election(internal_manifest, 5, None, False, False)
 	for plain in plaintext_ballots:
+		print("PLaintextballot")
+		print(plain)
 		for contest in plain.contests:
 			for selection in contest.ballot_selections:
 				if selection.vote == 1:
 					print(f"Ballot ID: {plain.object_id}, Selected: {selection.object_id}")
 		
 	for plain in plaintext_ballots:
+		print("CiphertextBallot")
 		encrypted_ballot = encrypter.encrypt(plain)
+		print(encrypted_ballot)
 		ciphertext_ballots.append(get_optional(encrypted_ballot))
 	
 	ballot_store = DataStore()
 	ballot_box = BallotBox(internal_manifest, context, ballot_store)
 	
-
 	for ballot in ciphertext_ballots:
-		# Validity checks dont allow to add via function submit_to_ballotbox. Because constants are different
 		submitted_ballot = ballot_box.cast(ballot)
-		#ballot_box_ballot = submit_ballot(ballot, BallotBoxState.CAST)
-		#ballot_store.set(ballot_box_ballot.object_id, ballot_box_ballot)
-		#submitted_ballot = ballot_store.get(ballot_box_ballot.object_id)
-
 
 	ciphertext_tally = get_optional(tally_ballots(ballot_store, internal_manifest, context))
 	submitted_ballots = get_ballots(ballot_store, BallotBoxState.SPOILED)
 	print(f"cast: {ciphertext_tally.cast()}")
 	print(f"spoiled: {ciphertext_tally.spoiled()}")
-	print(f"Total: {ciphertext_tally}")
+	#print(f"Total: {ciphertext_tally}")
 	submitted_ballots_list = list(submitted_ballots.values())
 	decryption_mediator = DecryptionMediator("decryption-mediator",context,)
-	print(context.crypto_extended_base_hash)
-	print(ciphertext_tally.contests.values())
+	#print(type(context.crypto_extended_base_hash))
+	#mqttc.publish("base_hash", message, 2, True)
+	print("Values")
+	
+	contests = ciphertext_tally.contests
+	parsed_data = parse_ciphertext_tally_selections(contests['referendum-single-vote'])
+	serialized_message = parsed_data.SerializeToString()
+	mqttc.publish("ciphertally", serialized_message, 2, True)
+	#print(parsed_data)
+	#contests = ciphertext_tally.contests
+	#selections = contest.selections
+	#ciphertext_tally_selections = tally_pb2.CiphertextTallySelections()
+
+	#for selection in selections.values():
+#		tally_selection = ciphertext_tally_selections.selections.add()
+	#	tally_selection.object_id = selection.object_id
+	#	tally_selection.description_hash = bytes.fromhex(selection.description_hash)
+	#	tally_selection.ciphertext_pad = bytes.fromhex(selection.ciphertext.pad)
+	#	tally_selection.ciphertext_data = bytes.fromhex(selection.ciphertext.data)
+		#print(tally_selection)
+		
+	
+	#serialized_message = ciphertext_tally_selections.SerializeToString()
+	#mqttc.publish("ciphertally", serialized_message, 2, True)
+
+  
+	#
+	#
+	#c_tally.description_hash = b'
+	#c_tally.ciphertext_pad = b'
+	#c_tally.ciphertext_data = b'
+	#serialized_message = c_tally.SerializeToString()
+	#
 
 
 
@@ -235,10 +288,6 @@ def on_message(mosq, obj, msg):
 		commitment = binascii.hexlify(buffer[JOINT_KEY_SIZE:JOINT_KEY_SIZE + COMMITMENT_SIZE]).decode('utf-8')
 		buildElection()
 		
-    # This callback will be called for messages that we receive that do not
-    # match any patterns defined in topic specific callbacks, i.e. in this case
-    # those messages that do not have topics $SYS/broker/messages/# nor
-    # $SYS/broker/bytes/#
 
 	
 manifest = createManifest()

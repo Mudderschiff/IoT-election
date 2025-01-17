@@ -18,6 +18,7 @@ void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int d
 void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_len);
 void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_len);
 void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int data_len);
+void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len);
 
 void add_key_pair(ElectionKeyPair *key_pair);
 ElectionKeyPair* find_key_pair(uint8_t *guardian_id);
@@ -127,6 +128,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 sp_to_unsigned_bin(joint_key.joint_key, buffer);
                 sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(joint_key.joint_key), joint_key.commitment_hash, buffer);
                 esp_mqtt_client_publish(client, "joint_key", (char*)buffer, size, 2, 0);
+                esp_mqtt_client_subscribe(client, "ciphertally", 1);
                 free(buffer);
             }
 
@@ -170,6 +172,10 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
         {
             ESP_LOGI(TAG, "Received Challenge");
             handle_challenge(client, event->data, event->data_len);
+        } else if (strncmp(topic, "ciphertally", event->topic_len) == 0)
+        {
+            ESP_LOGI(TAG, "Received ciphertext tally");
+            handle_ciphertext_tally(client, event->data, event->data_len);
         }
         else {
             ESP_LOGI(TAG, "Unknown topic");
@@ -286,6 +292,11 @@ void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int dat
     */
 }
 
+void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len)
+{
+    CiphertextTallySelections selections;
+    deserialize_ciphertext_tally_selections((uint8_t*)data, data_len, &selections);
+}
 
 // Function to add an entry to the key pair map
 void add_key_pair(ElectionKeyPair *key_pair) {
