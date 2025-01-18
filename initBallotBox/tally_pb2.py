@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btally.proto\"}\n\x1d\x43iphertextTallySelectionProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x18\n\x10\x64\x65scription_hash\x18\x02 \x02(\x0c\x12\x16\n\x0e\x63iphertext_pad\x18\x03 \x02(\x0c\x12\x17\n\x0f\x63iphertext_data\x18\x04 \x02(\x0c\"\x7f\n\x1e\x43iphertextTallySelectionsProto\x12\x11\n\tbase_hash\x18\x01 \x02(\x0c\x12\x16\n\x0enum_selections\x18\x02 \x02(\x05\x12\x32\n\nselections\x18\x03 \x03(\x0b\x32\x1e.CiphertextTallySelectionProto\"\xb3\x01\n\"CiphertextDecryptionSelectionProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x13\n\x0bguardian_id\x18\x02 \x02(\x0c\x12\r\n\x05share\x18\x03 \x02(\x0c\x12\x11\n\tproof_pad\x18\x04 \x02(\x0c\x12\x12\n\nproof_data\x18\x05 \x02(\x0c\x12\x17\n\x0fproof_challenge\x18\x06 \x02(\x0c\x12\x16\n\x0eproof_response\x18\x07 \x02(\x0c\"\xa2\x01\n CiphertextDecryptionContestProto\x12\x13\n\x0bguardian_id\x18\x01 \x02(\x0c\x12\x18\n\x10\x64\x65scription_hash\x18\x02 \x02(\x0c\x12\x16\n\x0enum_selections\x18\x03 \x02(\x05\x12\x37\n\nselections\x18\x04 \x03(\x0b\x32#.CiphertextDecryptionSelectionProto')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btally.proto\"c\n\x1d\x43iphertextTallySelectionProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x16\n\x0e\x63iphertext_pad\x18\x02 \x02(\x0c\x12\x17\n\x0f\x63iphertext_data\x18\x03 \x02(\x0c\"\xae\x01\n\x1b\x43iphertextTallyContestProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x16\n\x0esequence_order\x18\x02 \x02(\x05\x12\x18\n\x10\x64\x65scription_hash\x18\x03 \x02(\x0c\x12\x16\n\x0enum_selections\x18\x04 \x02(\x05\x12\x32\n\nselections\x18\x05 \x03(\x0b\x32\x1e.CiphertextTallySelectionProto\"\x81\x01\n\x14\x43iphertextTallyProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x11\n\tbase_hash\x18\x02 \x02(\x0c\x12\x13\n\x0bnum_contest\x18\x03 \x02(\x05\x12.\n\x08\x63ontests\x18\x04 \x03(\x0b\x32\x1c.CiphertextTallyContestProto\"\xb8\x01\n\"CiphertextDecryptionSelectionProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x13\n\x0bguardian_id\x18\x02 \x02(\x0c\x12\x12\n\ndecryption\x18\x03 \x02(\x0c\x12\x11\n\tproof_pad\x18\x04 \x02(\x0c\x12\x12\n\nproof_data\x18\x05 \x02(\x0c\x12\x17\n\x0fproof_challenge\x18\x06 \x02(\x0c\x12\x16\n\x0eproof_response\x18\x07 \x02(\x0c\"\xb5\x01\n CiphertextDecryptionContestProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x13\n\x0bguardian_id\x18\x02 \x02(\x0c\x12\x18\n\x10\x64\x65scription_hash\x18\x03 \x02(\x0c\x12\x16\n\x0enum_selections\x18\x04 \x02(\x05\x12\x37\n\nselections\x18\x05 \x03(\x0b\x32#.CiphertextDecryptionSelectionProto\"\x9d\x01\n\x14\x44\x65\x63ryptionShareProto\x12\x11\n\tobject_id\x18\x01 \x02(\t\x12\x13\n\x0bguardian_id\x18\x02 \x02(\x0c\x12\x12\n\npublic_key\x18\x03 \x02(\x0c\x12\x14\n\x0cnum_contests\x18\x04 \x02(\x05\x12\x33\n\x08\x63ontests\x18\x05 \x03(\x0b\x32!.CiphertextDecryptionContestProto')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'tally_pb2', globals())
@@ -21,11 +21,15 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _CIPHERTEXTTALLYSELECTIONPROTO._serialized_start=15
-  _CIPHERTEXTTALLYSELECTIONPROTO._serialized_end=140
-  _CIPHERTEXTTALLYSELECTIONSPROTO._serialized_start=142
-  _CIPHERTEXTTALLYSELECTIONSPROTO._serialized_end=269
-  _CIPHERTEXTDECRYPTIONSELECTIONPROTO._serialized_start=272
-  _CIPHERTEXTDECRYPTIONSELECTIONPROTO._serialized_end=451
-  _CIPHERTEXTDECRYPTIONCONTESTPROTO._serialized_start=454
-  _CIPHERTEXTDECRYPTIONCONTESTPROTO._serialized_end=616
+  _CIPHERTEXTTALLYSELECTIONPROTO._serialized_end=114
+  _CIPHERTEXTTALLYCONTESTPROTO._serialized_start=117
+  _CIPHERTEXTTALLYCONTESTPROTO._serialized_end=291
+  _CIPHERTEXTTALLYPROTO._serialized_start=294
+  _CIPHERTEXTTALLYPROTO._serialized_end=423
+  _CIPHERTEXTDECRYPTIONSELECTIONPROTO._serialized_start=426
+  _CIPHERTEXTDECRYPTIONSELECTIONPROTO._serialized_end=610
+  _CIPHERTEXTDECRYPTIONCONTESTPROTO._serialized_start=613
+  _CIPHERTEXTDECRYPTIONCONTESTPROTO._serialized_end=794
+  _DECRYPTIONSHAREPROTO._serialized_start=797
+  _DECRYPTIONSHAREPROTO._serialized_end=954
 # @@protoc_insertion_point(module_scope)

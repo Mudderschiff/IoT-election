@@ -12,7 +12,7 @@ uint8_t* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* bac
 int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, ElectionPartialKeyPairBackup* backup);
 uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len);
 int deserialize_election_key_pair(uint8_t* buffer, unsigned len, ElectionKeyPair* key_pair);
-int deserialize_ciphertext_tally_selections(uint8_t *buffer, unsigned len, CiphertextTallySelections* selections);
+int deserialize_ciphertext_tally(uint8_t *buffer, unsigned len, CiphertextTally* ciphertally);
 
 #endif // SERIALIZE_H
 

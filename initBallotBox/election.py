@@ -117,35 +117,84 @@ decryption_mediator: DecryptionMediator
 lagrange_coefficients: LagrangeCoefficientsRecord
 
 
-def parse_ciphertext_tally_selection(data):
-    selection = tally_pb2.CiphertextTallySelectionProto()
-    print("Object id")
-    print("description hash")
-    description_hash = data.description_hash
-    print(description_hash)
-    print("Ciphertext pad")
-    ciphertext_pad = data.ciphertext.pad
-    print(ciphertext_pad)
-    print("ciphertext data")
-    ciphertext_data = data.ciphertext.data
-    print(ciphertext_data)
-    selection.object_id = data.object_id
-    selection.description_hash = description_hash.value.to_bytes((description_hash.value.bit_length() + 7) // 8, byteorder='big')
-    selection.ciphertext_pad = ciphertext_pad.value.to_bytes((ciphertext_pad.value.bit_length() + 7) // 8, byteorder='big')
-    selection.ciphertext_data = ciphertext_data.value.to_bytes((ciphertext_data.value.bit_length() + 7) // 8, byteorder='big')
-    return selection
+#def parse_ciphertext_tally_selection(data):
+#    selection = tally_pb2.CiphertextTallySelectionProto()
+#    print("Object id")
+#    print("description hash")
+#    description_hash = data.description_hash
+#    print(description_hash)
+#    print("Ciphertext pad")
+#    ciphertext_pad = data.ciphertext.pad
+#    print(ciphertext_pad)
+#    print("ciphertext data")
+#    ciphertext_data = data.ciphertext.data
+#    print(ciphertext_data)
+#    selection.object_id = data.object_id
+#    selection.description_hash = description_hash.value.to_bytes((description_hash.value.bit_length() + 7) // 8, byteorder='big')
+#    selection.ciphertext_pad = ciphertext_pad.value.to_bytes((ciphertext_pad.value.bit_length() + 7) // 8, byteorder='big')
+#    selection.ciphertext_data = ciphertext_data.value.to_bytes((ciphertext_data.value.bit_length() + 7) // 8, byteorder='big')
+#    return selection
 
-def parse_ciphertext_tally_selections(data, base_hash):
-    selections = tally_pb2.CiphertextTallySelectionsProto()
-    print(base_hash)
-    selections.base_hash = base_hash.value.to_bytes((base_hash.value.bit_length() + 7) // 8, byteorder='big')
-    selections.num_selections = len(data.selections)
-    print("Num selections")
-    print(selections.num_selections)
-    for value in data.selections.values():
-        selection = parse_ciphertext_tally_selection(value)
-        selections.selections.append(selection)
-    return selections
+#def parse_ciphertext_tally_selections(data, base_hash):
+#    selections = tally_pb2.CiphertextTallySelectionsProto()
+#    print(base_hash)
+#    selections.base_hash = base_hash.value.to_bytes((base_hash.value.bit_length() + 7) // 8, byteorder='big')
+#    selections.num_selections = len(data.selections)
+#    print("Num selections")
+#    print(selections.num_selections)
+#    for value in data.selections.values():
+#        selection = parse_ciphertext_tally_selection(value)
+#        selections.selections.append(selection)
+#    return selections
+
+#message CiphertextTallySelectionProto {
+#	required string object_id = 1;
+#	required bytes ciphertext_pad = 2;
+#	required bytes ciphertext_data = 3;
+#}
+
+def parse_ciphertext_tally_selections(data):
+	selection = tally_pb2.CiphertextTallySelectionProto()
+	print("Object Id, Ciphertext Pad, Ciphertext Data")
+	print(data.object_id)
+	print(data.ciphertext.pad)
+	print(data.ciphertext.data)
+	selection.object_id = data.object_id
+	selection.ciphertext_pad = data.ciphertext.pad.value.to_bytes((data.ciphertext.pad.value.bit_length() + 7) // 8, byteorder='big')
+	selection.ciphertext_data = data.ciphertext.data.value.to_bytes((data.ciphertext.data.value.bit_length() + 7) // 8, byteorder='big')
+	return selection
+	
+
+def parse_ciphertext_tally_contests(data):
+	contests = tally_pb2.CiphertextTallyContestProto()
+	contests.object_id = data.object_id
+	contests.sequence_order = data.sequence_order
+	contests.description_hash = data.description_hash.value.to_bytes((data.description_hash.value.bit_length() + 7) // 8, byteorder='big')
+	contests.num_selections = len(data.selections)
+	print("Object ID, Dequence Order, Description Hash, Num Selections")
+	print(data.object_id)
+	print(data.sequence_order)
+	print(data.description_hash)
+	print(contests.num_selections)
+	for value in data.selections.values():
+		selection = parse_ciphertext_tally_selections(value)
+		contests.selections.append(selection)
+	return contests
+	
+
+def parse_ciphertext_tally(tally, base_hash):
+	ciphertext = tally_pb2.CiphertextTallyProto()
+	ciphertext.object_id = tally.object_id
+	ciphertext.base_hash = base_hash.value.to_bytes((base_hash.value.bit_length() + 7) // 8, byteorder='big')
+	ciphertext.num_contest = len(tally.contests)
+	print("Object ID, Base Hash, Num COntests")
+	print(tally.object_id)
+	print(base_hash)
+	print(ciphertext.num_contest)
+	for value in tally.contests.values():
+		contest = parse_ciphertext_tally_contests(value)
+		ciphertext.contests.append(contest)
+	return ciphertext
 
 
 def createManifest() -> Manifest:
@@ -244,12 +293,8 @@ def buildElection() -> None:
 	#print(f"Total: {ciphertext_tally}")
 	submitted_ballots_list = list(submitted_ballots.values())
 	decryption_mediator = DecryptionMediator("decryption-mediator",context,)
-	#print(type())
-	#mqttc.publish("base_hash", message, 2, True)
-	print("Values")
 	
-	contests = ciphertext_tally.contests
-	parsed_data = parse_ciphertext_tally_selections(contests['referendum-single-vote'], context.crypto_extended_base_hash)
+	parsed_data = parse_ciphertext_tally(ciphertext_tally, context.crypto_extended_base_hash)
 	serialized_message = parsed_data.SerializeToString()
 	mqttc.publish("ciphertally", serialized_message, 0, True)
 

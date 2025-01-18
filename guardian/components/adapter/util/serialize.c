@@ -257,36 +257,55 @@ int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, Elect
 
 
 
-int deserialize_ciphertext_tally_selections(uint8_t *buffer, unsigned len, CiphertextTallySelections* selections) {
-    CiphertextTallySelectionsProto *sel = ciphertext_tally_selections_proto__unpack(NULL, len, buffer);
-    if (selections == NULL) {
+int deserialize_ciphertext_tally(uint8_t *buffer, unsigned len, CiphertextTally* ciphertally) {
+    CiphertextTallyProto* tally = ciphertext_tally_proto__unpack(NULL, len, buffer);
+    if (tally == NULL) {
         fprintf(stderr, "Error unpacking CiphertextTallySelections\n");
         return -1;
     }
-    selections->num_selections = sel->num_selections;
-    selections->base_hash = NULL;
-    selections->base_hash = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    sp_read_unsigned_bin(selections->base_hash, sel->base_hash.data, sel->base_hash.len);
-    print_sp_int(selections->base_hash);
-    ESP_LOGI("Deserialize CiphertextTallySelections", "Number of selections: %d", selections->num_selections);
-    selections->selections = (CiphertextTallySelection*)malloc(sizeof(CiphertextTallySelection) * selections->num_selections);
-    for(int i = 0; i < selections->num_selections; i++) {
-        selections->selections[i].object_id = strdup(sel->selections[i]->object_id);
-        selections->selections[i].description_hash = NULL;
-        selections->selections[i].ciphertext_pad = NULL;
-        selections->selections[i].ciphertext_data = NULL;
-        selections->selections[i].description_hash = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-        sp_read_unsigned_bin(selections->selections[i].description_hash, sel->selections[i]->description_hash.data, sel->selections[i]->description_hash.len);
-        print_sp_int(selections->selections[i].description_hash);
-        selections->selections[i].ciphertext_pad = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-        sp_read_unsigned_bin(selections->selections[i].ciphertext_pad, sel->selections[i]->ciphertext_pad.data, sel->selections[i]->ciphertext_pad.len);
-        print_sp_int(selections->selections[i].ciphertext_pad);
-        selections->selections[i].ciphertext_data = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-        sp_read_unsigned_bin(selections->selections[i].ciphertext_data, sel->selections[i]->ciphertext_data.data, sel->selections[i]->ciphertext_data.len);
-        print_sp_int(selections->selections[i].ciphertext_data);
-    }
 
-    ciphertext_tally_selections_proto__free_unpacked(sel, NULL);
+    ciphertally->object_id = strdup(tally->object_id);
+    ciphertally->base_hash = NULL;
+    ciphertally->base_hash = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+    sp_read_unsigned_bin(ciphertally->base_hash, tally->base_hash.data, tally->base_hash.len);
+
+    ciphertally->num_contest = tally->num_contest;
+    ESP_LOGI("num_contest", "%d", ciphertally->num_contest);
+    ESP_LOGI("object_id", "%s", ciphertally->object_id);
+    ESP_LOGI("deserialize","Base hash");
+    print_sp_int(ciphertally->base_hash);
+    ciphertally->contests = (CiphertextTallyContest*)malloc(sizeof(CiphertextTallyContest) * ciphertally->num_contest);
+    for(int i = 0; i < ciphertally->num_contest; i++) {
+        ciphertally->contests[i].object_id = strdup(tally->contests[i]->object_id);
+        ciphertally->contests[i].sequence_order = tally->contests[i]->sequence_order;
+        ciphertally->contests[i].description_hash = NULL;
+        ciphertally->contests[i].description_hash = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+        sp_read_unsigned_bin(ciphertally->contests[i].description_hash, tally->contests[i]->description_hash.data, tally->contests[i]->description_hash.len);
+        ciphertally->contests[i].num_selections = tally->contests[i]->num_selections;
+        ESP_LOGI("num_selections", "%d", ciphertally->contests[i].num_selections);
+        ESP_LOGI("sequence_order", "%d", ciphertally->contests[i].sequence_order);
+        ESP_LOGI("object_id", "%s", ciphertally->contests[i].object_id);
+        ESP_LOGI("deserialize","description_hash");
+        print_sp_int(ciphertally->contests[i].description_hash);
+        ciphertally->contests[i].selections = (CiphertextTallySelection*)malloc(sizeof(CiphertextTallySelection) * ciphertally->contests[i].num_selections);
+        for(int j = 0; j < ciphertally->contests[i].num_selections; j++) {
+            ciphertally->contests[i].selections[j].object_id = strdup(tally->contests[i]->selections[j]->object_id);
+            ciphertally->contests[i].selections[j].ciphertext_pad = NULL;
+            ciphertally->contests[i].selections[j].ciphertext_pad = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+            sp_read_unsigned_bin(ciphertally->contests[i].selections[j].ciphertext_pad, tally->contests[i]->selections[j]->ciphertext_pad.data, tally->contests[i]->selections[j]->ciphertext_pad.len);
+            ciphertally->contests[i].selections[j].ciphertext_data = NULL;
+            ciphertally->contests[i].selections[j].ciphertext_data = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
+            sp_read_unsigned_bin(ciphertally->contests[i].selections[j].ciphertext_data, tally->contests[i]->selections[j]->ciphertext_data.data, tally->contests[i]->selections[j]->ciphertext_data.len);
+            ESP_LOGI("object_id", "%s", ciphertally->contests[i].selections[j].object_id);
+            ESP_LOGI("deserialize","Pad + Data");
+            print_sp_int(ciphertally->contests[i].selections[j].ciphertext_pad);
+            print_sp_int(ciphertally->contests[i].selections[j].ciphertext_data);
+        }
+    
+    }
+    
+
+    ciphertext_tally_proto__free_unpacked(tally, NULL);
     return 0;
 }
 

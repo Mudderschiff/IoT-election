@@ -667,3 +667,7 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
     }
     return 0;
 }
+
+int create_ciphertext_decryption_selection() {
+    return 0;
+}

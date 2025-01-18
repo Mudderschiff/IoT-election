@@ -67,16 +67,25 @@ typedef struct {
 
 typedef struct {
     char* object_id;
-	sp_int* description_hash;
 	sp_int* ciphertext_pad;
 	sp_int* ciphertext_data;
 } CiphertextTallySelection;
 
 typedef struct {
-    sp_int* base_hash;
+    char* object_id;
+    int sequence_order;
+    sp_int* description_hash;
     int num_selections;
     CiphertextTallySelection* selections;
-} CiphertextTallySelections;
+} CiphertextTallyContest;
+
+typedef struct{
+    char* object_id;
+    sp_int* base_hash;
+    int num_contest;
+    CiphertextTallyContest* contests;
+} CiphertextTally;
+
 
 
 typedef struct {

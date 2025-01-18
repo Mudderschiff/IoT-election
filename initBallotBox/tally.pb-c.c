@@ -52,49 +52,94 @@ void   ciphertext_tally_selection_proto__free_unpacked
   assert(message->base.descriptor == &ciphertext_tally_selection_proto__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-void   ciphertext_tally_selections_proto__init
-                     (CiphertextTallySelectionsProto         *message)
+void   ciphertext_tally_contest_proto__init
+                     (CiphertextTallyContestProto         *message)
 {
-  static const CiphertextTallySelectionsProto init_value = CIPHERTEXT_TALLY_SELECTIONS_PROTO__INIT;
+  static const CiphertextTallyContestProto init_value = CIPHERTEXT_TALLY_CONTEST_PROTO__INIT;
   *message = init_value;
 }
-size_t ciphertext_tally_selections_proto__get_packed_size
-                     (const CiphertextTallySelectionsProto *message)
+size_t ciphertext_tally_contest_proto__get_packed_size
+                     (const CiphertextTallyContestProto *message)
 {
-  assert(message->base.descriptor == &ciphertext_tally_selections_proto__descriptor);
+  assert(message->base.descriptor == &ciphertext_tally_contest_proto__descriptor);
   return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
 }
-size_t ciphertext_tally_selections_proto__pack
-                     (const CiphertextTallySelectionsProto *message,
+size_t ciphertext_tally_contest_proto__pack
+                     (const CiphertextTallyContestProto *message,
                       uint8_t       *out)
 {
-  assert(message->base.descriptor == &ciphertext_tally_selections_proto__descriptor);
+  assert(message->base.descriptor == &ciphertext_tally_contest_proto__descriptor);
   return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
 }
-size_t ciphertext_tally_selections_proto__pack_to_buffer
-                     (const CiphertextTallySelectionsProto *message,
+size_t ciphertext_tally_contest_proto__pack_to_buffer
+                     (const CiphertextTallyContestProto *message,
                       ProtobufCBuffer *buffer)
 {
-  assert(message->base.descriptor == &ciphertext_tally_selections_proto__descriptor);
+  assert(message->base.descriptor == &ciphertext_tally_contest_proto__descriptor);
   return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
 }
-CiphertextTallySelectionsProto *
-       ciphertext_tally_selections_proto__unpack
+CiphertextTallyContestProto *
+       ciphertext_tally_contest_proto__unpack
                      (ProtobufCAllocator  *allocator,
                       size_t               len,
                       const uint8_t       *data)
 {
-  return (CiphertextTallySelectionsProto *)
-     protobuf_c_message_unpack (&ciphertext_tally_selections_proto__descriptor,
+  return (CiphertextTallyContestProto *)
+     protobuf_c_message_unpack (&ciphertext_tally_contest_proto__descriptor,
                                 allocator, len, data);
 }
-void   ciphertext_tally_selections_proto__free_unpacked
-                     (CiphertextTallySelectionsProto *message,
+void   ciphertext_tally_contest_proto__free_unpacked
+                     (CiphertextTallyContestProto *message,
                       ProtobufCAllocator *allocator)
 {
   if(!message)
     return;
-  assert(message->base.descriptor == &ciphertext_tally_selections_proto__descriptor);
+  assert(message->base.descriptor == &ciphertext_tally_contest_proto__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
+void   ciphertext_tally_proto__init
+                     (CiphertextTallyProto         *message)
+{
+  static const CiphertextTallyProto init_value = CIPHERTEXT_TALLY_PROTO__INIT;
+  *message = init_value;
+}
+size_t ciphertext_tally_proto__get_packed_size
+                     (const CiphertextTallyProto *message)
+{
+  assert(message->base.descriptor == &ciphertext_tally_proto__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t ciphertext_tally_proto__pack
+                     (const CiphertextTallyProto *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &ciphertext_tally_proto__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t ciphertext_tally_proto__pack_to_buffer
+                     (const CiphertextTallyProto *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &ciphertext_tally_proto__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+CiphertextTallyProto *
+       ciphertext_tally_proto__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (CiphertextTallyProto *)
+     protobuf_c_message_unpack (&ciphertext_tally_proto__descriptor,
+                                allocator, len, data);
+}
+void   ciphertext_tally_proto__free_unpacked
+                     (CiphertextTallyProto *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &ciphertext_tally_proto__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
 void   ciphertext_decryption_selection_proto__init
@@ -187,7 +232,52 @@ void   ciphertext_decryption_contest_proto__free_unpacked
   assert(message->base.descriptor == &ciphertext_decryption_contest_proto__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCFieldDescriptor ciphertext_tally_selection_proto__field_descriptors[4] =
+void   decryption_share_proto__init
+                     (DecryptionShareProto         *message)
+{
+  static const DecryptionShareProto init_value = DECRYPTION_SHARE_PROTO__INIT;
+  *message = init_value;
+}
+size_t decryption_share_proto__get_packed_size
+                     (const DecryptionShareProto *message)
+{
+  assert(message->base.descriptor == &decryption_share_proto__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t decryption_share_proto__pack
+                     (const DecryptionShareProto *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &decryption_share_proto__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t decryption_share_proto__pack_to_buffer
+                     (const DecryptionShareProto *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &decryption_share_proto__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+DecryptionShareProto *
+       decryption_share_proto__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (DecryptionShareProto *)
+     protobuf_c_message_unpack (&decryption_share_proto__descriptor,
+                                allocator, len, data);
+}
+void   decryption_share_proto__free_unpacked
+                     (DecryptionShareProto *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &decryption_share_proto__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
+static const ProtobufCFieldDescriptor ciphertext_tally_selection_proto__field_descriptors[3] =
 {
   {
     "object_id",
@@ -202,20 +292,8 @@ static const ProtobufCFieldDescriptor ciphertext_tally_selection_proto__field_de
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "description_hash",
-    2,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_BYTES,
-    0,   /* quantifier_offset */
-    offsetof(CiphertextTallySelectionProto, description_hash),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
     "ciphertext_pad",
-    3,
+    2,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_BYTES,
     0,   /* quantifier_offset */
@@ -227,7 +305,7 @@ static const ProtobufCFieldDescriptor ciphertext_tally_selection_proto__field_de
   },
   {
     "ciphertext_data",
-    4,
+    3,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_BYTES,
     0,   /* quantifier_offset */
@@ -239,15 +317,14 @@ static const ProtobufCFieldDescriptor ciphertext_tally_selection_proto__field_de
   },
 };
 static const unsigned ciphertext_tally_selection_proto__field_indices_by_name[] = {
-  3,   /* field[3] = ciphertext_data */
-  2,   /* field[2] = ciphertext_pad */
-  1,   /* field[1] = description_hash */
+  2,   /* field[2] = ciphertext_data */
+  1,   /* field[1] = ciphertext_pad */
   0,   /* field[0] = object_id */
 };
 static const ProtobufCIntRange ciphertext_tally_selection_proto__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 4 }
+  { 0, 3 }
 };
 const ProtobufCMessageDescriptor ciphertext_tally_selection_proto__descriptor =
 {
@@ -257,22 +334,46 @@ const ProtobufCMessageDescriptor ciphertext_tally_selection_proto__descriptor =
   "CiphertextTallySelectionProto",
   "",
   sizeof(CiphertextTallySelectionProto),
-  4,
+  3,
   ciphertext_tally_selection_proto__field_descriptors,
   ciphertext_tally_selection_proto__field_indices_by_name,
   1,  ciphertext_tally_selection_proto__number_ranges,
   (ProtobufCMessageInit) ciphertext_tally_selection_proto__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor ciphertext_tally_selections_proto__field_descriptors[3] =
+static const ProtobufCFieldDescriptor ciphertext_tally_contest_proto__field_descriptors[5] =
 {
   {
-    "base_hash",
+    "object_id",
     1,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(CiphertextTallyContestProto, object_id),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "sequence_order",
+    2,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_INT32,
+    0,   /* quantifier_offset */
+    offsetof(CiphertextTallyContestProto, sequence_order),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "description_hash",
+    3,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_BYTES,
     0,   /* quantifier_offset */
-    offsetof(CiphertextTallySelectionsProto, base_hash),
+    offsetof(CiphertextTallyContestProto, description_hash),
     NULL,
     NULL,
     0,             /* flags */
@@ -280,11 +381,11 @@ static const ProtobufCFieldDescriptor ciphertext_tally_selections_proto__field_d
   },
   {
     "num_selections",
-    2,
+    4,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_INT32,
     0,   /* quantifier_offset */
-    offsetof(CiphertextTallySelectionsProto, num_selections),
+    offsetof(CiphertextTallyContestProto, num_selections),
     NULL,
     NULL,
     0,             /* flags */
@@ -292,40 +393,119 @@ static const ProtobufCFieldDescriptor ciphertext_tally_selections_proto__field_d
   },
   {
     "selections",
-    3,
+    5,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
-    offsetof(CiphertextTallySelectionsProto, n_selections),
-    offsetof(CiphertextTallySelectionsProto, selections),
+    offsetof(CiphertextTallyContestProto, n_selections),
+    offsetof(CiphertextTallyContestProto, selections),
     &ciphertext_tally_selection_proto__descriptor,
     NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
 };
-static const unsigned ciphertext_tally_selections_proto__field_indices_by_name[] = {
-  0,   /* field[0] = base_hash */
-  1,   /* field[1] = num_selections */
-  2,   /* field[2] = selections */
+static const unsigned ciphertext_tally_contest_proto__field_indices_by_name[] = {
+  2,   /* field[2] = description_hash */
+  3,   /* field[3] = num_selections */
+  0,   /* field[0] = object_id */
+  4,   /* field[4] = selections */
+  1,   /* field[1] = sequence_order */
 };
-static const ProtobufCIntRange ciphertext_tally_selections_proto__number_ranges[1 + 1] =
+static const ProtobufCIntRange ciphertext_tally_contest_proto__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 3 }
+  { 0, 5 }
 };
-const ProtobufCMessageDescriptor ciphertext_tally_selections_proto__descriptor =
+const ProtobufCMessageDescriptor ciphertext_tally_contest_proto__descriptor =
 {
   PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "CiphertextTallySelectionsProto",
-  "CiphertextTallySelectionsProto",
-  "CiphertextTallySelectionsProto",
+  "CiphertextTallyContestProto",
+  "CiphertextTallyContestProto",
+  "CiphertextTallyContestProto",
   "",
-  sizeof(CiphertextTallySelectionsProto),
-  3,
-  ciphertext_tally_selections_proto__field_descriptors,
-  ciphertext_tally_selections_proto__field_indices_by_name,
-  1,  ciphertext_tally_selections_proto__number_ranges,
-  (ProtobufCMessageInit) ciphertext_tally_selections_proto__init,
+  sizeof(CiphertextTallyContestProto),
+  5,
+  ciphertext_tally_contest_proto__field_descriptors,
+  ciphertext_tally_contest_proto__field_indices_by_name,
+  1,  ciphertext_tally_contest_proto__number_ranges,
+  (ProtobufCMessageInit) ciphertext_tally_contest_proto__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor ciphertext_tally_proto__field_descriptors[4] =
+{
+  {
+    "object_id",
+    1,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(CiphertextTallyProto, object_id),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "base_hash",
+    2,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_BYTES,
+    0,   /* quantifier_offset */
+    offsetof(CiphertextTallyProto, base_hash),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "num_contest",
+    3,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_INT32,
+    0,   /* quantifier_offset */
+    offsetof(CiphertextTallyProto, num_contest),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "contests",
+    4,
+    PROTOBUF_C_LABEL_REPEATED,
+    PROTOBUF_C_TYPE_MESSAGE,
+    offsetof(CiphertextTallyProto, n_contests),
+    offsetof(CiphertextTallyProto, contests),
+    &ciphertext_tally_contest_proto__descriptor,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned ciphertext_tally_proto__field_indices_by_name[] = {
+  1,   /* field[1] = base_hash */
+  3,   /* field[3] = contests */
+  2,   /* field[2] = num_contest */
+  0,   /* field[0] = object_id */
+};
+static const ProtobufCIntRange ciphertext_tally_proto__number_ranges[1 + 1] =
+{
+  { 1, 0 },
+  { 0, 4 }
+};
+const ProtobufCMessageDescriptor ciphertext_tally_proto__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "CiphertextTallyProto",
+  "CiphertextTallyProto",
+  "CiphertextTallyProto",
+  "",
+  sizeof(CiphertextTallyProto),
+  4,
+  ciphertext_tally_proto__field_descriptors,
+  ciphertext_tally_proto__field_indices_by_name,
+  1,  ciphertext_tally_proto__number_ranges,
+  (ProtobufCMessageInit) ciphertext_tally_proto__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
 static const ProtobufCFieldDescriptor ciphertext_decryption_selection_proto__field_descriptors[7] =
@@ -355,12 +535,12 @@ static const ProtobufCFieldDescriptor ciphertext_decryption_selection_proto__fie
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "share",
+    "decryption",
     3,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_BYTES,
     0,   /* quantifier_offset */
-    offsetof(CiphertextDecryptionSelectionProto, share),
+    offsetof(CiphertextDecryptionSelectionProto, decryption),
     NULL,
     NULL,
     0,             /* flags */
@@ -416,13 +596,13 @@ static const ProtobufCFieldDescriptor ciphertext_decryption_selection_proto__fie
   },
 };
 static const unsigned ciphertext_decryption_selection_proto__field_indices_by_name[] = {
+  2,   /* field[2] = decryption */
   1,   /* field[1] = guardian_id */
   0,   /* field[0] = object_id */
   5,   /* field[5] = proof_challenge */
   4,   /* field[4] = proof_data */
   3,   /* field[3] = proof_pad */
   6,   /* field[6] = proof_response */
-  2,   /* field[2] = share */
 };
 static const ProtobufCIntRange ciphertext_decryption_selection_proto__number_ranges[1 + 1] =
 {
@@ -444,11 +624,23 @@ const ProtobufCMessageDescriptor ciphertext_decryption_selection_proto__descript
   (ProtobufCMessageInit) ciphertext_decryption_selection_proto__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor ciphertext_decryption_contest_proto__field_descriptors[4] =
+static const ProtobufCFieldDescriptor ciphertext_decryption_contest_proto__field_descriptors[5] =
 {
   {
-    "guardian_id",
+    "object_id",
     1,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(CiphertextDecryptionContestProto, object_id),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "guardian_id",
+    2,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_BYTES,
     0,   /* quantifier_offset */
@@ -460,7 +652,7 @@ static const ProtobufCFieldDescriptor ciphertext_decryption_contest_proto__field
   },
   {
     "description_hash",
-    2,
+    3,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_BYTES,
     0,   /* quantifier_offset */
@@ -472,7 +664,7 @@ static const ProtobufCFieldDescriptor ciphertext_decryption_contest_proto__field
   },
   {
     "num_selections",
-    3,
+    4,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_INT32,
     0,   /* quantifier_offset */
@@ -484,7 +676,7 @@ static const ProtobufCFieldDescriptor ciphertext_decryption_contest_proto__field
   },
   {
     "selections",
-    4,
+    5,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
     offsetof(CiphertextDecryptionContestProto, n_selections),
@@ -496,15 +688,16 @@ static const ProtobufCFieldDescriptor ciphertext_decryption_contest_proto__field
   },
 };
 static const unsigned ciphertext_decryption_contest_proto__field_indices_by_name[] = {
-  1,   /* field[1] = description_hash */
-  0,   /* field[0] = guardian_id */
-  2,   /* field[2] = num_selections */
-  3,   /* field[3] = selections */
+  2,   /* field[2] = description_hash */
+  1,   /* field[1] = guardian_id */
+  3,   /* field[3] = num_selections */
+  0,   /* field[0] = object_id */
+  4,   /* field[4] = selections */
 };
 static const ProtobufCIntRange ciphertext_decryption_contest_proto__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 4 }
+  { 0, 5 }
 };
 const ProtobufCMessageDescriptor ciphertext_decryption_contest_proto__descriptor =
 {
@@ -514,10 +707,100 @@ const ProtobufCMessageDescriptor ciphertext_decryption_contest_proto__descriptor
   "CiphertextDecryptionContestProto",
   "",
   sizeof(CiphertextDecryptionContestProto),
-  4,
+  5,
   ciphertext_decryption_contest_proto__field_descriptors,
   ciphertext_decryption_contest_proto__field_indices_by_name,
   1,  ciphertext_decryption_contest_proto__number_ranges,
   (ProtobufCMessageInit) ciphertext_decryption_contest_proto__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor decryption_share_proto__field_descriptors[5] =
+{
+  {
+    "object_id",
+    1,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(DecryptionShareProto, object_id),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "guardian_id",
+    2,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_BYTES,
+    0,   /* quantifier_offset */
+    offsetof(DecryptionShareProto, guardian_id),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "public_key",
+    3,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_BYTES,
+    0,   /* quantifier_offset */
+    offsetof(DecryptionShareProto, public_key),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "num_contests",
+    4,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_INT32,
+    0,   /* quantifier_offset */
+    offsetof(DecryptionShareProto, num_contests),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "contests",
+    5,
+    PROTOBUF_C_LABEL_REPEATED,
+    PROTOBUF_C_TYPE_MESSAGE,
+    offsetof(DecryptionShareProto, n_contests),
+    offsetof(DecryptionShareProto, contests),
+    &ciphertext_decryption_contest_proto__descriptor,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned decryption_share_proto__field_indices_by_name[] = {
+  4,   /* field[4] = contests */
+  1,   /* field[1] = guardian_id */
+  3,   /* field[3] = num_contests */
+  0,   /* field[0] = object_id */
+  2,   /* field[2] = public_key */
+};
+static const ProtobufCIntRange decryption_share_proto__number_ranges[1 + 1] =
+{
+  { 1, 0 },
+  { 0, 5 }
+};
+const ProtobufCMessageDescriptor decryption_share_proto__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "DecryptionShareProto",
+  "DecryptionShareProto",
+  "DecryptionShareProto",
+  "",
+  sizeof(DecryptionShareProto),
+  5,
+  decryption_share_proto__field_descriptors,
+  decryption_share_proto__field_indices_by_name,
+  1,  decryption_share_proto__number_ranges,
+  (ProtobufCMessageInit) decryption_share_proto__init,
   NULL,NULL,NULL    /* reserved[123] */
 };

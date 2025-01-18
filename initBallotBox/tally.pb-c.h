@@ -16,9 +16,11 @@ PROTOBUF_C__BEGIN_DECLS
 
 
 typedef struct CiphertextTallySelectionProto CiphertextTallySelectionProto;
-typedef struct CiphertextTallySelectionsProto CiphertextTallySelectionsProto;
+typedef struct CiphertextTallyContestProto CiphertextTallyContestProto;
+typedef struct CiphertextTallyProto CiphertextTallyProto;
 typedef struct CiphertextDecryptionSelectionProto CiphertextDecryptionSelectionProto;
 typedef struct CiphertextDecryptionContestProto CiphertextDecryptionContestProto;
+typedef struct DecryptionShareProto DecryptionShareProto;
 
 
 /* --- enums --- */
@@ -30,26 +32,41 @@ struct  CiphertextTallySelectionProto
 {
   ProtobufCMessage base;
   char *object_id;
-  ProtobufCBinaryData description_hash;
   ProtobufCBinaryData ciphertext_pad;
   ProtobufCBinaryData ciphertext_data;
 };
 #define CIPHERTEXT_TALLY_SELECTION_PROTO__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&ciphertext_tally_selection_proto__descriptor) \
-    , NULL, {0,NULL}, {0,NULL}, {0,NULL} }
+    , NULL, {0,NULL}, {0,NULL} }
 
 
-struct  CiphertextTallySelectionsProto
+struct  CiphertextTallyContestProto
 {
   ProtobufCMessage base;
-  ProtobufCBinaryData base_hash;
+  char *object_id;
+  int32_t sequence_order;
+  ProtobufCBinaryData description_hash;
   int32_t num_selections;
   size_t n_selections;
   CiphertextTallySelectionProto **selections;
 };
-#define CIPHERTEXT_TALLY_SELECTIONS_PROTO__INIT \
- { PROTOBUF_C_MESSAGE_INIT (&ciphertext_tally_selections_proto__descriptor) \
-    , {0,NULL}, 0, 0,NULL }
+#define CIPHERTEXT_TALLY_CONTEST_PROTO__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&ciphertext_tally_contest_proto__descriptor) \
+    , NULL, 0, {0,NULL}, 0, 0,NULL }
+
+
+struct  CiphertextTallyProto
+{
+  ProtobufCMessage base;
+  char *object_id;
+  ProtobufCBinaryData base_hash;
+  int32_t num_contest;
+  size_t n_contests;
+  CiphertextTallyContestProto **contests;
+};
+#define CIPHERTEXT_TALLY_PROTO__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&ciphertext_tally_proto__descriptor) \
+    , NULL, {0,NULL}, 0, 0,NULL }
 
 
 struct  CiphertextDecryptionSelectionProto
@@ -57,7 +74,7 @@ struct  CiphertextDecryptionSelectionProto
   ProtobufCMessage base;
   char *object_id;
   ProtobufCBinaryData guardian_id;
-  ProtobufCBinaryData share;
+  ProtobufCBinaryData decryption;
   ProtobufCBinaryData proof_pad;
   ProtobufCBinaryData proof_data;
   ProtobufCBinaryData proof_challenge;
@@ -71,6 +88,7 @@ struct  CiphertextDecryptionSelectionProto
 struct  CiphertextDecryptionContestProto
 {
   ProtobufCMessage base;
+  char *object_id;
   ProtobufCBinaryData guardian_id;
   ProtobufCBinaryData description_hash;
   int32_t num_selections;
@@ -79,7 +97,22 @@ struct  CiphertextDecryptionContestProto
 };
 #define CIPHERTEXT_DECRYPTION_CONTEST_PROTO__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&ciphertext_decryption_contest_proto__descriptor) \
-    , {0,NULL}, {0,NULL}, 0, 0,NULL }
+    , NULL, {0,NULL}, {0,NULL}, 0, 0,NULL }
+
+
+struct  DecryptionShareProto
+{
+  ProtobufCMessage base;
+  char *object_id;
+  ProtobufCBinaryData guardian_id;
+  ProtobufCBinaryData public_key;
+  int32_t num_contests;
+  size_t n_contests;
+  CiphertextDecryptionContestProto **contests;
+};
+#define DECRYPTION_SHARE_PROTO__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&decryption_share_proto__descriptor) \
+    , NULL, {0,NULL}, {0,NULL}, 0, 0,NULL }
 
 
 /* CiphertextTallySelectionProto methods */
@@ -101,24 +134,43 @@ CiphertextTallySelectionProto *
 void   ciphertext_tally_selection_proto__free_unpacked
                      (CiphertextTallySelectionProto *message,
                       ProtobufCAllocator *allocator);
-/* CiphertextTallySelectionsProto methods */
-void   ciphertext_tally_selections_proto__init
-                     (CiphertextTallySelectionsProto         *message);
-size_t ciphertext_tally_selections_proto__get_packed_size
-                     (const CiphertextTallySelectionsProto   *message);
-size_t ciphertext_tally_selections_proto__pack
-                     (const CiphertextTallySelectionsProto   *message,
+/* CiphertextTallyContestProto methods */
+void   ciphertext_tally_contest_proto__init
+                     (CiphertextTallyContestProto         *message);
+size_t ciphertext_tally_contest_proto__get_packed_size
+                     (const CiphertextTallyContestProto   *message);
+size_t ciphertext_tally_contest_proto__pack
+                     (const CiphertextTallyContestProto   *message,
                       uint8_t             *out);
-size_t ciphertext_tally_selections_proto__pack_to_buffer
-                     (const CiphertextTallySelectionsProto   *message,
+size_t ciphertext_tally_contest_proto__pack_to_buffer
+                     (const CiphertextTallyContestProto   *message,
                       ProtobufCBuffer     *buffer);
-CiphertextTallySelectionsProto *
-       ciphertext_tally_selections_proto__unpack
+CiphertextTallyContestProto *
+       ciphertext_tally_contest_proto__unpack
                      (ProtobufCAllocator  *allocator,
                       size_t               len,
                       const uint8_t       *data);
-void   ciphertext_tally_selections_proto__free_unpacked
-                     (CiphertextTallySelectionsProto *message,
+void   ciphertext_tally_contest_proto__free_unpacked
+                     (CiphertextTallyContestProto *message,
+                      ProtobufCAllocator *allocator);
+/* CiphertextTallyProto methods */
+void   ciphertext_tally_proto__init
+                     (CiphertextTallyProto         *message);
+size_t ciphertext_tally_proto__get_packed_size
+                     (const CiphertextTallyProto   *message);
+size_t ciphertext_tally_proto__pack
+                     (const CiphertextTallyProto   *message,
+                      uint8_t             *out);
+size_t ciphertext_tally_proto__pack_to_buffer
+                     (const CiphertextTallyProto   *message,
+                      ProtobufCBuffer     *buffer);
+CiphertextTallyProto *
+       ciphertext_tally_proto__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   ciphertext_tally_proto__free_unpacked
+                     (CiphertextTallyProto *message,
                       ProtobufCAllocator *allocator);
 /* CiphertextDecryptionSelectionProto methods */
 void   ciphertext_decryption_selection_proto__init
@@ -158,19 +210,44 @@ CiphertextDecryptionContestProto *
 void   ciphertext_decryption_contest_proto__free_unpacked
                      (CiphertextDecryptionContestProto *message,
                       ProtobufCAllocator *allocator);
+/* DecryptionShareProto methods */
+void   decryption_share_proto__init
+                     (DecryptionShareProto         *message);
+size_t decryption_share_proto__get_packed_size
+                     (const DecryptionShareProto   *message);
+size_t decryption_share_proto__pack
+                     (const DecryptionShareProto   *message,
+                      uint8_t             *out);
+size_t decryption_share_proto__pack_to_buffer
+                     (const DecryptionShareProto   *message,
+                      ProtobufCBuffer     *buffer);
+DecryptionShareProto *
+       decryption_share_proto__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   decryption_share_proto__free_unpacked
+                     (DecryptionShareProto *message,
+                      ProtobufCAllocator *allocator);
 /* --- per-message closures --- */
 
 typedef void (*CiphertextTallySelectionProto_Closure)
                  (const CiphertextTallySelectionProto *message,
                   void *closure_data);
-typedef void (*CiphertextTallySelectionsProto_Closure)
-                 (const CiphertextTallySelectionsProto *message,
+typedef void (*CiphertextTallyContestProto_Closure)
+                 (const CiphertextTallyContestProto *message,
+                  void *closure_data);
+typedef void (*CiphertextTallyProto_Closure)
+                 (const CiphertextTallyProto *message,
                   void *closure_data);
 typedef void (*CiphertextDecryptionSelectionProto_Closure)
                  (const CiphertextDecryptionSelectionProto *message,
                   void *closure_data);
 typedef void (*CiphertextDecryptionContestProto_Closure)
                  (const CiphertextDecryptionContestProto *message,
+                  void *closure_data);
+typedef void (*DecryptionShareProto_Closure)
+                 (const DecryptionShareProto *message,
                   void *closure_data);
 
 /* --- services --- */
@@ -179,9 +256,11 @@ typedef void (*CiphertextDecryptionContestProto_Closure)
 /* --- descriptors --- */
 
 extern const ProtobufCMessageDescriptor ciphertext_tally_selection_proto__descriptor;
-extern const ProtobufCMessageDescriptor ciphertext_tally_selections_proto__descriptor;
+extern const ProtobufCMessageDescriptor ciphertext_tally_contest_proto__descriptor;
+extern const ProtobufCMessageDescriptor ciphertext_tally_proto__descriptor;
 extern const ProtobufCMessageDescriptor ciphertext_decryption_selection_proto__descriptor;
 extern const ProtobufCMessageDescriptor ciphertext_decryption_contest_proto__descriptor;
+extern const ProtobufCMessageDescriptor decryption_share_proto__descriptor;
 
 PROTOBUF_C__END_DECLS
 
