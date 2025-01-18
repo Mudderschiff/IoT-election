@@ -143,11 +143,19 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
 }
 
 int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphertally, DecryptionShare *share) {
-    share.
-    share->guardian_id = NULL;
-    share->guardian_id = (uint8_t*)XMALLOC(6, NULL, DYNAMIC_TYPE_BIGINT);
-    memcpy(share->guardian_id, guardian->guardian_id, 6);
+    share->object_id = NULL;
+    share->object_id = strdup(ciphertally->object_id);
+    share->public_key = NULL;
 
+    NEW_MP_INT_SIZE(share->public_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(share->public_key, 3072);
+    sp_copy(guardian->public_key, share->public_key);
+
+    share->num_contest = ciphertally->num_contest;
+    share->contests = (CiphertextDecryptionContest*)XMALLOC(ciphertally->num_contest * sizeof(CiphertextDecryptionContest), NULL, DYNAMIC_TYPE_BIGINT);
+    for (int i = 0; i < ciphertally->num_contest; i++) {
+        compute_decryption_share_for_contest(guardian, &ciphertally->contests[i], &ciphertally->base_hash , &share->contests[i]);
+    }
     
     return 0;
 }

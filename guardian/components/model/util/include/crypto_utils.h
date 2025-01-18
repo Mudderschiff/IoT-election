@@ -18,7 +18,6 @@ typedef struct {
     sp_int* commitment;
     sp_int* challenge;
     sp_int* response;
-    
 } SchnorrProof;
 
 typedef struct {
@@ -86,21 +85,23 @@ typedef struct{
     CiphertextTallyContest* contests;
 } CiphertextTally;
 
-
+typedef struct {
+    sp_int* pad;
+    sp_int* data;
+    sp_int* challenge;
+    sp_int* response;
+} ChaumPedersenProof;
 
 typedef struct {
     char* object_id;
     uint8_t guardian_id[6];
     sp_int* decryption;
-    sp_int* proof_pad;
-    sp_int* proof_data;
-    sp_int* proof_challenge;
-    sp_int* proof_response;
+    ChaumPedersenProof proof;
 } CiphertextDecryptionSelection;
 
 typedef struct{
     char* object_id;
-    uint8_t guardian_id[6];
+    sp_int *public_key;
     sp_int* description_hash;
     int num_selections;
     CiphertextDecryptionSelection* selections;
@@ -130,5 +131,6 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
 void print_sp_int(sp_int *num);
 void print_byte_array(const byte *array, int size);
 void int_to_bytes(int value, unsigned char *bytes);
+int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTallyContest *contest, sp_int* base_hash , CiphertextDecryptionContest *dec_contest);
 
 #endif // CRYPTO_UTILS_H

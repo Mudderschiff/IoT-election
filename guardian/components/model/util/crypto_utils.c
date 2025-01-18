@@ -668,6 +668,168 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
     return 0;
 }
 
-int create_ciphertext_decryption_selection() {
+
+/**
+ * @brief Generates a random element in [0,Q) from an initial element in [0,Q). If you start with the same seed, you'll get exactly the same number
+ * @param seed: The seed for the random number
+ * @return 0 on success, -1 on failure
+ */
+int nonce(sp_int* seed, sp_int* nonce) {
+    Sha256 sha256[1];
+    char* header = "constant-chaum-pedersen-proof";
+    int index = 0;
+    int ret;
+    byte* bseed = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
+    sp_to_unsigned_bin(seed, bseed);
+    if(wc_InitSha256(sha256) != 0) {
+        ESP_LOGE("NONCE", "Failed to initialise sha256");
+        return -1;
+    } else {
+        // Update the hash with the seed, header and index
+        if(wc_Sha256Update(sha256, bseed, WC_SHA256_DIGEST_SIZE) != 0) {
+            ESP_LOGE("NONCE", "Failed to update sha256");
+            return -1;
+        }
+        if(wc_Sha256Update(sha256, (byte*)header, strlen(header)) != 0) {
+            ESP_LOGE("NONCE", "Failed to update sha256");
+            return -1;
+        }
+        if(wc_Sha256Update(sha256, (byte*)&index, sizeof(index)) != 0) {
+            ESP_LOGE("NONCE", "Failed to update sha256");
+            return -1;
+        }
+        // Finalise the hash
+        if(wc_Sha256Final(sha256, bseed) != 0) {
+            ESP_LOGE("NONCE", "Failed to finalise sha256");
+            return -1;
+        }
+        sp_read_unsigned_bin(nonce, bseed, WC_SHA256_DIGEST_SIZE);
+    }
+    free(bseed);
+    return 0;
+}
+
+
+/**
+ * @brief Produces a proof that a given value corresponds to a specific encryption
+ * @param alpha: Message Pad
+ * @param beta: Message Data
+ * @param secret: The nonce or secret used to derive the value
+ * @param m: The value we are trying to prove
+ * @param seed: Used to generate other random values here
+ * @param hash_header: A value used when generating the challenge, usually the election extended base hash
+ * @param proof: The proof that the value corresponds to the encryption
+ * @return 0 on success, -1 on failure
+ */
+static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_int* m, sp_int* seed, sp_int* hash_header, ChaumPedersenProof* proof) {
+    proof->pad = NULL;
+    NEW_MP_INT_SIZE(proof->pad, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->pad, 3072);
+    proof->data = NULL;
+    NEW_MP_INT_SIZE(proof->data, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->data, 3072);
+    proof->challenge = NULL;
+    NEW_MP_INT_SIZE(proof->challenge, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->challenge, 256);
+    proof->response = NULL;
+    NEW_MP_INT_SIZE(proof->response, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->response, 256);
+    
+    DECL_MP_INT_SIZE(large_prime, 3072);
+    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(large_prime, 3072);
+    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
+
+    DECL_MP_INT_SIZE(u, 256);
+    NEW_MP_INT_SIZE(u, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(u, 256);
+    nonce(seed, u);
+
+    g_pow_p(u, proof->pad);
+    exptmod(alpha, u, large_prime, proof->data);
+
+    FREE_MP_INT_SIZE(u, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    
+    hash(hash_header, alpha, proof->challenge);
+    hash(proof->challenge, beta, proof->challenge);
+    hash(proof->challenge, proof->pad, proof->challenge);
+    hash(proof->challenge, proof->data, proof->challenge);
+    hash(proof->challenge, m, proof->challenge);
+
+    ESP_LOGI("CHAUM_PEDERSEN", "Challenge");
+    print_sp_int(proof->challenge);
+
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
+
+    // a + bc ^ q = u + c * secret ^ q
+    sp_mul(proof->challenge,secret,proof->response);
+    sp_addmod(u,proof->response,small_prime,proof->response);
+    ESP_LOGI("CHAUM_PEDERSEN", "Response");
+    print_sp_int(proof->response);
+
+    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    
+    return 0;
+}
+
+/**
+ * @brief Compute a partial decryption of an elgamal encryption
+ * @param private_key: The secret key used to decrypt the ciphertext
+ * @param pad: The pad of the ciphertext
+ * @param data: The data of the ciphertext
+ * @param base_hash: The base hash of the election
+ * @param dec_selection: The decryption selection
+ * @return 0 on success, -1 on failure
+ */
+static int compute_decryption_share_for_selection(sp_int *private_key, sp_int* pad, sp_int* data, sp_int* base_hash , CiphertextDecryptionSelection *dec_selection) {
+    dec_selection->decryption = NULL;
+    NEW_MP_INT_SIZE(dec_selection->decryption, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(dec_selection->decryption, 3072);
+    
+    DECL_MP_INT_SIZE(nonce_seed, 256);
+    NEW_MP_INT_SIZE(nonce_seed, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(nonce_seed, 256);
+    rand_q(nonce_seed);
+
+    DECL_MP_INT_SIZE(large_prime, 3072);
+    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(large_prime, 3072);
+    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
+
+    // Partially Decrypt Elgamal Ciphertext with a known Elgamal Secret Key
+    exptmod(pad, private_key, large_prime, dec_selection->decryption);
+    make_chaum_pedersen(pad, data, private_key, dec_selection->decryption, nonce_seed, base_hash, &dec_selection->proof);
+    
+    FREE_MP_INT_SIZE(nonce_seed, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    return 0;
+}
+
+
+int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTallyContest *contest, sp_int* base_hash , CiphertextDecryptionContest *dec_contest) {
+    dec_contest->object_id = strdup(contest->object_id);
+
+    dec_contest->public_key = NULL;
+    NEW_MP_INT_SIZE(dec_contest->public_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(dec_contest->public_key, 3072);
+    sp_copy(guardian->public_key, dec_contest->public_key);
+
+    dec_contest->description_hash = NULL;
+    NEW_MP_INT_SIZE(dec_contest->description_hash, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(dec_contest->description_hash, 256);
+    sp_copy(contest->description_hash, dec_contest->description_hash);
+
+    dec_contest->num_selections = contest->num_selections;
+    dec_contest->selections = (CiphertextDecryptionSelection *)malloc(contest->num_selections * sizeof(CiphertextDecryptionSelection));
+    if(dec_contest->selections == NULL) {
+        return -1;
+    }
+    for (int i = 0; i < dec_contest->num_selections; i++) {
+        compute_decryption_share_for_selection(guardian->private_key, contest->selections[i].ciphertext_pad, contest->selections[i].ciphertext_data, base_hash, &dec_contest->selections[i]);
+    }
     return 0;
 }
