@@ -135,8 +135,10 @@ def parse_ciphertext_tally_selection(data):
     selection.ciphertext_data = ciphertext_data.value.to_bytes((ciphertext_data.value.bit_length() + 7) // 8, byteorder='big')
     return selection
 
-def parse_ciphertext_tally_selections(data):
+def parse_ciphertext_tally_selections(data, base_hash):
     selections = tally_pb2.CiphertextTallySelectionsProto()
+    print(base_hash)
+    selections.base_hash = base_hash.value.to_bytes((base_hash.value.bit_length() + 7) // 8, byteorder='big')
     selections.num_selections = len(data.selections)
     print("Num selections")
     print(selections.num_selections)
@@ -242,12 +244,12 @@ def buildElection() -> None:
 	#print(f"Total: {ciphertext_tally}")
 	submitted_ballots_list = list(submitted_ballots.values())
 	decryption_mediator = DecryptionMediator("decryption-mediator",context,)
-	#print(type(context.crypto_extended_base_hash))
+	#print(type())
 	#mqttc.publish("base_hash", message, 2, True)
 	print("Values")
 	
 	contests = ciphertext_tally.contests
-	parsed_data = parse_ciphertext_tally_selections(contests['referendum-single-vote'])
+	parsed_data = parse_ciphertext_tally_selections(contests['referendum-single-vote'], context.crypto_extended_base_hash)
 	serialized_message = parsed_data.SerializeToString()
 	mqttc.publish("ciphertally", serialized_message, 0, True)
 

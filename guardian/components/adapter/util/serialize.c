@@ -264,6 +264,10 @@ int deserialize_ciphertext_tally_selections(uint8_t *buffer, unsigned len, Ciphe
         return -1;
     }
     selections->num_selections = sel->num_selections;
+    selections->base_hash = NULL;
+    selections->base_hash = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
+    sp_read_unsigned_bin(selections->base_hash, sel->base_hash.data, sel->base_hash.len);
+    print_sp_int(selections->base_hash);
     ESP_LOGI("Deserialize CiphertextTallySelections", "Number of selections: %d", selections->num_selections);
     selections->selections = (CiphertextTallySelection*)malloc(sizeof(CiphertextTallySelection) * selections->num_selections);
     for(int i = 0; i < selections->num_selections; i++) {

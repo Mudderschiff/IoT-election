@@ -73,6 +73,7 @@ typedef struct {
 } CiphertextTallySelection;
 
 typedef struct {
+    sp_int* base_hash;
     int num_selections;
     CiphertextTallySelection* selections;
 } CiphertextTallySelections;

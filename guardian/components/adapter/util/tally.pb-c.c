@@ -264,11 +264,23 @@ const ProtobufCMessageDescriptor ciphertext_tally_selection_proto__descriptor =
   (ProtobufCMessageInit) ciphertext_tally_selection_proto__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor ciphertext_tally_selections_proto__field_descriptors[2] =
+static const ProtobufCFieldDescriptor ciphertext_tally_selections_proto__field_descriptors[3] =
 {
   {
-    "num_selections",
+    "base_hash",
     1,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_BYTES,
+    0,   /* quantifier_offset */
+    offsetof(CiphertextTallySelectionsProto, base_hash),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "num_selections",
+    2,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_INT32,
     0,   /* quantifier_offset */
@@ -280,7 +292,7 @@ static const ProtobufCFieldDescriptor ciphertext_tally_selections_proto__field_d
   },
   {
     "selections",
-    2,
+    3,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
     offsetof(CiphertextTallySelectionsProto, n_selections),
@@ -292,13 +304,14 @@ static const ProtobufCFieldDescriptor ciphertext_tally_selections_proto__field_d
   },
 };
 static const unsigned ciphertext_tally_selections_proto__field_indices_by_name[] = {
-  0,   /* field[0] = num_selections */
-  1,   /* field[1] = selections */
+  0,   /* field[0] = base_hash */
+  1,   /* field[1] = num_selections */
+  2,   /* field[2] = selections */
 };
 static const ProtobufCIntRange ciphertext_tally_selections_proto__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 2 }
+  { 0, 3 }
 };
 const ProtobufCMessageDescriptor ciphertext_tally_selections_proto__descriptor =
 {
@@ -308,7 +321,7 @@ const ProtobufCMessageDescriptor ciphertext_tally_selections_proto__descriptor =
   "CiphertextTallySelectionsProto",
   "",
   sizeof(CiphertextTallySelectionsProto),
-  2,
+  3,
   ciphertext_tally_selections_proto__field_descriptors,
   ciphertext_tally_selections_proto__field_indices_by_name,
   1,  ciphertext_tally_selections_proto__number_ranges,

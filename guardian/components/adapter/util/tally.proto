@@ -8,8 +8,9 @@ message CiphertextTallySelectionProto {
 }
 
 message CiphertextTallySelectionsProto {
-	required int32 num_selections = 1;
-	repeated CiphertextTallySelectionProto selections = 2;
+	required bytes base_hash = 1;
+	required int32 num_selections = 2;
+	repeated CiphertextTallySelectionProto selections = 3;
 }
 
 

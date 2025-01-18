@@ -42,13 +42,14 @@ struct  CiphertextTallySelectionProto
 struct  CiphertextTallySelectionsProto
 {
   ProtobufCMessage base;
+  ProtobufCBinaryData base_hash;
   int32_t num_selections;
   size_t n_selections;
   CiphertextTallySelectionProto **selections;
 };
 #define CIPHERTEXT_TALLY_SELECTIONS_PROTO__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&ciphertext_tally_selections_proto__descriptor) \
-    , 0, 0,NULL }
+    , {0,NULL}, 0, 0,NULL }
 
 
 struct  CiphertextDecryptionSelectionProto
