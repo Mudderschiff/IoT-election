@@ -217,7 +217,8 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
     word32 a_size = sp_unsigned_bin_size(a);
     word32 b_size = sp_unsigned_bin_size(b); 
     word32 tmp_size = a_size + b_size;
-    
+    ESP_LOGI("HASH_ELEMS", "a_size: %d, b_size: %d, tmp_size: %d", a_size, b_size, tmp_size);
+
     byte *tmp = (byte *)malloc(tmp_size);
     if (tmp == NULL) {
         ESP_LOGE("HASH_ELEMS", "Failed to allocate memory for tmp");
@@ -822,6 +823,10 @@ int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTa
     NEW_MP_INT_SIZE(dec_contest->description_hash, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(dec_contest->description_hash, 256);
     sp_copy(contest->description_hash, dec_contest->description_hash);
+    ESP_LOGI("COMPUTE_DEC_SHARE_CONTEST", "Base Hash");
+    print_sp_int(base_hash);
+    int size = sp_unsigned_bin_size(base_hash);
+    ESP_LOGI("COMPUTE_DEC_SHARE_CONTEST", "Base Hash Size: %d", size);
 
     dec_contest->num_selections = contest->num_selections;
     dec_contest->selections = (CiphertextDecryptionSelection *)malloc(contest->num_selections * sizeof(CiphertextDecryptionSelection));
