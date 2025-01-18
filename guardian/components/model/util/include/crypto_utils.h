@@ -89,8 +89,9 @@ typedef struct{
 
 
 typedef struct {
+    char* object_id;
     uint8_t guardian_id[6];
-    sp_int* decryption_share;
+    sp_int* decryption;
     sp_int* proof_pad;
     sp_int* proof_data;
     sp_int* proof_challenge;
@@ -98,14 +99,18 @@ typedef struct {
 } CiphertextDecryptionSelection;
 
 typedef struct{
+    char* object_id;
     uint8_t guardian_id[6];
-    sp_int* decryption_hash;
+    sp_int* description_hash;
+    int num_selections;
     CiphertextDecryptionSelection* selections;
 } CiphertextDecryptionContest;
 
 typedef struct {
+    char* object_id;
     uint8_t guardian_id[6];
     sp_int* public_key;
+    int num_contest;
     CiphertextDecryptionContest* contests;
 } DecryptionShare;
 

@@ -142,20 +142,12 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
     return 0;
 }
 
-/*
-int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTallySelections *selections, DecryptionShare *share) {
-    share->public_key = NULL;
-    NEW_MP_INT_SIZE(share->public_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(share->public_key, 3072);
-    sp_copy(share->public_key, guardian->private_key);
+int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphertally, DecryptionShare *share) {
+    share.
     share->guardian_id = NULL;
-    NEW_MP_INT_SIZE(share->guardian_id, 48, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(share->guardian_id, 48);
-    sp_copy(share->guardian_id, guardian->guardian_id);
+    share->guardian_id = (uint8_t*)XMALLOC(6, NULL, DYNAMIC_TYPE_BIGINT);
+    memcpy(share->guardian_id, guardian->guardian_id, 6);
 
-    //CiphertextDecryptionContest *contests = (CiphertextDecryptionContest*)XMALLOC(selections->num_selections * sizeof(CiphertextDecryptionContest), NULL, DYNAMIC_TYPE_BIGINT);
-
-
+    
     return 0;
 }
-*/

@@ -295,7 +295,10 @@ void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int dat
 void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
     CiphertextTally tally;
+    DecryptionShare share;
     deserialize_ciphertext_tally((uint8_t*)data, data_len, &tally);
+    compute_decryption_share(&guardian, &tally, &share);
+
 }
 
 // Function to add an entry to the key pair map

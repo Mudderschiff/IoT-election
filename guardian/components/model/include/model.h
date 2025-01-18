@@ -10,4 +10,5 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
 int generate_election_key_pair(int quorum, ElectionKeyPair *key_pair);
 int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPair *receiver, ElectionPartialKeyPairBackup *backup);
 int verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPair *sender, ElectionPartialKeyPairBackup *backup, ElectionPartialKeyVerification *verification);
+int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphertally, DecryptionShare *share);
 #endif // MOD_MATH_H
