@@ -297,6 +297,7 @@ def buildElection() -> None:
 	parsed_data = parse_ciphertext_tally(ciphertext_tally, context.crypto_extended_base_hash)
 	serialized_message = parsed_data.SerializeToString()
 	mqttc.publish("ciphertally", serialized_message, 0, True)
+	mqttc.subscribe("decryption_share")
 
 	
 	
@@ -309,6 +310,13 @@ def on_message(mosq, obj, msg):
 		joint_key = binascii.hexlify(buffer[:JOINT_KEY_SIZE]).decode('utf-8')
 		commitment = binascii.hexlify(buffer[JOINT_KEY_SIZE:JOINT_KEY_SIZE + COMMITMENT_SIZE]).decode('utf-8')
 		buildElection()
+	if msg.topic == "decryption_share":
+		buffer = msg.payload
+		deserialized = tally_pb2.DecryptionShareProto()
+		deserialized.ParseFromString(buffer)
+		print(deserialized)
+		
+		
 		
 
 	

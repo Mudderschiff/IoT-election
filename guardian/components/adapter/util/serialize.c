@@ -315,8 +315,8 @@ uint8_t* serialize_DecryptionShare(DecryptionShare* share, unsigned* len) {
     sp_to_unsigned_bin(share->public_key, proto.public_key.data);
     print_sp_int(share->public_key);
     proto.num_contests = share->num_contest;
+    proto.n_contests = share->num_contest;
     ESP_LOGI("serialize", "Num Contests: %d", share->num_contest);
-
 
     contests = (CiphertextDecryptionContestProto**)malloc(sizeof(CiphertextDecryptionContestProto*) * share->num_contest);
 
@@ -335,6 +335,7 @@ uint8_t* serialize_DecryptionShare(DecryptionShare* share, unsigned* len) {
         sp_to_unsigned_bin(share->contests[i].description_hash, contests[i]->description_hash.data);
         print_sp_int(share->contests[i].description_hash);
         
+        contests[i]->n_selections = share->contests[i].num_selections;
         contests[i]->num_selections = share->contests[i].num_selections;
         ESP_LOGI("serialize", "Num Selections: %d", share->contests[i].num_selections);
         selections = (CiphertextDecryptionSelectionProto**)malloc(sizeof(CiphertextDecryptionSelectionProto*) * share->contests[i].num_selections);
