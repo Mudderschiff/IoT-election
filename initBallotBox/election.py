@@ -296,7 +296,7 @@ def buildElection() -> None:
 	
 	parsed_data = parse_ciphertext_tally(ciphertext_tally, context.crypto_extended_base_hash)
 	serialized_message = parsed_data.SerializeToString()
-	mqttc.publish("ciphertally", serialized_message, 0, True)
+	mqttc.publish("ciphertally", serialized_message, 0, False)
 	mqttc.subscribe("decryption_share")
 
 	

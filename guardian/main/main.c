@@ -1,5 +1,6 @@
 #include "model.h"
 #include "adapter.h"
+#include "view.h"
 #include "serialize.h"
 #include "freertos/task.h"
 #include "freertos/FreeRTOS.h"
@@ -10,6 +11,7 @@
 #include "esp_task_wdt.h"
 
 static const char *TAG = "mqtt_example";
+
 
 void app_main(void)
 {   
@@ -32,6 +34,8 @@ void app_main(void)
      */
     ESP_ERROR_CHECK(example_connect());
 
+    // Delay for 5 seconds
+    xTaskCreatePinnedToCore(guiTask, "gui", 4096*2, NULL, 0, NULL, 1);
 
     // Each guardian connect to broker
     mqtt_app_start();

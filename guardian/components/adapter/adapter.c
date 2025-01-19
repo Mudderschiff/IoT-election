@@ -264,32 +264,7 @@ void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_
 
 void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
-    /*
-    
-    
-    ElectionPartialKeyPairBackup backup;
-    ElectionPartialKeyVerification verification;
-    deserialize_election_partial_key_backup((uint8_t*)data, data_len, &backup);
-
-    if(memcmp(backup.receiver, mac, 6) != 0)
-    {
-        ESP_LOGI(TAG, "Challenge not intended for this guardian");
-        free_ElectionPartialKeyPairBackup(&backup);
-        return;
-    }
-
-    verify_election_partial_key_backup(find_key_pair(backup.sender), find_key_pair(backup.receiver), &backup, &verification);
-    if(verification.verified == 0)
-    {
-        ESP_LOGI(TAG, "Proof failed");
-        // send challenge
-    } else {
-        ESP_LOGI(TAG, "Proof verified");
-        add_backup(&backup);
-    }
-
-    free_ElectionPartialKeyPairBackup(&backup);
-    */
+    return;
 }
 
 void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len)
