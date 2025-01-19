@@ -298,7 +298,10 @@ void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, 
     DecryptionShare share;
     deserialize_ciphertext_tally((uint8_t*)data, data_len, &tally);
     compute_decryption_share(&guardian, &tally, &share);
-
+    void *buffer;
+    size_t len;
+    buffer = serialize_DecryptionShare(&share, &len);
+    esp_mqtt_client_publish(client, "decryption_share", buffer, len, 2, 0);
 }
 
 // Function to add an entry to the key pair map

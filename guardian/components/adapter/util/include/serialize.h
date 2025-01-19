@@ -13,6 +13,7 @@ int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, Elect
 uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len);
 int deserialize_election_key_pair(uint8_t* buffer, unsigned len, ElectionKeyPair* key_pair);
 int deserialize_ciphertext_tally(uint8_t *buffer, unsigned len, CiphertextTally* ciphertally);
+uint8_t* serialize_DecryptionShare(DecryptionShare* share, unsigned* len);
 
 #endif // SERIALIZE_H
 

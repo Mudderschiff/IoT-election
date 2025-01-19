@@ -101,6 +101,7 @@ typedef struct {
 
 typedef struct{
     char* object_id;
+    uint8_t guardian_id[6];
     sp_int *public_key;
     sp_int* description_hash;
     int num_selections;

@@ -298,3 +298,88 @@ int deserialize_ciphertext_tally(uint8_t *buffer, unsigned len, CiphertextTally*
 }
 
 
+
+
+uint8_t* serialize_DecryptionShare(DecryptionShare* share, unsigned* len) {
+    DecryptionShareProto proto = DECRYPTION_SHARE_PROTO__INIT;
+    CiphertextDecryptionContestProto** contests;
+    CiphertextDecryptionSelectionProto** selections;
+
+    proto.object_id = strdup(share->object_id);
+    ESP_LOGI("serialize", "object id %s", share->object_id);
+    proto.guardian_id.len = sizeof(share->guardian_id);
+    proto.guardian_id.data = share->guardian_id;
+    ESP_LOGI("serialize", "guardian id %02x %02x %02x %02x %02x %02x", share->guardian_id[0], share->guardian_id[1], share->guardian_id[2], share->guardian_id[3], share->guardian_id[4], share->guardian_id[5]);
+    proto.public_key.len = sp_unsigned_bin_size(share->public_key);
+    proto.public_key.data = (uint8_t*)malloc(proto.public_key.len);
+    sp_to_unsigned_bin(share->public_key, proto.public_key.data);
+    print_sp_int(share->public_key);
+    proto.num_contests = share->num_contest;
+    ESP_LOGI("serialize", "Num Contests: %d", share->num_contest);
+
+
+    contests = (CiphertextDecryptionContestProto**)malloc(sizeof(CiphertextDecryptionContestProto*) * share->num_contest);
+
+    
+    for(int i = 0; i < share->num_contest; i++) {
+        contests[i] = (CiphertextDecryptionContestProto*)malloc(sizeof(CiphertextDecryptionContestProto));
+        ciphertext_decryption_contest_proto__init(contests[i]);
+        contests[i]->object_id = strdup(share->contests[i].object_id);
+        ESP_LOGI("serialize", "Contest object id %s", share->contests[i].object_id);
+        contests[i]->guardian_id.len = sizeof(share->guardian_id);
+        contests[i]->guardian_id.data = share->guardian_id;
+        ESP_LOGI("serialize", "Contest guardian id %02x %02x %02x %02x %02x %02x", share->guardian_id[0], share->guardian_id[1], share->guardian_id[2], share->guardian_id[3], share->guardian_id[4], share->guardian_id[5]);
+
+        contests[i]->description_hash.len = sp_unsigned_bin_size(share->contests[i].description_hash);
+        contests[i]->description_hash.data = (uint8_t*)malloc(contests[i]->description_hash.len);
+        sp_to_unsigned_bin(share->contests[i].description_hash, contests[i]->description_hash.data);
+        print_sp_int(share->contests[i].description_hash);
+        
+        contests[i]->num_selections = share->contests[i].num_selections;
+        ESP_LOGI("serialize", "Num Selections: %d", share->contests[i].num_selections);
+        selections = (CiphertextDecryptionSelectionProto**)malloc(sizeof(CiphertextDecryptionSelectionProto*) * share->contests[i].num_selections);
+        for(int j = 0; j < share->contests[i].num_selections; j++) {
+            selections[j] = (CiphertextDecryptionSelectionProto*)malloc(sizeof(CiphertextDecryptionSelectionProto));
+            ciphertext_decryption_selection_proto__init(selections[j]);
+            selections[j]->object_id = strdup(share->contests[i].selections[j].object_id);
+            ESP_LOGI("serialize", "Selection object id %s", share->contests[i].selections[j].object_id);
+            selections[j]->guardian_id.len = sizeof(share->contests[i].selections[j].guardian_id);
+            selections[j]->guardian_id.data = share->contests[i].selections[j].guardian_id;
+            ESP_LOGI("serialize", "Selection guardian id %02x %02x %02x %02x %02x %02x", share->contests[i].selections[j].guardian_id[0], share->contests[i].selections[j].guardian_id[1], share->contests[i].selections[j].guardian_id[2], share->contests[i].selections[j].guardian_id[3], share->contests[i].selections[j].guardian_id[4], share->contests[i].selections[j].guardian_id[5]);
+
+            selections[j]->decryption.len = sp_unsigned_bin_size(share->contests[i].selections[j].decryption);
+            selections[j]->decryption.data = (uint8_t*)malloc(selections[j]->decryption.len);
+            sp_to_unsigned_bin(share->contests[i].selections[j].decryption, selections[j]->decryption.data);
+            print_sp_int(share->contests[i].selections[j].decryption);
+            
+            selections[j]->proof_pad.len = sp_unsigned_bin_size(share->contests[i].selections[j].proof.pad);
+            selections[j]->proof_pad.data = (uint8_t*)malloc(selections[j]->proof_pad.len);
+            sp_to_unsigned_bin(share->contests[i].selections[j].proof.pad, selections[j]->proof_pad.data);
+            print_sp_int(share->contests[i].selections[j].proof.pad);
+
+            selections[j]->proof_data.len = sp_unsigned_bin_size(share->contests[i].selections[j].proof.data);
+            selections[j]->proof_data.data = (uint8_t*)malloc(selections[j]->proof_data.len);
+            sp_to_unsigned_bin(share->contests[i].selections[j].proof.data, selections[j]->proof_data.data);
+            print_sp_int(share->contests[i].selections[j].proof.data);
+
+            selections[j]->proof_challenge.len = sp_unsigned_bin_size(share->contests[i].selections[j].proof.challenge);
+            selections[j]->proof_challenge.data = (uint8_t*)malloc(selections[j]->proof_challenge.len);
+            sp_to_unsigned_bin(share->contests[i].selections[j].proof.challenge, selections[j]->proof_challenge.data);
+            print_sp_int(share->contests[i].selections[j].proof.challenge);
+
+            selections[j]->proof_response.len = sp_unsigned_bin_size(share->contests[i].selections[j].proof.response);
+            selections[j]->proof_response.data = (uint8_t*)malloc(selections[j]->proof_response.len);
+            sp_to_unsigned_bin(share->contests[i].selections[j].proof.response, selections[j]->proof_response.data);
+            print_sp_int(share->contests[i].selections[j].proof.response);
+        }
+        contests[i]->selections = selections;
+    }
+    proto.contests = contests;
+
+    
+    *len = decryption_share_proto__get_packed_size(&proto);
+    uint8_t* buffer = (uint8_t *)calloc(*len, sizeof(char));
+    decryption_share_proto__pack(&proto, buffer);
+    return buffer;
+}
+

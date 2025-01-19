@@ -786,7 +786,7 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
  * @param dec_selection: The decryption selection
  * @return 0 on success, -1 on failure
  */
-static int compute_decryption_share_for_selection(sp_int *private_key, sp_int* pad, sp_int* data, sp_int* base_hash , CiphertextDecryptionSelection *dec_selection) {
+static int compute_decryption_share_for_selection(sp_int* privatekey, sp_int* pad, sp_int* data, sp_int* base_hash , CiphertextDecryptionSelection *dec_selection) {
     dec_selection->decryption = NULL;
     NEW_MP_INT_SIZE(dec_selection->decryption, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(dec_selection->decryption, 3072);
@@ -802,8 +802,8 @@ static int compute_decryption_share_for_selection(sp_int *private_key, sp_int* p
     sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
 
     // Partially Decrypt Elgamal Ciphertext with a known Elgamal Secret Key
-    exptmod(pad, private_key, large_prime, dec_selection->decryption);
-    make_chaum_pedersen(pad, data, private_key, dec_selection->decryption, nonce_seed, base_hash, &dec_selection->proof);
+    exptmod(pad, privatekey, large_prime, dec_selection->decryption);
+    make_chaum_pedersen(pad, data, privatekey, dec_selection->decryption, nonce_seed, base_hash, &dec_selection->proof);
     
     FREE_MP_INT_SIZE(nonce_seed, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
@@ -818,6 +818,8 @@ int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTa
     NEW_MP_INT_SIZE(dec_contest->public_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(dec_contest->public_key, 3072);
     sp_copy(guardian->public_key, dec_contest->public_key);
+
+    memcpy(dec_contest->guardian_id, guardian->guardian_id, sizeof(guardian->guardian_id));
 
     dec_contest->description_hash = NULL;
     NEW_MP_INT_SIZE(dec_contest->description_hash, 256, NULL, DYNAMIC_TYPE_BIGINT);
@@ -834,6 +836,8 @@ int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTa
         return -1;
     }
     for (int i = 0; i < dec_contest->num_selections; i++) {
+        dec_contest->selections[i].object_id = strdup(contest->selections[i].object_id);
+        memcpy(dec_contest->selections[i].guardian_id, guardian->guardian_id, sizeof(guardian->guardian_id));
         compute_decryption_share_for_selection(guardian->private_key, contest->selections[i].ciphertext_pad, contest->selections[i].ciphertext_data, base_hash, &dec_contest->selections[i]);
     }
     return 0;

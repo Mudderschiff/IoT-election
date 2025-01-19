@@ -147,6 +147,8 @@ int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphert
     share->object_id = strdup(ciphertally->object_id);
     share->public_key = NULL;
 
+    memcpy(share->guardian_id, guardian->guardian_id, sizeof(guardian->guardian_id));
+
     NEW_MP_INT_SIZE(share->public_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(share->public_key, 3072);
     sp_copy(guardian->public_key, share->public_key);
@@ -154,9 +156,6 @@ int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphert
     share->num_contest = ciphertally->num_contest;
     share->contests = (CiphertextDecryptionContest*)XMALLOC(ciphertally->num_contest * sizeof(CiphertextDecryptionContest), NULL, DYNAMIC_TYPE_BIGINT);
     for (int i = 0; i < ciphertally->num_contest; i++) {
-        print_sp_int(ciphertally->base_hash);
-        int size = sp_unsigned_bin_size(ciphertally->base_hash);
-        ESP_LOGI("COMPUTE_DEC_SHARE", "Base Hash Size: %d", size);
         compute_decryption_share_for_contest(guardian, &ciphertally->contests[i], ciphertally->base_hash , &share->contests[i]);
     }
     
