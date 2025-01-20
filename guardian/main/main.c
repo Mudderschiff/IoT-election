@@ -1,47 +1,43 @@
 #include "model.h"
+#include "adapter.h"
+#include "view.h"
+#include "serialize.h"
 #include "freertos/task.h"
 #include "freertos/FreeRTOS.h"
+#include "nvs_flash.h"
+#include "protocol_examples_common.h"
+#include "buff.pb-c.h"
+#include "esp_heap_caps.h"
+#include "esp_task_wdt.h"
+
+static const char *TAG = "mqtt_example";
 
 
-/*
-Key Ceremony:
-Round 1: Announce and Share keys
-client_id/publickey
-mqtt broker check: all_guardians_annouced = #/public_keys = NUMBER_OF_GUARDIANS
-	
-Round 2
-Each guardian generated election partial key backups
-For each #/public_key generate_election_partial_key_backup
-MQTT Broker: Each guardian needs NUMBER_OF_GUARDIANS - 1 Partial key backups
-	
-client_id/guardian_id/ElectionPartialKeyBackup
-Round 3
-client_id/guardian_id/ElectionPartialKeyVerification
-verify_polynomial_coordinate
-MQTT Broker: all_backups_verified True Confirms all guardians have verified the backups of all other guardians
-receive_backup_verifications
-Final
-MQTT Broker: if all backups verified. combine_election_public_keys (pub key + commitment hash)
-*/
+void app_main(void)
+{   
 
+    esp_log_level_set("*", ESP_LOG_INFO);
+    esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);
+    esp_log_level_set("mqtt_example", ESP_LOG_VERBOSE);
+    esp_log_level_set("transport_base", ESP_LOG_VERBOSE);
+    esp_log_level_set("esp-tls", ESP_LOG_VERBOSE);
+    esp_log_level_set("transport", ESP_LOG_VERBOSE);
+    esp_log_level_set("outbox", ESP_LOG_VERBOSE);
 
-void app_main(void) {
-    ElGamalKeyPair key_pair;
-    key_pair.secret_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
-    key_pair.public_key = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(3072)), NULL, DYNAMIC_TYPE_BIGINT);
-    if (key_pair.secret_key != NULL) {
-        XMEMSET(key_pair.secret_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(256)));
-        mp_init_size(key_pair.secret_key, MP_BITS_CNT(256));
-    }
-    if (key_pair.public_key != NULL) {
-        XMEMSET(key_pair.public_key, 0, MP_INT_SIZEOF(MP_BITS_CNT(3072)));
-        mp_init_size(key_pair.public_key, MP_BITS_CNT(3072));
-    }
-    
-    generate_election_key_pair(5, &key_pair);
-    print_sp_int(key_pair.secret_key);
-    print_sp_int(key_pair.public_key);
+    ESP_ERROR_CHECK(nvs_flash_init());
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    //compute_polynomial_coordinate(1, NULL, NULL);
+    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
+     * Read "Establishing Wi-Fi or Ethernet Connection" section in
+     * examples/protocols/README.md for more information about this function.
+     */
+    ESP_ERROR_CHECK(example_connect());
+
+    // Delay for 5 seconds
+    xTaskCreatePinnedToCore(guiTask, "gui", 4096*2, NULL, 0, NULL, 1);
+
+    // Each guardian connect to broker
+    mqtt_app_start();
 
 }

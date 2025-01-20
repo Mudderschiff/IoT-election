@@ -1,0 +1,45 @@
+syntax = "proto2";
+
+message SchnorrProofProto {
+    required bytes pubkey = 1;
+    required bytes commitment = 2;
+    required bytes challenge = 3;
+    required bytes response = 4;
+}
+
+message CoefficientProto {
+    required bytes value = 1;
+    required bytes commitment = 2;
+    required SchnorrProofProto proof = 3;
+}
+
+message ElectionPolynomialProto {
+    required int32 num_coefficients = 1;
+    repeated CoefficientProto coefficients = 2;
+}
+
+message ElectionKeyPairProto {
+    required bytes guardian_id = 1; // fixed length of 6 bytes
+    required bytes public_key = 2;
+    required bytes private_key = 3;
+    required ElectionPolynomialProto polynomial = 4;
+}
+
+message HashedElGamalCiphertextProto {
+    required bytes pad = 1;
+    required bytes data = 2;
+    required bytes mac = 3;
+}
+
+message ElectionPartialKeyPairBackupProto {
+    required bytes sender = 1; // fixed length of 6 bytes
+    required bytes receiver = 2; // fixed length of 6 bytes
+    required HashedElGamalCiphertextProto encrypted_coordinate = 3;
+}
+
+message ElectionPartialKeyVerificationProto {
+    required bytes sender = 1; // fixed length of 6 bytes
+    required bytes receiver = 2; // fixed length of 6 bytes
+    required bytes verifier = 3; // fixed length of 6 bytes
+    required bool verified = 4;
+}

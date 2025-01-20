@@ -1,22 +1,40 @@
 dependencies:
+  espressif/button:
+    component_hash: 30a3f495c3862d505ce6e41adbbd218b2750e9723ab2151feff00e9fe685b326
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 3.5.0
+  espressif/cmake_utilities:
+    component_hash: 351350613ceafba240b761b4ea991e0f231ac7a9f59a9ee901f751bddc0bb18f
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 0.5.3
   idf:
     component_hash: null
     source:
       type: idf
     version: 5.2.2
   lvgl/lvgl:
-    component_hash: 77ce3a05acc0f9709986d61ab2655f6e15c5803f8866aa7fe94a6cfeee6c0cd1
+    component_hash: d7c1ac037ae6e85d94897f807d6e7ba0946a83e720074fc95a4f6241da9f9f53
     source:
       service_url: https://api.components.espressif.com/
       type: service
-    version: 7.11.0
+    version: 8.4.0
   lvgl_esp32_drivers:
-    component_hash: 8c486a2bf5b62b3bd5f1e39cf785766c3665347aa7082eb858291a05056422c7
+    component_hash: c228e24494c6e820aec9d27368983561c5f0375d8ebc38bc50030162c1d6dc95
     source:
       git: git@github.com:Mudderschiff/lvgl_esp32_drivers.git
       path: .
       type: git
-    version: 733271a547fb33baa5fb9bcb5041c02d56c6afdd
-manifest_hash: 6087400ef0550783773d06455a12b1967d35f69195afa941a5a23cdf514954b1
+    version: 9363c9a9a498a33ad13b2d8c7897419f5216ab5c
+  protocol_examples_common:
+    component_hash: null
+    source:
+      path: /home/mudderschiff/esp/v5.2.2/esp-idf/examples/common_components/protocol_examples_common
+      type: local
+    version: '*'
+manifest_hash: 6f61c21b6bc4c2fa046da6a62d3d9b29699ebb7aad51660143d92671e67eacf4
 target: esp32
 version: 1.0.0

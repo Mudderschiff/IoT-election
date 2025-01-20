@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+
+message PlaintextBallotSelectionProto {
+	required bool vote = 1;
+	required bool is_placeholder_selection = 2;
+}
+
+
+message PlaintextBallotContestProto {
+	required int32 num_selections = 1;
+	repeated PlaintextBallotSelectionProto ballot_selections = 2;
+}
+
+message PlaintextBallotProto {
+	required string style_id = 1;
+	required int32 num_contests = 2;
+	repeated PlaintextBallotContestProto contests = 3;
+}
+
+
+message CiphertextBallotProto {
+	required string style_id = 1;
+	required bytes code_seed = 2;
+	required bytes code = 3;
+	required bytes crypto_hash = 4;
+}
+
+
