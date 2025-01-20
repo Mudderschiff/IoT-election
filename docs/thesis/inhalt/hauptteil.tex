@@ -14,9 +14,24 @@ At the core of the module is the ESP32-D0WDQ6 chip \cite[6]{esp32-module}. This 
 	\label{Fig:esp32-crypto}
 \end{figure}
 
-
-
 \section{Implementation/Software Architecture}
+Espressif IoT Development Framework (ESP-IDF) is a software development framework intended for the development of Internet-of-Things (IoT) applications for the ESP32 board \cite[3]{esp-idf}. ESP-IDF consists of components written specifically for ESP-IDF as well as third-party libraries.\cite[123]{esp-idf} For example, the real-time operating system kernel used for ESP-IDF applications is the third-party component called FreeRTOS \cite[1893]{esp-idf}. ESP-IDF projects use the same componment based approach and can be seen as an amalgamation of a number of components \cite[2240]{esp-idf}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\textwidth]{abbildungen/Diagramme/components.png}
+	\caption{}
+	\label{Fig:uml-classes-python}
+\end{figure}
+
+
+
+
+ESP32 contains a hardware random number generator, values from it can be obtained using the APIs esp_random() and esp_fill_random(). If certain conditions are met, the RNG mixes samples of physical noise continously into the internal hardware RNG state to provide entropy. If the conditions are not met, the output of the RNG should be considered pseudo-random. \cite[2140]{esp-idf}
+
+
+
+
 \subsection{Model}
 \begin{figure}
 	\centering
