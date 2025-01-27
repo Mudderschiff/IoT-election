@@ -17,12 +17,24 @@
   year         = {2020}
 }
 
-@manual{esp32-ds,
+@manual{nodemcu-ds,
   title        = {NodeMCU ESP32 Datasheet},
   author       = {Joy-it},
   organization = {Joy-it},
   month        = {sep},
   year         = {2018}
+}
+
+@manual{esp32-ds,
+  title        = "{ESP32 Series} Datasheet",
+  author       = "",
+  organization = "Espressif Systems",
+  address      = "",
+  edition      = "v4.7",
+  month        = "09",
+  year         = "2024",
+  note         = "",
+  url = {https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf}
 }
 
 @manual{lcd,
@@ -33,6 +45,7 @@
   month        = "",
   year         = "",
   note         = "",
+  url = {http://www.lcdwiki.com/res/MAR1801/1.8inch_Arduino_SPI_Module_MAR1801_User_Manual_EN.pdf},
   annote       = ""
 }
 
@@ -44,20 +57,21 @@
   edition      = "Rev1.0",
   month        = "03",
   year         = "2019",
-  note         = "",
+  url = {https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html},
   annote       = ""
 }
 
-@manual{eg-spec,
+@misc{eg-spec,
   title        = "{ElectionGuard} Specification",
   author       = "Josh Benaloh and Michael Naehrig",
   organization = "Microsoft Research",
-  address      = "",
   edition      = "v1.0",
-  month        = "",
-  year         = "",
-  note         = "",
-  annote       = ""
+  month        = "01",
+  year         = "2022",
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/Election-Tech-Initiative/electionguard/releases/tag/v1.0}},
+  commit = {93956943414961582b9dc377b8deea6fd7f9fb74},
+  note = {Accessed on 2025-01-21}
 }
 
 @manual{esp32-ref,
@@ -70,19 +84,6 @@
   year         = "2024",
   note         = "",
   url = {https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf},
-  annote       = ""
-}
-
-@manual{esp32-datasheet,
-  title        = "{ESP32 Series} Datasheet",
-  author       = "",
-  organization = "Espressif Systems",
-  address      = "",
-  edition      = "v4.5",
-  month        = "",
-  year         = "2024",
-  note         = "",
-  url = {https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf},
   annote       = ""
 }
 
@@ -133,6 +134,7 @@
   url = {https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf}
 }
 
+
 @manual{esp32-module-new,
   author = {Espressif Systems},
   organization = {Espressif Systems},
@@ -163,7 +165,7 @@
   year = {2024},
   month = {sep},
   title = {ESP32 Series Datasheet},
-  url = {https://www.espressif.com/sites/default/files/documentation/esp32_errata_en.pdf}
+  url = {https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32/esp-chip-errata-en-master-esp32.pdf}
 }
 
 @misc{python-reference,
@@ -174,4 +176,64 @@
   howpublished = {\url{https://github.com/Election-Tech-Initiative/electionguard-python/tree/1.4.0}},
   commit = {d2f3d5fb0bffbbeedb54baf9474b2b80c7cd71d3},
   note = {Accessed on 2024-10-18},
+}
+
+@misc{lcd-driver,
+  author = {Light and Versatile Embedded Graphics Library},
+  title = {Display and touchpad drivers for ESP32 using LVGL},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/lvgl/lvgl_esp32_drivers}},
+  commit = {26fe6e7703162ac9b0ee82405e858dc37b885d1f},
+  note = {Accessed on 2024-10-18},
+}
+
+
+@manual{esp-idf,
+  author = {Espressif Systems},
+  title = {ESP-IDF Programming Guide},
+  version = {v5.1},
+  year = {2023},
+  month = {jun},
+}
+
+@misc{eg-docs,
+  author = {Election Tech Initiative},
+  title = {ElectionGuard Docs},
+  version = {2.1},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/Election-Tech-Initiative/electionguard/tree/v2.1/docs}},
+  commit = {0f99229669139d3cae6cfddc0a3d554319a84a2e},
+  note = {Accessed on 2025-01-21},
+}
+
+@INPROCEEDINGS{9292199,
+  author={Ionescu, Valeriu Manuel and Enescu, Florentina Magda},
+  booktitle={2020 IEEE 26th International Symposium for Design and Technology in Electronic Packaging (SIITME)}, 
+  title={Investigating the performance of MicroPython and C on ESP32 and STM32 microcontrollers}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={234-237},
+  keywords={Microcontrollers;Python;Hardware;Libraries;Software;Resource management;Performance evaluation;MicroPython;ESP32;STM32;performance;hash;CRC},
+  doi={10.1109/SIITME50350.2020.9292199}}
+
+
+@misc{micropython,
+  author = {MicroPython},
+  title = {MicroPython documentation},
+  version = {1.24.0},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/micropython/micropython}},
+  commit = {ecfdd5d6f9be971852003c2049600dc7b3e2a838},
+  note = {Accessed on 2025-01-21},
+}
+
+@misc{espidf-docs
+  author = {Espressif Systems (Shanghai) Co., Ltd.},
+  title = {ESP-IDF Programming Guide},
+  version = {5.4},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/espressif/esp-idf/tree/release/v5.4}},
+  commit = {67c1de1eebe095d554d281952fde63c16ee2dca0},
+  note = {Accessed on 2025-01-21},
 }

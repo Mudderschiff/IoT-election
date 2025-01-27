@@ -1,0 +1,29 @@
+@startuml
+skinparam component {
+	backgroundColor<<external component>> Gray
+}
+package "Guardian" {
+	[wolfssl] as w
+	component model {
+		[wolfssl] <<external component>>
+	}
+	component adapter {
+		[mqtt] <<external component>>
+	}
+	component view {
+		[lvgl_esp32_drivers] <<external component>>
+		[lvgl] <<external component>>
+	}
+	[model] --> [adapter]
+	[adapter] --> [model]
+	[adapter] --> [view]
+	[view] --> [adapter]
+}
+
+note bottom of w
+	This component overwrites 
+	the default configuration 
+	of the external component wolfssl
+end note
+
+@enduml

@@ -13,6 +13,7 @@ Practically all cryptographic methods have the task of ensuring one of the follo
 
 Cryptographic algorithms are mathematical equations, i.e. mathematical functions for encryption and decryption \cite[19]{crypto}. A cryptographic algorithm for encryption can be used in a variety of ways in different applications. To ensure that an application always runs in the same and correct correct way, cryptographic protocols are defined. In contrast to the cryptographic algorithms, the protocols are procedures for controlling the flow of transactions for certain applications. \cite[22]{crypto}.
 
+\section{Cryptog}
 The idea of combining cryptographic methods with voting systems is not new. In 1981, David Chaum published a cryptographic technique based on public key cryptography that hides who a participant communicates with, aswell as the content of the communication. The untracable mail system requires messages to pass through a cascade of mixes (also known as a Mix Network) \cite[86]{chaum}. Chaum proposes that the techniques can be used in elections in which an individual can correspond with a record-keeping organisation or an interested party under a unique pseudonym. The unique pseudonym has to appear in a roster of accetable clients. A interested party or record keeping organisation can verify that the message was sent by a registered voter. The record-keeping organisation or the interested party can also verify that the message was not altered during transmission. \cite[84]{chaum}. 
 
 In this use case, the properties of Confidentiality, Authenticity, Integrity and Non-repudiation are ensured. However, to be worthy of public trust, an election process must give voters and observers compelling evidence that the election was conducted properly without breaking voters confidentiality. The problem of public trust is further exacerbated to now having to trust election software and hardware, in addition to election officials, and proceedurs.
@@ -30,7 +31,7 @@ Submitted protocols must support the following properties
 
 \section{ElectionGuard}
 
-One of the first pilots to see how E2E verifiable elections works in a real election took place in a district of Preston, Idaho, United States, on November 8, 2022. The Verity scanner from Hart InterCivic was used in this pilot, which was integrated with Microsoft's ElectionGuard. [EAC Report]. ElectionGuard is a toolkit that encapsulates cryptographic functionality and provides simple interfaces that can be used without cryptographic expertise. The principal innovation of ElectionGuard is the seperation of the cryptographic tools from the core mechanics and user interfaces of voting systems. In it's preferred deployment, ElectionGuard doesn't replace the existing vote counting infrastructure but instead runs alongside and produces its own independently-verifiable tallies \cite[1-2]{eg-paper}. The cryptographic design is largely inspired by the cryptographic voting protocol by Cohen (now Benaloh) and Fischer in 1985 and the voting protocol by Cramer, Gennaro and Schoenmakers in 1997 \cite[5]{eg-paper}. 
+One of the first pilots to see how E2E verifiable elections works in a real election took place in a district of Preston, Idaho, United States, on November 8, 2022. The Verity scanner from Hart InterCivic was used in this pilot, which was integrated with Microsoft's ElectionGuard \cite{EAC}. ElectionGuard is a toolkit that encapsulates cryptographic functionality and provides simple interfaces that can be used without cryptographic expertise. The principal innovation of ElectionGuard is the seperation of the cryptographic tools from the core mechanics and user interfaces of voting systems. In it's preferred deployment, ElectionGuard doesn't replace the existing vote counting infrastructure but instead runs alongside and produces its own independently-verifiable tallies \cite[1-2]{eg-paper}. The cryptographic design is largely inspired by the cryptographic voting protocol by Cohen (now Benaloh) and Fischer in 1985 and the voting protocol by Cramer, Gennaro and Schoenmakers in 1997 \cite[5]{eg-paper}. 
 
 ----------------------------------------------
 The philosophy of ElectionGuard has been to cover the majority of voting scenarios with an approach that is as simple as possible to understand and verify. It can be used with Precinct Ballot Scanners, Electronic Ballot Markers, Internet Voting, Risk-Limiting Audits and even vote by mail and many more.
@@ -42,6 +43,54 @@ happens in between, however, can vary widely. [ElectionGuard: a Cryptographic To
 to Enable Verifiable Elections].
 
 This thesis focuses on the implementation of the Key Generation Ceremony and the Guardians using the ESP32 microcontroller. The ESP32 is a low-cost, low-power system on a chip microcontroller. It is widely used in IoT applications. [source]
-----------------------------------------------
-\subsection{Election Verification}
+
 ElectionGuard support the central aspects which a VVSG 2.0 compliant voting system must support Cast as Intended, Recorded as Cast and Tallied as Recorded. \cite[17]{eg-paper}. Key element supporting cast-as-intended and recorded-as-cast verifiability is through confirmation codes. Ballots can be ce challenged or cast and both are included in the election record. Voters can check if the expected confirmation code appears in the election records and for the challenged ballots, that it shows the correct selections \cite[18]{eg-paper}. Tallied-as-cast verifiability is supported through the inclusion of all ballots and decryption proofs in the election record. Any voter can verify that the ballot is accurately incorporated in the tally, and the decryption proofs demonstrate the validity of the announced tally \cite[18]{eg-paper}. To confirm the election's integrity, independent verification software can be used at any time after the completion of an election. \cite[6]{eg-paper}. Some, may choose even to write their own verifiers.  
+
+\subsection{Cryptographic Design & Structure}
+An election in electionguard comprises of Pre-election, Intra-election and Post-election phases. In the following sections, we will discuss the cryptographic design and the overall structure of ElectionGuard in each of these phases.
+
+\subsubsection{Pre-election}. 
+The pre-election phase contains the administrative task of configuring the election followed by the key generation ceremony. The election is defined using an election manifest \cite[7]{eg-paper}. The manifest defines common elements when conducting an election, such as locations, candidates, parties, contests, and ballot styles. The election terms and the manifest structure are largely based on the NIST SP-1500-100 Election Results Common Data Format Specification and the Civics Common Standard Data Specification.\cite{eg-docs}.  The manifest guarantees that ElectionGuard software records ballots properly. \cite[7]{eg-paper}. Each election also has to define cryptographic parameters. One set of cryptographic parameters are the mathematical constants that will be used in the cryptographic operations. The ElectionGuard specification specifies baseline and alternative values for these mathematical constants \cite[21, 36-38]{eg-spec}. Further cryptographic parameters are the number of guardians and the quorum count which play an important role in the key generation ceremony. \cite[8-9]{eg-paper}.
+
+
+The key generation ceremony is a process in which independent and trustworthy individuals called guardians work together to generate a joint key. The joint key is created by simple multiplication of the individual public keys of the guardians. When the joint key is used to encrypt data, the data can only be decrypted by all guardians applying their private key. A quorum count of guardians can be specified to compensate for guardians missing at the time of decryption. To compensate for missing guardians, the guardians can distribute "backups" of their private key to each other, such that a quorum of guardians can reconstruct the missing private key. \cite[8]{eg-paper} \cite{eg-docs}.
+
+The last pre-election step is to load the manifest, cryptographic parameters and the joint key into an encryption device. The encryption device is then used to encrypt the ballots during the election \cite[8]{eg-paper}.
+
+\subsection{Intra-election}.
+Encrypted ballots consist entirely of exponential ElGamal encryptions of ones and zeroes. A one indicates voter supports the choice, a zero indicates the voter does not support the corresponding choice. \cite[11]{eg-paper} \cite[12]{eg-spec}. If a voter has four options in a single contest, the encrypted ballot will consist of four encrypted bits. The exponential form of ElGamal has an additive homomorphic property the product of the encrypted ballot indicates the number of options that are encryptions of one. This can be used to show that the ballot does not incldue excessive votes. \cite[5]{eg-spec}.
+
+While encrypting the contents of a ballot is a relatively simple operation. most of the work of ElectionGuard is the process of creating externally-verifiable artifacts that prove that each encryption is well-formed. \cite[3]{eg-spec}. In order to prove that the encryptions are encryptions of ones and zeroes, Chaum-Pedersen Proofs are used. \cite[11]{eg-paper}. Chaum-Pedersen proof is a zero-knowledge proof that proves to decrypt to a particular value without revealing the nonce used for encryption or the secret decryption key. \cite[6]{eg-spec}.
+
+--------
+
+The use of ElGamal encryption enables efficient zero-knowledge proofs of these requirements, and
+ the Fiat-Shamir heuristic can be used to make these proofs non-interactive. Chaum-Pedersen proofs
+ are used to demonstrate that an encryption is that of a specified value, and these are combined
+ with the Cramer-Damg˚ ard-Schoenmakers technique to show that an encryption is that of one of
+ a specified set of values– particularly that a value is an encryption of either zero or one. The
+ encryptions of selections in a contest are homomorphically combined, and the result is shown to be
+ an encryption of that contest’s selection limit– again using a Chaum-Pedersen proof. \cite[13]{eg-spec}
+
+-----
+
+Upon completion of the encryption of a ballot a confirmation code is prepared for the voter.\cite[17]{eg-spec}. The confirmation code is a cryptographic hash derived entirely from the encryption of the ballot.\cite[14]{eg-paper}. Once the voter is in possesion of a confirmation code, the voter can either cast the associated ballot or spoil it and restart the ballot preperation process. \cite[17]{eg-spec}. The casting and spoiling mechanism is an interactive proof aimed to give voters confidence that their selections have been correctly encrypted. \cite{eg-docs}. [source].
+
+\subsection{Post-election}
+At the conclusion of voting, all encrypted ballots that are intended to be tallied i.e. submitted ballots are homomorphically combined to form an encrypted tally. \cite[5]{eg-spec} \cite[18]{eg-spec} \cite[15]{eg-paper}. Decrypting the individual spoiled ballots is not necessary for the election outcome. They can optionally be decrypted in order to support cast-as-intended verifiability. \cite[17]{eg-paper}. To decrypt an encrypted tally or a spoiled ballot each available guardian uses its secret key to compute a decryption share which is a partial decryption of each given encrypted tally or spoiled ballot \cite[18]{eg-spec} \cite[15]{eg-paper}. Each guardian also publishes a Chaum-Pedersen proof of the correctness of the decryption share. \cite[18]{eg-spec}. The partial decryptions can be combined using ordinary multiplication to form the full decryption \cite{eg-docs}. If Guardians are missing during a decryption, the quorum of guardians can use the backups to reconstruct the missing decryption shares. \cite{eg-docs}. 
+
+The final step of the election is to publish the election record. The value of a verifiable election is only fully realized, when the election is actually verified, for example by voters, election observers, or news organisations. \cite[17]{eg-spec}. The election record is a full accounting of all the election artifacts it includes items like the manifest, cryptographic parameters, decrypted tally etc. \cite[24]{eg-spec}. The election record is published in a public bulletin board. \cite[17]{eg-spec}. The election record is a full accounting of all the election artifacts.
+
+
+\section{ESP32}
+ESP32 is a system on a chip that integrates \dots
+Espressif provides software development framework.
+
+
+Build System: CMake
+ESP-IDF package manager
+Compiler:GCC
+
+
+
+
