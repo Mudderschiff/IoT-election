@@ -334,7 +334,7 @@ mqttc.on_message = on_message
 mqttc.connect("192.168.12.1", 1883, 60)
 # Send election information. Set retain flag in order for newly subscribed clients to receive the election information.
 message = f"{QUORUM},{NUMBER_OF_GUARDIANS}"
-mqttc.publish("ceremony_details", message, 2, True)
+mqttc.publish("ceremony_details", message, 2, False)
 mqttc.subscribe("joint_key")
 
 mqttc.loop_forever()
