@@ -13,84 +13,286 @@ Practically all cryptographic methods have the task of ensuring one of the follo
 
 Cryptographic algorithms are mathematical equations, i.e. mathematical functions for encryption and decryption \cite[19]{crypto}. A cryptographic algorithm for encryption can be used in a variety of ways in different applications. To ensure that an application always runs in the same and correct correct way, cryptographic protocols are defined. In contrast to the cryptographic algorithms, the protocols are procedures for controlling the flow of transactions for certain applications. \cite[22]{crypto}.
 
-\section{Cryptog}
+\section{Cryptography in Voting Systems}
 The idea of combining cryptographic methods with voting systems is not new. In 1981, David Chaum published a cryptographic technique based on public key cryptography that hides who a participant communicates with, aswell as the content of the communication. The untracable mail system requires messages to pass through a cascade of mixes (also known as a Mix Network) \cite[86]{chaum}. Chaum proposes that the techniques can be used in elections in which an individual can correspond with a record-keeping organisation or an interested party under a unique pseudonym. The unique pseudonym has to appear in a roster of accetable clients. A interested party or record keeping organisation can verify that the message was sent by a registered voter. The record-keeping organisation or the interested party can also verify that the message was not altered during transmission. \cite[84]{chaum}. 
 
-In this use case, the properties of Confidentiality, Authenticity, Integrity and Non-repudiation are ensured. However, to be worthy of public trust, an election process must give voters and observers compelling evidence that the election was conducted properly without breaking voters confidentiality. The problem of public trust is further exacerbated to now having to trust election software and hardware, in addition to election officials, and proceedurs.
+In this use case, the properties of Confidentiality, Authenticity, Integrity and Non-repudiation are ensured. However, to be worthy of public trust, an election process must give voters and observers compelling evidence (e.g. verifiability) that the election was conducted properly without breaking ballot secrecy. The problem of public trust is further exacerbated to now having to trust election software and hardware, in addition to election officials, and proceedurs. Fortunetly, modern cryptography provides viable methods for achieving the properties of verifiability and ballot secrecy. \cite[6]{onlinee-2e-study}. The goal of these methods is to place as little trust as possible in the individual components of the voting system, in order to be able to convince oneself as an independent auditor of the correctness of the final result, while at the same time not revealing more information about the individual votes than can be derived from the final result anyway. \cite[6, 10]{onlinee-2e-study}.
 
-In 2021, the U.S. Election Assitance Commission (EAC) adopted the Voluntary Voting System Guidelines (VVSG) 2.0. \cite{eac-pressrelease}. The VVSG is intended for designers and manufacturers of voting systems. Currently, the VVSG is titled as "Recommendations to the EAC" because it's not yet the final version that voting system manufacturers will follow.
-\cite{https://www.nist.gov/itl/voting/vvsg-introduction}. The VVSG 2.0 currently states only two methods for achieving software independence. The first through the use of independent voter-verifiable paper records, and the second through cryptographic E2E verifiable voting systems. The VVSG 2.0 states that a voting system need to be software independent through the use of independent voter-verifiable paper records
-\cite[181]{https://www.eac.gov/sites/default/files/TestingCertification/Voluntary_Voting_System_Guidelines_Version_2_0.pdf}. However, due to the lack of E2E verifiable voting systems available within the current market, there are no verified E2E cryptographic protocols.\cite[199]{https://www.eac.gov/sites/default/files/TestingCertification/Voluntary_Voting_System_Guidelines_Version_2_0.pdf} The U.S. Election Assistance Commission, in collaboration with the National Institute of Standards and Technology initialised an Call for proposals to solicit, evaluate, and approve protocols used in E2E cryptographically verifiable voting systems. \cite{https://www.eac.gov/voting-equipment/end-end-e2e-protocol-evaluation-process}. 
+According to a study published by the German Federal Office for Information Security (BSI), End-to-end verifiability is the gold standard to achieve these goals \cite[10]{onlinee-2e-study}. Furthermore, the Voluntary Voting System Guidelines (VVSG) 2.0 adopted by the U.S. Election Assitance Commission (EAC) states that a voting system need to be software independent. The VVSG 2.0 currently states only two methods for achieving software independence. The first through the use of independent voter-verifiable paper records, and the second through cryptographic end-to-end verifiable voting systems. \cite[181]{vvsg}.The VVSG is intended for designers and manufacturers of voting systems.\cite{vvsg-intro}.
 
-Submitted protocols must support the following properties
+\section{End-to-End Verifiability}
+
+End-to-end verifiability has two principal components \cite[2]{e2e-primer}:
 \begin{itemize}
-      \item Cast as Intended: Allow voters to confirm the voting system correctly interpreted their ballot selections while in the polling place via a receipt and provide evidence such that if there is an error or flaw in the interpretation of the voters’ selections.
-      \item Recorded as Cast: Allow voters to verify that their cast ballots were accurately recorded by the voting system and included in the public records of encoded ballots.
-      \item Tallied as Recorded: Provide a publicly verifiable tabulation process from the public records of encoded ballots.
+    \item \textbf{Cast As Intended} voters can verify that their selections (whether indicated electronically, on
+    paper, or by other means) are correctly recorded, and \cite[2]{e2e-primer}.
+    \item \textbf{Tallied As Cast} any member of the public can verify that every recorded vote is correctly
+    included in the tally. \cite[2]{e2e-primer}.
 \end{itemize}
 
+All E2E Verifiable Voting Systems have cryptographic building blocks at their core. The most important recurring cryptographic building blocks are \cite[13]{onlinee-2e-study}:
+
+All verifiable voting systems have cryptographic building blocks at their core. The most important recurring cryptographic building blocks are:
+\begin{itemize}
+    \item Public-key encryption is used in most verifiable voting systems to encrypt sensitive data, such as votes, with a public key so that only selected parties who know the corresponding secret key can read it
+    \item Commitments are often used for similar purposes, with the difference that the sensitive data cannot be read with a message-independent secret key, but only with specific information that is generated during the individual commit process and then shared with selected parties
+    \item Digital signatures are commonly used in voting systems so that different parties 
+    can verify that the messages they receive are from the indicated party.
+    \item Zero-knowledge proofs allow a party to prove that it performed a certain computational step correctly, without having to reveal any further information (such as the secret key used in the computation). These building blocks are central to combine the competing but desirable properties of public verifiability and secrecy of votes.
+    \item Threshold secret sharing can be used to distribute information about a secret (e.g., a secret key) among multiple parties, so that more than a certain threshold of them must cooperate to recover the secret from their individual shares.
+\end{itemize}
+
+\section{E2E Verifiable Software Libraries}
+Implementing a E2E Verifiable Voting System is a complex task. It requires a person or a group of persons implementing the voting system to have skills cryptography in addition to a "standard" background of a software engineer. The person or group must understand the particular algorithm or to implement it correctly. Luckily, there are several high-quality and well-maintained software libraries that implement the cryptographic building blocks at the core of E2E Verifiable Voting Systems. For example, CHVote, ElectionGuard, Verificatum, Belenios, and Swiss Post \cite[26]{onlinee-2e-study}. These libraries can greatly increase the implementability of a voting system. \cite[11]{onlinee-2e-study}. All of these libraries rely on the ElGamal's malleable public-key encryption (PKE) scheme. Elgamal's PKE is the most common implementation in today's systems. \cite[40]{onlinee-2e-study}. ElGamal's original scheme is multiplicatively homomorphic. Often, an exponential version of the scheme is used, which is additively homomorphic. \cite[40]{onlinee-2e-study}.
+
 \section{ElectionGuard}
+One of the first pilots to see how E2E verifiable elections works in a real election took place in a district of Preston, Idaho, United States, on November 8, 2022. The Verity scanner from Hart InterCivic was used in this pilot, which was integrated with Microsoft's ElectionGuard \cite{EAC}. ElectionGuard is a toolkit that encapsulates cryptographic functionality and provides simple interfaces that can be used without cryptographic expertise. \cite[1-2]{eg-paper}. The cryptographic design is largely inspired by the cryptographic voting protocol by Cohen (now Benaloh) and Fischer in 1985 and the voting protocol by Cramer, Gennaro and Schoenmakers in 1997 \cite[5]{eg-paper}. 
 
-One of the first pilots to see how E2E verifiable elections works in a real election took place in a district of Preston, Idaho, United States, on November 8, 2022. The Verity scanner from Hart InterCivic was used in this pilot, which was integrated with Microsoft's ElectionGuard \cite{EAC}. ElectionGuard is a toolkit that encapsulates cryptographic functionality and provides simple interfaces that can be used without cryptographic expertise. The principal innovation of ElectionGuard is the seperation of the cryptographic tools from the core mechanics and user interfaces of voting systems. In it's preferred deployment, ElectionGuard doesn't replace the existing vote counting infrastructure but instead runs alongside and produces its own independently-verifiable tallies \cite[1-2]{eg-paper}. The cryptographic design is largely inspired by the cryptographic voting protocol by Cohen (now Benaloh) and Fischer in 1985 and the voting protocol by Cramer, Gennaro and Schoenmakers in 1997 \cite[5]{eg-paper}. 
+The principal innovation of ElectionGuard is the seperation of the cryptographic tools from the core mechanics and user interfaces of voting systems. In it's preferred deployment, ElectionGuard doesn't replace the existing vote counting infrastructure but instead runs alongside and produces its own independently-verifiable tallies \cite[1-2]{eg-paper}. In all applications, an election using ElectionGuard begins with a key-generation ceremony in which an election administrator works with guardians to form election keys. Later, usually at the conclusion, the administrator will again work with guardians to produce verifiable tallies. What happens in between, however, can vary widely. \cite[20]{eg-paper}. The flexibility of ElectionGuard is novel and is one of its primary benefits \cite[22]{eg-paper}.
 
-----------------------------------------------
-The philosophy of ElectionGuard has been to cover the majority of voting scenarios with an approach that is as simple as possible to understand and verify. It can be used with Precinct Ballot Scanners, Electronic Ballot Markers, Internet Voting, Risk-Limiting Audits and even vote by mail and many more.
-
-In all applications, an election using ElectionGuard begins with a key-generation ceremony in
-which an election administrator works with guardians to form election keys. Later, usually at the
-conclusion, the administrator will again work with guardians to produce verifiable tallies. What
-happens in between, however, can vary widely. [ElectionGuard: a Cryptographic Toolkit
-to Enable Verifiable Elections].
-
-This thesis focuses on the implementation of the Key Generation Ceremony and the Guardians using the ESP32 microcontroller. The ESP32 is a low-cost, low-power system on a chip microcontroller. It is widely used in IoT applications. [source]
-
-ElectionGuard support the central aspects which a VVSG 2.0 compliant voting system must support Cast as Intended, Recorded as Cast and Tallied as Recorded. \cite[17]{eg-paper}. Key element supporting cast-as-intended and recorded-as-cast verifiability is through confirmation codes. Ballots can be ce challenged or cast and both are included in the election record. Voters can check if the expected confirmation code appears in the election records and for the challenged ballots, that it shows the correct selections \cite[18]{eg-paper}. Tallied-as-cast verifiability is supported through the inclusion of all ballots and decryption proofs in the election record. Any voter can verify that the ballot is accurately incorporated in the tally, and the decryption proofs demonstrate the validity of the announced tally \cite[18]{eg-paper}. To confirm the election's integrity, independent verification software can be used at any time after the completion of an election. \cite[6]{eg-paper}. Some, may choose even to write their own verifiers.  
-
-\subsection{Cryptographic Design & Structure}
+\subsection{Cryptographic Design and Structure}
 An election in electionguard comprises of Pre-election, Intra-election and Post-election phases. In the following sections, we will discuss the cryptographic design and the overall structure of ElectionGuard in each of these phases.
 
 \subsubsection{Pre-election}. 
 The pre-election phase contains the administrative task of configuring the election followed by the key generation ceremony. The election is defined using an election manifest \cite[7]{eg-paper}. The manifest defines common elements when conducting an election, such as locations, candidates, parties, contests, and ballot styles. The election terms and the manifest structure are largely based on the NIST SP-1500-100 Election Results Common Data Format Specification and the Civics Common Standard Data Specification.\cite{eg-docs}.  The manifest guarantees that ElectionGuard software records ballots properly. \cite[7]{eg-paper}. Each election also has to define cryptographic parameters. One set of cryptographic parameters are the mathematical constants that will be used in the cryptographic operations. The ElectionGuard specification specifies baseline and alternative values for these mathematical constants \cite[21, 36-38]{eg-spec}. Further cryptographic parameters are the number of guardians and the quorum count which play an important role in the key generation ceremony. \cite[8-9]{eg-paper}.
 
+To avoid a single party being responsible for the property of ballot secrecy, it is useful to distribute the role of that part among several entities, so that only some of these parties need to be trusted with respect to that property. One should keep in mind that it is impossible to completly avoid trusting any system component. For the distribution of trust to be effective in practice, it must be ensured that these parties are truly independent of each other. \cite[92]{onlinee-2e-study}.
 
 The key generation ceremony is a process in which independent and trustworthy individuals called guardians work together to generate a joint key. The joint key is created by simple multiplication of the individual public keys of the guardians. When the joint key is used to encrypt data, the data can only be decrypted by all guardians applying their private key. A quorum count of guardians can be specified to compensate for guardians missing at the time of decryption. To compensate for missing guardians, the guardians can distribute "backups" of their private key to each other, such that a quorum of guardians can reconstruct the missing private key. \cite[8]{eg-paper} \cite{eg-docs}.
 
 The last pre-election step is to load the manifest, cryptographic parameters and the joint key into an encryption device. The encryption device is then used to encrypt the ballots during the election \cite[8]{eg-paper}.
 
 \subsection{Intra-election}.
-Encrypted ballots consist entirely of exponential ElGamal encryptions of ones and zeroes. A one indicates voter supports the choice, a zero indicates the voter does not support the corresponding choice. \cite[11]{eg-paper} \cite[12]{eg-spec}. If a voter has four options in a single contest, the encrypted ballot will consist of four encrypted bits. The exponential form of ElGamal has an additive homomorphic property the product of the encrypted ballot indicates the number of options that are encryptions of one. This can be used to show that the ballot does not incldue excessive votes. \cite[5]{eg-spec}.
+Encrypted ballots consist entirely of exponential ElGamal encryptions of ones and zeroes. A one indicates voter supports the choice, a zero indicates the voter does not support the corresponding choice. \cite[11]{eg-paper} \cite[12]{eg-spec}. If a voter has four options in a single contest, the encrypted ballot will consist of four encrypted bits. The exponential form of ElGamal has an additive homomorphic property the product of the encrypted ballot indicates the number of options that are encryptions of one. This can be used to show that the ballot does not include excessive votes. \cite[5]{eg-spec}.
 
-While encrypting the contents of a ballot is a relatively simple operation. most of the work of ElectionGuard is the process of creating externally-verifiable artifacts that prove that each encryption is well-formed. \cite[3]{eg-spec}. In order to prove that the encryptions are encryptions of ones and zeroes, Chaum-Pedersen Proofs are used. \cite[11]{eg-paper}. Chaum-Pedersen proof is a zero-knowledge proof that proves to decrypt to a particular value without revealing the nonce used for encryption or the secret decryption key. \cite[6]{eg-spec}.
+While encrypting the contents of a ballot is a relatively simple operation. most of the work of ElectionGuard is the process of creating externally-verifiable artifacts that prove that each encryption is well-formed. \cite[3]{eg-spec}. In order to prove that the encryptions are encryptions of ones and zeroes, zero knowledge proofs are used. \cite[11]{eg-paper}. A Chaum-Pedersen is a zero-knowledge proof that demonstrates that an encryption is of a specified value. These proofs are combined with the Cramer-Damgård-Schoenmakers technique to show that an encryption is that of one of a specified set of values– particularly that a value is an encryption of either zero or one. The proofs are made non-interactive through the use of the Fiat-Shamir heuristic. \cite[6,13]{eg-spec}.
 
---------
+Upon completion of the encryption of a ballot a confirmation code is prepared for the voter.\cite[17]{eg-spec}. The confirmation code is a cryptographic hash derived entirely from the encryption of the ballot.\cite[14]{eg-paper}. Once the voter is in possesion of a confirmation code, the voter can either cast the associated ballot or spoil it and restart the ballot preperation process. \cite[17]{eg-spec}. The casting and spoiling mechanism is an interactive proof aimed to give voters confidence that their selections have been correctly encrypted. \cite{eg-docs}.
 
-The use of ElGamal encryption enables efficient zero-knowledge proofs of these requirements, and
- the Fiat-Shamir heuristic can be used to make these proofs non-interactive. Chaum-Pedersen proofs
- are used to demonstrate that an encryption is that of a specified value, and these are combined
- with the Cramer-Damg˚ ard-Schoenmakers technique to show that an encryption is that of one of
- a specified set of values– particularly that a value is an encryption of either zero or one. The
- encryptions of selections in a contest are homomorphically combined, and the result is shown to be
- an encryption of that contest’s selection limit– again using a Chaum-Pedersen proof. \cite[13]{eg-spec}
-
------
-
-Upon completion of the encryption of a ballot a confirmation code is prepared for the voter.\cite[17]{eg-spec}. The confirmation code is a cryptographic hash derived entirely from the encryption of the ballot.\cite[14]{eg-paper}. Once the voter is in possesion of a confirmation code, the voter can either cast the associated ballot or spoil it and restart the ballot preperation process. \cite[17]{eg-spec}. The casting and spoiling mechanism is an interactive proof aimed to give voters confidence that their selections have been correctly encrypted. \cite{eg-docs}. [source].
 
 \subsection{Post-election}
 At the conclusion of voting, all encrypted ballots that are intended to be tallied i.e. submitted ballots are homomorphically combined to form an encrypted tally. \cite[5]{eg-spec} \cite[18]{eg-spec} \cite[15]{eg-paper}. Decrypting the individual spoiled ballots is not necessary for the election outcome. They can optionally be decrypted in order to support cast-as-intended verifiability. \cite[17]{eg-paper}. To decrypt an encrypted tally or a spoiled ballot each available guardian uses its secret key to compute a decryption share which is a partial decryption of each given encrypted tally or spoiled ballot \cite[18]{eg-spec} \cite[15]{eg-paper}. Each guardian also publishes a Chaum-Pedersen proof of the correctness of the decryption share. \cite[18]{eg-spec}. The partial decryptions can be combined using ordinary multiplication to form the full decryption \cite{eg-docs}. If Guardians are missing during a decryption, the quorum of guardians can use the backups to reconstruct the missing decryption shares. \cite{eg-docs}. 
 
-The final step of the election is to publish the election record. The value of a verifiable election is only fully realized, when the election is actually verified, for example by voters, election observers, or news organisations. \cite[17]{eg-spec}. The election record is a full accounting of all the election artifacts it includes items like the manifest, cryptographic parameters, decrypted tally etc. \cite[24]{eg-spec}. The election record is published in a public bulletin board. \cite[17]{eg-spec}. The election record is a full accounting of all the election artifacts.
+The final step of the election is to publish the election record. The value of a verifiable election is only fully realized, when the election is actually verified, for example by voters, election observers, or news organisations. \cite[17]{eg-spec}. The election record is a full accounting of all the election artifacts it includes items like the manifest, cryptographic parameters, decrypted tally etc. \cite[24]{eg-spec}. The election record is published in a public bulletin board. \cite[17]{eg-spec}. 
+
+The election record is a full accounting of all the election artifacts. To confirm the election's integrity, independent verification software can be used at any time after the completion of an election. \cite[6]{eg-paper}
+
+
+\begin{comment}
+    
+
+The practicality of a voting system ensures that it can be implemented correctly in practive and that the resultin implementation is efficient enough for the intended election. 
+
+
+\subsection{Usability}
+Usability. The ISO standard for usability [78] considers the following aspects:
+• Efficiency: This is the (total) time that users need to complete their task. In our application, 
+this is the time to complete authentication, vote casting, and individual verification.
+• Effectiveness: This property describes how accurately and completely users perform their task. 
+In our application, there are essentially two types of potential errors: failing to cast a vote, or 
+failing to apply the individual verification mechanism. The latter can be divided into failing 
+to detect manipulations, or failing to report a detected manipulation to the right place.
+• Satisfaction: This property measures how comfortable users found the task. In our applica
+tion, this could for example be affected by voters complaining about having to use two devices.
+\subsection{Implementability}
+\subsection{Efficiency}
+communication and computation.
+main communication costs data size 
+computational cost
+serialization
+28
+
+
+
+\cite[10-11]{onlinee-2e-study}:
+
+
+Requires person or group implementing the voting system to have skills in addition to a "standard" background of software engineer, that are required to understand the particular algorithm or to implement it corretly.
+Example skills include cryptography, parallelism, secure hardware
+
+Sources of randomness in a constrained environment
+multiple interacting devices
+anonymouse/untappable channels
+31
+
+The number of agents involved in the mechanism, as well as the pattern of communication between the agents, has significant impact on the effort required to implement the mechanism: more agents means that more independent pieces of software must be developed, and the communication between the agents must be managed and synchronized. Therefore, the more agents are involved and the more complex their communication is, the more negatively we evaluate this constraint. If the mechanism requires up to two more agents, we consider this few agents, otherwise we consider this many agents. 32
+
+
+
+Implementability (Section 3.5.1) captures the effort required to implement a mechanism. 
+There are various constraints (e.g., required skills, limited resources, and the complexity of 
+
+Implementability
+
+
+Constraint: resources (Table 3.2). A mechanism may rely on existing resources, physical or digital,
+to enable its implementation, making the task more complex.
+Examples of such resources include sources of randomness in a constrained environment, low-
+latency/high-throughput network between agents, key management systems (e.g. HSM), multiple
+interacting devices, anonymous/untappable channels, special printing (e.g., special paper, unusual
+folding, scratch cards), or personal trusted hardware (e.g. eID).
+
+onstraint: protocol complexity (Table 3.3). The number of agents involved in the mechanism,
+as well as the pattern of communication between the agents, has a significant impact on the ef
+fort required to implement the mechanism: more agents means that more independent pieces of
+
+software must be developed, and the communication between the agents must be managed and
+synchronized. Therefore, the more agents are involved and the more complex their communica
+tion is, the more negatively we evaluate this constraint. If the mechanism requires up to two more
+agents, we consider this few agents, otherwise we consider this many agents
+
+
+Efficiency
+We study two aspects of efficiency: communication and computation. We evaluate the communi
+cation overhead and the computation overhead of a mechanism separately, and the minimum of
+both is its overall efficiency.
+In our evaluations, to estimate the data size and computation time, we will consider an election
+with 100 candidates from which a voter can choose one
+
+Communication (Table 3.5). The main communication costs of a mechanism are the size of the
+data to be transferred and the complexity of the communication:
+• Data size: We look at the total size of all messages and divide it by the number of voters. We
+use 1 MB per voter as a definition of medium size.
+• Complexity: We count the number of communication rounds, i.e. the number of times an
+agent (server, voting device, audit device, …) has to wait for data from others before it can send
+messages again. The higher the number of rounds, the worse the communication complexity.
+If the number of rounds is in relation to the number of servers and trustees, we use some
+rounds, else we use many rounds.
+
+Computation (Table 3.6). To evaluate the computational overhead of a mechanism, we consider
+a large scale election with 100,000 voters on current retail hardware. We distinguish between the
+computational cost on the voters’ side and on the servers’ side.
+• Voter: We assume that the voter is using a browser or app on their personal computer or
+phone. We distinguish between less than 1 second, less than 1 minute, and more than 1 minute
+of computation time.
+• Server: We distinguish between a few minutes, a few hours, and many hours (more than five)
+of computation time on a single processor. We value positively when the algorithm can be
+distributed or parallelized.
+
+
+
+We evaluate the communication efficiency (Section 3.5.2) as follows. Both approaches have data
+size small. Concerning the number of blocking rounds, no threshold needs 0 rounds, while threshold
+needs some rounds. This results in an overall communication efficiency score of 5 for no threshold,
+and 3 for threshold. We achieve their intermediate scores as follows:
+• Data size: First, we note that a single ElGamal ciphertext consists of two group elements.
+When we tally the ballots with a verifiable mix net (Section 4.5), we can encrypt the complete
+choice in a single ciphertext. The corresponding proof of plaintext knowledge is done with 2
+scalars (see Section 5.4.1 in [58]). The ciphtertext together with the proof results therefore in
+2 · 32B + 2 · 32B = 128B per ballot.
+When we tally the ballots with homomorphic aggregation (Section 4.4), we consider the ap
+proach of representing each choice as a binary vector, where the 1 entries indicate a voter’s
+preferred candidates. Proving membership in the set {0, 1} consists of 4 scalars: 2 challenges
+and 2 responses for each element in the set (see, e.g., Section 5.4 of [58]). A membership proof
+is needed for each candidate as well as for the homomorphic aggregation of the candidate en
+tries, which corresponds to 100 + 1 = 101 proofs for an election with 100 candidates. When
+we put these numbers together, a ballot consists of 200 group elements for the encryptions
+and 101 · 8 = 808 scalars for the NIZKPs. This results in 200 · 32B + 808 · 32B ≈ 32KB.
+This shows that in both cases, the size of the ballot is well below our 1MB threshold, hence the
+data is small.
+• Complexity: With no threshold secret sharing, no blocking communication is necessary. With
+threshold secret sharing, the protocol includes blocking steps impacting the communication
+efficiency. As described in Section 3.1.1 of [53] and with more details in [31], 3 rounds per
+tallier are required to build partial decryption keys. Assuming the usage of homomorphic
+aggregation (see Section 4.4), the talliers perform the decryption in 2 rounds, which results in
+a total of 5 rounds per tallier.
+For no threshold secret sharing, we therefore have 0 blocking rounds, while for threshold secret
+sharing, we have some blocking rounds.
+
+
+We evaluate the computational efficiency (Section 3.5.2) as follows. For both approaches, the
+server time is less than a few minutes, and the voter time less than a second, hence both have an
+overall computational efficiency score of 5. We achieve the intermediate scores as follows:
+• Server time: Only the voting server is active in the ballot submission phase and it only needs
+to store (or forward) the incoming ballots.5 The time required for these operations is less than
+a few minutes in total.
+• Voter time: First, we note that forming a single ciphertext requires two exponentiations.
+When we tally the ballots with a verifiable mix net (Section 4.5), a single ciphertext is sufficient.
+The corresponding proof of plaintext knowledge requires another 2 exponentiations. Hence,
+the total time to compute the ballot is therefore 4 · 0.32ms = 1.28ms.
+When we tally the ballots homomorphically (Section 4.4), we again consider the approach
+which results in one ciphertext per candidate (see the Data size evaluation for details). Each
+membership proof requires 4 exponentiations (see, e.g., Section 5.4 of [58]: a proof of plaintext
+knowledge requires 2 exponentiations, thus a membership proof for a set with 2 elements
+requires 2 · 2 = 4). In an election with 100 candidates where a voter can select at most one of
+them, a ballot therefore needs 200·0.32ms = 64ms to encrypt, and then 404·0.32ms = 129.3ms
+to generate the NIZKP. The total ballot construction time remains clearly under 1
+
+
+
+Trust assumptions: The ultimate goal of verifiable online voting systems with vote secrecy is to 
+reduce the required trust in the various system components as much as possible. To effectively 
+distribute trust in practice, it must be ensured that these parties are truly independent of each 
+other.
+
+Verifiable tallying: We can expect any state-of-the-art verifiable online voting system to com
+bine a secret ballot technique with a verifiable privacy-preserving tallying technique. In this 
+way, independent auditors can verify the correctness of the election result, without having to 
+trust the tallying authority, while keeping individual votes secret.
+• Voting device verification: There is no one-size-fits-all solution to protect against possibly cor
+rupted voting devices. Which voting device verification mechanism is appropriate for a given 
+election depends on various election-specific requirements.
+
+Everlasting privacy: In many elections, it is necessary to protect privacy not only in the fore
+ seeable future, but also in the long run, e.g. against quantum adversaries. There are feasible 
+approaches to guarantee this property, called everlasting privacy, towards anyone who wants 
+to verify the election, i.e., without compromising verifiability.
+
+• Ballot secrecy: Every voter should be able to express their true will. Unfortunately, depending 
+on the circumstances of an election, there is a risk that not every voter will be in such a posi
+ tion. For example, there may be a general discomfort with open voting, since voters may fear 
+that they will sooner or later be disadvantaged if they openly express their will. In this case, 
+which applies to many elections, it must be ensured that voters can cast their votes in secret
+ and that they must remain secret during and after the election.
+ • End-to-end verifiability: Especially in online elections, there is a risk that votes can be digitally 
+altered: it is not immediately apparent whether votes have been lost, added, or changed on 
+the purely electronic path from the voting devices through the digital ballot box to the result 
+announced online. Such changes can be caused not only by intentional manipulation, but 
+also by unknown software bugs. However, to ensure that the final result is accepted only if 
+it correctly reflects the votes of the voters, even if parts of the voting system do not function 
+properly, the voting system must be end-to-end verifiable.
+
+
+
+
+The concept of homomorphic aggregation to tally ballots in a verifiable manner is based on the ad
+ditively homomorphic property of the underlying public-key encryption or commitment scheme. 
+As we explained in Section 4.2 (for public-key encryption) and in Section 4.3 (for commitments), 
+this feature guarantees that a list of such ciphertexts or a list of such commitments can be com
+ bined in a way that the result is a single ciphertext or a single commitment that contains the sum of 
+all messages in the respective list; in particular, this function is deterministic and can be performed 
+by anyone without any secret knowledge (e.g., of a secret key or opening values). \cite[53]{onlinee-2e-study}.
+
+In fact, if we use the homomorphic aggregation as sketched above, a corrupted voter Vi could 
+secretly submit more than one vote (by choosing some v > 1) or remove votes to manipulate 
+the election outcome (see Remark 2 for an example).
+
+
+
+
+
+ If an online voting system aims to distribute trust among multiple entities, then special care must 
+be taken to ensure that these different entities are truly independent. Distributing trust for the sake 
+of appearances is not enough. Depending on the role, this may mean, for example, that the parties 
+are physically separated (e.g., in distributed mix nets), that their software comes from independent 
+sources (e.g., in voting device verification) and that the providers are independent (e.g., economically, 
+politically).
+
+
+
+
+In many elections, it is necessary to protect privacy not only in the foreseeable future, but also 
+in the long run (for example against future adversaries that use quantum computers). There are 
+feasible approaches to guarantee this property, called everlasting privacy, towards anyone who 
+wants to verify the election, without compromising verifiability.
+
 
 
 \section{ESP32}
 ESP32 is a system on a chip that integrates \dots
 Espressif provides software development framework.
 
-
 Build System: CMake
 ESP-IDF package manager
 Compiler:GCC
-
-
-
-
+\end{comment}
