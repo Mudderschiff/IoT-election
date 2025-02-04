@@ -1,0 +1,34 @@
+@startjson
+{
+  "ElectionKeyPair": {
+    "guardian_id": "",
+    "public_key": "",
+    "private_key": "",
+    "ElectionPolynomial": {
+      "num_coefficients": "",
+      "coefficients": [
+        {
+          "value": "",
+          "commitment": "",
+          "proof": {
+            "pubkey": "",
+            "commitment": "",
+            "challenge": "",
+            "response": ""
+          }
+        },
+        {
+          "value": "",
+          "commitment": "",
+          "proof": {
+            "pubkey": "",
+            "commitment": "",
+            "challenge": "",
+            "response": ""
+          }
+        }
+      ]
+    }
+  }
+}
+@endjson

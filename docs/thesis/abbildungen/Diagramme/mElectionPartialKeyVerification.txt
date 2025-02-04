@@ -1,0 +1,10 @@
+@startjson
+{
+  "ElectionPartialKeyVerification": {
+    "sender": "",
+    "receiver": "",
+    "verifier": "",
+    "verified": ""
+  }
+}
+@endjson

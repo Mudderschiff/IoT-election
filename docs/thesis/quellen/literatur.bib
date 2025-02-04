@@ -25,18 +25,6 @@
   year         = {2018}
 }
 
-@manual{esp32-ds,
-  title        = "{ESP32 Series} Datasheet",
-  author       = "",
-  organization = "Espressif Systems",
-  address      = "",
-  edition      = "v4.7",
-  month        = "09",
-  year         = "2024",
-  note         = "",
-  url = {https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf}
-}
-
 @manual{lcd,
   title        = {1.8inch Arduino SPI Module MAR1801 User Manual},
   author       = {LCDWiki},
@@ -49,16 +37,75 @@
   annote       = ""
 }
 
-@manual{mqtt-v5.0,
-  title        = "MQTT Version 5.0",
-  author       = "Andrew Banks et.al",
-  organization = "LCDWiki",
-  address      = "",
-  edition      = "Rev1.0",
-  month        = "03",
-  year         = "2019",
-  url = {https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html},
-  annote       = ""
+@manual{esp32-ref,
+  title        = {{ESP32} Technical Reference Manual},
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  month        = {01},
+  year         = {2025},
+  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf}},
+  edition      = {5.3}
+}
+
+@manual{esp32-module,
+  title        = {ESP32-WROOM-32 Datasheet},
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  month        = {02},
+  year         = {2023},
+  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf}},
+  edition      = {3.4},
+  note = {Not Recommended For New Designs (NRND)}
+}
+
+@manual{esp32-module-new,
+  title        = {ESP32-WROOM-32E Datasheet},
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  month        = {09},
+  year         = {2024},
+  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf}},
+  edition      = {1.7}
+}
+
+@manual{esp32-series,
+  title        = {ESP32 Series Datasheet},
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  month        = {01},
+  year         = {2025},
+  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf}},
+  edition      = {4.8}
+}
+
+@manual{esp32-errata,
+  title        = {ESP32 Series SoC Errata},
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  month        = {07},
+  year         = {2024},
+  note         = {Available at \url{https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32/esp-chip-errata-en-master-esp32.pdf}},
+  edition      = {2.8}
+}
+
+@manual{esp-prog,
+  title        = {ESP-IDF Programming Guide},
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  year         = {2025},
+  url = {https://docs.espressif.com/projects/esp-idf/en/v5.4/esp32/},
+  version      = {5.4},
+  howpublished = {GitHub repository}
+}
+
+@manual{esp-faq,
+  title        = {ESP-FAQ Handbook},
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  url = {https://docs.espressif.com/projects/esp-faq},
+  howpublished = {GitHub repository},
+  note = {Accessed on 2025-01-21}
+}
+
+@manual{eg-docs,
+  title        = {ElectionGuard Docs},
+  organization = { Election Tech Initiative },
+  url = {https://github.com/Election-Tech-Initiative/electionguard/tree/0f99229669139d3cae6cfddc0a3d554319a84a2e/docs},
+  version = {2.1},
+  howpublished = {GitHub repository},
 }
 
 @misc{eg-spec,
@@ -74,18 +121,6 @@
   note = {Accessed on 2025-01-21}
 }
 
-@manual{esp32-ref,
-  title        = "{ESP32} Technical Reference Manual",
-  author       = "",
-  organization = "Espressif Systems",
-  address      = "",
-  edition      = "v5.2",
-  month        = "aug",
-  year         = "2024",
-  note         = "",
-  url = {https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf},
-  annote       = ""
-}
 
 @misc{eg-paper,
       author = {Josh Benaloh and Michael Naehrig and Olivier Pereira and Dan S. Wallach},
@@ -94,6 +129,28 @@
       year = {2024},
       note = {\url{https://eprint.iacr.org/2024/955}},
       url = {https://eprint.iacr.org/2024/955}
+}
+
+@booklet{e2e-primer,
+author = {Benaloh, Josh and Rivest, Ronald and Ryan, Peter Y. A. and Stark, Philip and Teague, Vanessa and Vora, Poorvi},
+title = {End-to-end verifiablity},
+year = {2014},
+month = {February},
+abstract = {This pamphlet describes end-to-end election verifiability (E2E-V) for a nontechnical audience: election officials, public policymakers, and anyone else interested in secure, transparent, evidencebased electronic elections. This work is part of the Overseas Vote Foundation’s End-to-End Verifiable Internet Voting: Specification and Feasibility Assessment Study (E2E VIV Project), funded by the Democracy Fund.},
+url = {https://www.microsoft.com/en-us/research/publication/end-end-verifiablity/},
+}
+
+
+@manual{mqtt-v5.0,
+  title        = "MQTT Version 5.0",
+  author       = "Andrew Banks et.al",
+  organization = "LCDWiki",
+  address      = "",
+  edition      = "Rev1.0",
+  month        = "03",
+  year         = "2019",
+  url = {https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html},
+  annote       = ""
 }
 
 
@@ -122,91 +179,8 @@
   note =  {Accessed on 2024-01-10}
 }
 
-@manual{esp32-module,
-  author = {Espressif Systems},
-  organization = {Espressif Systems},
-  year = {2023},
-  month = {feb},
-  version = {3.4},
-  address = {Shanghai, China},
-  title = {ESP32-WROOM-32 Datasheet},
-  note = {Not Recommended For New Designs (NRND)},
-  url = {https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf}
-}
 
-
-@manual{esp32-module-new,
-  author = {Espressif Systems},
-  organization = {Espressif Systems},
-  year = {2024},
-  month = {sep},
-  version = {1.7},
-  address = {Shanghai, China},
-  title = {ESP32-WROOM-32E Datasheet},
-  url = {https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf}
-}
-
-@manual{esp32-series,
-  author = {Espressif Systems},
-  organization = {Espressif Systems},
-  address = {Shanghai, China},
-  version = {4.7},
-  year = {2024},
-  month = {sep},
-  title = {ESP32 Series Datasheet},
-  url = {https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf}
-}
-
-@manual{esp32-errata,
-  author = {Espressif Systems},
-  organization = {Espressif Systems},
-  address = {Shanghai, China},
-  version = {4.7},
-  year = {2024},
-  month = {sep},
-  title = {ESP32 Series Datasheet},
-  url = {https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32/esp-chip-errata-en-master-esp32.pdf}
-}
-
-@misc{python-reference,
-  author = {Election Tech Initiative},
-  title = {ElectionGuard Python},
-  version = {1.0.0},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/Election-Tech-Initiative/electionguard-python/tree/1.4.0}},
-  commit = {d2f3d5fb0bffbbeedb54baf9474b2b80c7cd71d3},
-  note = {Accessed on 2024-10-18},
-}
-
-@misc{lcd-driver,
-  author = {Light and Versatile Embedded Graphics Library},
-  title = {Display and touchpad drivers for ESP32 using LVGL},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/lvgl/lvgl_esp32_drivers}},
-  commit = {26fe6e7703162ac9b0ee82405e858dc37b885d1f},
-  note = {Accessed on 2024-10-18},
-}
-
-
-@manual{esp-idf,
-  author = {Espressif Systems},
-  title = {ESP-IDF Programming Guide},
-  version = {v5.1},
-  year = {2023},
-  month = {jun},
-}
-
-@misc{eg-docs,
-  author = {Election Tech Initiative},
-  title = {ElectionGuard Docs},
-  version = {2.1},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/Election-Tech-Initiative/electionguard/tree/v2.1/docs}},
-  commit = {0f99229669139d3cae6cfddc0a3d554319a84a2e},
-  note = {Accessed on 2025-01-21},
-}
-
-@INPROCEEDINGS{9292199,
+@INPROCEEDINGS{micropython-performance,
   author={Ionescu, Valeriu Manuel and Enescu, Florentina Magda},
   booktitle={2020 IEEE 26th International Symposium for Design and Technology in Electronic Packaging (SIITME)}, 
   title={Investigating the performance of MicroPython and C on ESP32 and STM32 microcontrollers}, 
@@ -228,15 +202,6 @@
   note = {Accessed on 2025-01-21},
 }
 
-@misc{espidf-docs,
-  author = {Espressif Systems (Shanghai) Co., Ltd.},
-  title = {ESP-IDF Programming Guide},
-  version = {5.4},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/espressif/esp-idf/tree/release/v5.4}},
-  commit = {67c1de1eebe095d554d281952fde63c16ee2dca0},
-  note = {Accessed on 2025-01-21},
-}
 
 @misc{vvsg,
   author = {Technical Guidelines Development Committee},
@@ -258,11 +223,64 @@
   year = {2017}
 }
 
-@booklet{e2e-primer,
-author = {Benaloh, Josh and Rivest, Ronald and Ryan, Peter Y. A. and Stark, Philip and Teague, Vanessa and Vora, Poorvi},
-title = {End-to-end verifiablity},
-year = {2014},
-month = {February},
-abstract = {This pamphlet describes end-to-end election verifiability (E2E-V) for a nontechnical audience: election officials, public policymakers, and anyone else interested in secure, transparent, evidencebased electronic elections. This work is part of the Overseas Vote Foundation’s End-to-End Verifiable Internet Voting: Specification and Feasibility Assessment Study (E2E VIV Project), funded by the Democracy Fund.},
-url = {https://www.microsoft.com/en-us/research/publication/end-end-verifiablity/},
+
+@misc{wolfssl-benchmark,
+  author = {wolfSSL Inc.},
+  title = {ESP32 Hardware Cryptography},
+  url = {https://www.wolfssl.com/docs/espressif/},
+  note = {Accessed on 2024-01-10}
+}
+
+
+@misc{wolfSSL-manual,
+  author = {wolfSSL Inc.},
+  howpublished = {},
+  title = {wolfSSL Documentation},
+  url = {https://www.wolfssl.com/documentation/manuals/wolfssl/wolfSSL-Manual.pdf},
+  month = {02},
+  year = {2025},
+  note = {Accessed on 2025-01-21}
+}
+
+
+@software{wolfSSL-port,
+  author = {wolfSSL Inc.},
+  title = {wolfSSL ESP-IDF Port},
+  url = {https://github.com/wolfSSL/wolfssl/tree/eb15a1213cdc2cd43f155cedd06b25741fad9326/IDE/Espressif/ESP-IDF}
+  version = {5.7.4},
+  howpublished = {GitHub repository}  
+}
+
+@software{mbedTLS-fork,
+  author = {Espressif Systems (Shanghai) Co., Ltd.},
+  title = {mbedTLS Component},
+  url = {https://github.com/espressif/esp-idf/tree/473771bc14b7f76f9f7721e71b7ee16a37713f26/components/mbedtls}
+  version = {3.6.2},
+  howpublished = {GitHub repository}  
+}
+
+@software{python-reference,
+  author = {Election Tech Initiative},
+  title = {ElectionGuard Python},
+  url = {https://github.com/Election-Tech-Initiative/electionguard-python},
+  commit = {d2f3d5fb0bffbbeedb54baf9474b2b80c7cd71d3},
+  version = {1.4.0},
+  howpublished = {GitHub repository}
+}
+
+@software{lcd-driver,
+  author = {Light and Versatile Embedded Graphics Library},
+  title = {Display and touchpad drivers for ESP32 using LVGL},
+  url = {https://github.com/lvgl/lvgl_esp32_drivers},
+  commit = {26fe6e7703162ac9b0ee82405e858dc37b885d1f},
+  version = {0.0.2},
+  howpublished = {GitHub repository}
+}
+
+@software{esp-rom,
+  author = {Espressif Systems (Shanghai) Co., Ltd.},
+  title = {esp_rom Component},
+  url = {https://github.com/espressif/esp-idf/tree/473771bc14b7f76f9f7721e71b7ee16a37713f26/components/esp_rom/esp32},
+  version = {5.4},
+  howpublished = {GitHub repository}
 }

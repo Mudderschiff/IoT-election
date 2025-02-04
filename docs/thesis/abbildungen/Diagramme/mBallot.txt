@@ -1,0 +1,27 @@
+@startjson
+{
+  "PlaintextBallot": {
+    "style_id": "",
+    "num_contests": "",
+    "PlaintextBallotContest": [
+      {
+        "num_selections": "",
+        "PlaintextBallotSelection": [
+          {
+            "vote": "",
+            "is_placeholder_selection": ""
+          },
+          {
+            "vote": "",
+            "is_placeholder_selection": ""
+          },
+          {
+            "vote": "",
+            "is_placeholder_selection": ""
+          }
+        ]
+      }
+    ]
+  }
+}
+@endjson

@@ -1,0 +1,13 @@
+@startjson
+{
+  "ElectionPartialKeyPairBackup": {
+    "sender": "",
+    "receiver": "",
+    "HashedElGamalCiphertext": {
+      "pad": "",
+      "data": "",
+      "mac": ""
+     }
+  }
+}
+@endjson
