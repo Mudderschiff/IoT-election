@@ -1,0 +1,19 @@
+@startuml
+rectangle Guardian1 {
+    rectangle sk1
+    rectangle pk1
+}
+rectangle Guardian2 {
+    rectangle sk2
+    rectangle pk2
+}
+rectangle GuardianN {
+    rectangle skN
+    rectangle pkN
+}
+rectangle JointKey
+pk1 -up-> JointKey
+pk2 -right-> JointKey
+pkN -down-> JointKey
+@enduml
+

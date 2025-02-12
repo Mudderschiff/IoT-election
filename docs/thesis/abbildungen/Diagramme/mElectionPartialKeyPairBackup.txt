@@ -1,12 +1,12 @@
 @startjson
 {
   "ElectionPartialKeyPairBackup": {
-    "sender": "",
-    "receiver": "",
+    "sender": "6 B (mac address)",
+    "receiver": "6 B (mac address)",
     "HashedElGamalCiphertext": {
-      "pad": "",
-      "data": "",
-      "mac": ""
+      "pad": "384 B",
+      "data": "32 B",
+      "mac": "32 B"
      }
   }
 }

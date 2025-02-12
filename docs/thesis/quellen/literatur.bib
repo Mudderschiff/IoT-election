@@ -42,7 +42,7 @@
   organization = { Espressif Systems (Shanghai) Co., Ltd.},
   month        = {01},
   year         = {2025},
-  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf}},
+  url = {https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf},
   edition      = {5.3}
 }
 
@@ -51,7 +51,7 @@
   organization = { Espressif Systems (Shanghai) Co., Ltd.},
   month        = {02},
   year         = {2023},
-  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf}},
+  url = {https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf},
   edition      = {3.4},
   note = {Not Recommended For New Designs (NRND)}
 }
@@ -61,7 +61,7 @@
   organization = { Espressif Systems (Shanghai) Co., Ltd.},
   month        = {09},
   year         = {2024},
-  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf}},
+  url = {https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf},
   edition      = {1.7}
 }
 
@@ -70,7 +70,7 @@
   organization = { Espressif Systems (Shanghai) Co., Ltd.},
   month        = {01},
   year         = {2025},
-  note         = {Available at \url{https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf}},
+  url = {https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf},
   edition      = {4.8}
 }
 
@@ -79,7 +79,7 @@
   organization = { Espressif Systems (Shanghai) Co., Ltd.},
   month        = {07},
   year         = {2024},
-  note         = {Available at \url{https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32/esp-chip-errata-en-master-esp32.pdf}},
+  url = {https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32/esp-chip-errata-en-master-esp32.pdf},
   edition      = {2.8}
 }
 
@@ -115,20 +115,33 @@
   edition      = "v1.0",
   month        = "01",
   year         = "2022",
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/Election-Tech-Initiative/electionguard/releases/tag/v1.0}},
+  url = {https://github.com/Election-Tech-Initiative/electionguard/releases/tag/v1.0},
+  howpublished = {GitHub repository},
   commit = {93956943414961582b9dc377b8deea6fd7f9fb74},
   note = {Accessed on 2025-01-21}
 }
 
+@article{chip-revision,
+  organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  title = {Security Advisory concerning fault injection and eFuse protections (CVE-2019-17391)},
+  url = {https://www.espressif.com/en/news/Security_Advisory_Concerning_Fault_Injection_and_eFuse_Protections},
+  month = {11},
+  year = {2019}
+}
 
-@misc{eg-paper,
-      author = {Josh Benaloh and Michael Naehrig and Olivier Pereira and Dan S. Wallach},
-      title = {{ElectionGuard}: a Cryptographic Toolkit to Enable Verifiable Elections},
-      howpublished = {Cryptology ePrint Archive, Paper 2024/955},
-      year = {2024},
-      note = {\url{https://eprint.iacr.org/2024/955}},
-      url = {https://eprint.iacr.org/2024/955}
+
+@inproceedings{eg-paper,
+author = {Benaloh, Josh and Naehrig, Michael and Pereira, Olivier and Wallach, D.},
+title = {ElectionGuard: a Cryptographic Toolkit to Enable Verifiable Elections},
+booktitle = {USENIX Security},
+year = {2024},
+month = {August},
+abstract = {,ElectionGuard is a flexible set of open-source tools that---when used with traditional election systems---can produce end-to-end verifiable elections whose integrity can be verified by observers, candidates, media, and even voters themselves. ElectionGuard has been integrated into a variety of systems and used in actual public U.S. elections in Wisconsin, California, Idaho, Utah, and Maryland as well as in caucus elections in the U.S. Congress. It has also been used for civic voting in the Paris suburb of Neuilly-sur-Seine and for an online election by a Switzerland/Denmark-based organization.
+
+The principal innovation of ElectionGuard is the separation of the cryptographic tools from the core mechanics and user interfaces of voting systems. This separation allows the cryptography to be designed and built by security experts without having to re-invent and replace the existing infrastructure. Indeed, in its preferred deployment, ElectionGuard does not replace the existing vote counting infrastructure but instead runs alongside and produces its own independently-verifiable tallies. Although much of the cryptography in ElectionGuard is, by design, not novel, some significant innovations are introduced which greatly simplify the process of verification.
+
+This paper describes the design of ElectionGuard, its innovations, and many of the learnings from its implementation and growing number of real-world deployments.},
+url = {https://www.microsoft.com/en-us/research/publication/electionguard-a-cryptographic-toolkit-to-enable-verifiable-elections/},
 }
 
 @booklet{e2e-primer,
@@ -154,7 +167,7 @@ url = {https://www.microsoft.com/en-us/research/publication/end-end-verifiablity
 }
 
 
-@techreport{EAC,
+@techreport{e2e-pilot,
   title       = "End-to-End Verifiability in Real-World Elections",
   institution = "Microsoft",
   year        = 2023,
@@ -187,8 +200,8 @@ url = {https://www.microsoft.com/en-us/research/publication/end-end-verifiablity
   author = {MicroPython},
   title = {MicroPython documentation},
   version = {1.24.0},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/micropython/micropython}},
+  url = {https://github.com/micropython/micropython},
+  howpublished = {GitHub repository},
   commit = {ecfdd5d6f9be971852003c2049600dc7b3e2a838},
   note = {Accessed on 2025-01-21},
 }
@@ -237,7 +250,7 @@ url = {https://www.microsoft.com/en-us/research/publication/end-end-verifiablity
 @software{wolfSSL-port,
   author = {wolfSSL Inc.},
   title = {wolfSSL ESP-IDF Port},
-  url = {https://github.com/wolfSSL/wolfssl/tree/eb15a1213cdc2cd43f155cedd06b25741fad9326/IDE/Espressif/ESP-IDF},
+  url = {https://github.com/wolfSSL/wolfssl/tree/eb15a1213cdc2cd43f155cedd06b25741fad9326/wolfcrypt/src/port/Espressif},
   version = {5.7.4},
   howpublished = {GitHub repository}  
 }
@@ -293,3 +306,92 @@ url = {https://www.microsoft.com/en-us/research/publication/end-end-verifiablity
   year = {2022},
   note = {Retrieved from \url{https://urn.kb.se/resolve?urn=urn:nbn:se:kth:diva-309833}},
 }
+
+@article{chaum,
+author = {Chaum, David L.},
+title = {Untraceable electronic mail, return addresses, and digital pseudonyms},
+year = {1981},
+issue_date = {Feb. 1981},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {24},
+number = {2},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/358549.358563},
+doi = {10.1145/358549.358563},
+journal = {Commun. ACM},
+month = feb,
+pages = {84–90},
+numpages = {7},
+keywords = {traffic analysis, security, public key cryptosystems, privacy, electronic mail, digital signatures}
+}
+
+@INPROCEEDINGS{ecc-eval,
+  author={Sagheer, Ali Makki},
+  booktitle={2012 6th International Conference on Signal Processing and Communication Systems}, 
+  title={Elliptic curves cryptographic techniques}, 
+  year={2012},
+  volume={},
+  number={},
+  pages={1-7},
+  keywords={Elliptic Curves Cryptography;Discrete Logarithm Problem;Elliptic Curve Discrete Logarithm Problem;ElGamal;Menezes-Vanstone},
+  doi={10.1109/ICSPCS.2012.6507952}
+}
+
+
+@ARTICLE{protocols,
+  author={Al-Masri, Eyhab and Kalyanam, Karan Raj and Batts, John and Kim, Jonathan and Singh, Sharanjit and Vo, Tammy and Yan, Charlotte},
+  journal={IEEE Access}, 
+  title={Investigating Messaging Protocols for the Internet of Things (IoT)}, 
+  year={2020},
+  volume={8},
+  number={},
+  pages={94880-94911},
+  keywords={Protocols;Internet of Things;Object recognition;Open systems;Middleware;Wireless sensor networks;Hardware;Internet of Things;IoT;HTTP;MQTT;CoAP;AMQP;XMPP;DDS;data distribution service;constrained application protocol;message queuing telemetry transport;extensible messaging and presence protocol;HyperText transfer protocol;edge computing;fog computing;cloud applications},
+  doi={10.1109/ACCESS.2020.2993363}}
+
+
+
+@Article{serialisation-comparison,
+AUTHOR = {Luis, Álvaro and Casares, Pablo and Cuadrado-Gallego, Juan J. and Patricio, Miguel A.},
+TITLE = {PSON: A Serialization Format for IoT Sensor Networks},
+JOURNAL = {Sensors},
+VOLUME = {21},
+YEAR = {2021},
+NUMBER = {13},
+ARTICLE-NUMBER = {4559},
+URL = {https://www.mdpi.com/1424-8220/21/13/4559},
+PubMedID = {34283115},
+ISSN = {1424-8220},
+ABSTRACT = {In many Internet of Things (IoT) environments, the lifetime of a sensor is linked to its power supply. Sensor devices capture external information and transmit it. They also receive messages with control commands, which means that one of the largest computational overheads of sensor devices is spent on data serialization and deserialization tasks, as well as data transmission. The simpler the serialization/deserialization and the smaller the size of the information to be transmitted, the longer the lifetime of the sensor device and, consequently, the longer the service life. This paper presents a new serialization format (PSON) for these environments, which simplifies the serialization/deserialization tasks and minimizes the messages to be sent/received. The paper presents evaluation results with the most popular serialization formats, demonstrating the improvement obtained with the new PSON format.},
+DOI = {10.3390/s21134559}
+}
+
+
+@Inbook{protobuffer,
+author="Currier, Chris",
+editor="Hummert, Christian
+and Pawlaszczyk, Dirk",
+title="Protocol Buffers",
+bookTitle="Mobile Forensics -- The File Format Handbook: Common File Formats and File Systems Used in Mobile Devices",
+year="2022",
+publisher="Springer International Publishing",
+address="Cham",
+pages="223--260",
+abstract="Protocol Buffers (Protobufs) are discussed in this chapter, from creating one to analyzing the data. This particular serialization format, originally developed by Google, is used in various apps.We discuss creating a protocol buffer and adding data through Python step by step. This provides a better understanding of how and why protocol buffers are formed and used. We also clarify how to recognize and decode them during a forensic examination.",
+isbn="978-3-030-98467-0",
+doi="10.1007/978-3-030-98467-0_9",
+url="https://doi.org/10.1007/978-3-030-98467-0_9"
+}
+
+
+@INPROCEEDINGS{serialisation,
+  author={Proos, Daniel Persson and Carlsson, Niklas},
+  booktitle={2020 IFIP Networking Conference (Networking)}, 
+  title={Performance Comparison of Messaging Protocols and Serialization Formats for Digital Twins in IoV}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={10-18},
+  keywords={Protocols;Reliability;Quality of service;Cloud computing;Bandwidth;Servers;Google},
+  doi={}}

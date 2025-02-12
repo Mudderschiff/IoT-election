@@ -2,22 +2,22 @@
 {
   "PlaintextBallot": {
     "style_id": "",
-    "num_contests": "",
+    "num_contests": "2 B (int)",
     "PlaintextBallotContest": [
       {
-        "num_selections": "",
+        "num_selections": "2 B (int)",
         "PlaintextBallotSelection": [
           {
-            "vote": "",
-            "is_placeholder_selection": ""
+            "vote": "1 B (bool)",
+            "is_placeholder_selection": "1 B (bool)"
           },
           {
-            "vote": "",
-            "is_placeholder_selection": ""
+            "vote": "1 B (bool)",
+            "is_placeholder_selection": "1 B (bool)"
           },
           {
-            "vote": "",
-            "is_placeholder_selection": ""
+            "vote": "1 B (bool)",
+            "is_placeholder_selection": "1 B (bool)"
           }
         ]
       }

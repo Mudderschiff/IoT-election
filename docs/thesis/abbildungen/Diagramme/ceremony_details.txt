@@ -1,4 +1,0 @@
-@startuml
-allowmixing
-collections guardians
-@enduml

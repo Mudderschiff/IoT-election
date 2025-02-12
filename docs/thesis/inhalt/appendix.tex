@@ -1,10 +1,33 @@
 \chapter{Appendix}
-\section{Subset of Reference Implementation for the Guardian functionality}
+\section{wolfSSL}
+\subsection{User Settings}
+\lstinputlisting[language=C, label={lst:user_settings}, firstline=79, lastline=82]{../../guardian/components/wolfssl/include/user_settings.h}
+\lstinputlisting[language=C, firstline=93, lastline=96]{../../guardian/components/wolfssl/include/user_settings.h}
+\lstinputlisting[language=C, firstline=341, lastline=366]{../../guardian/components/wolfssl/include/user_settings.h}
 
 \section{Model Component}
-\subsection{Model.c}
-\lstinputlisting[caption={Business logic}, label=model.c, language=C]{../../guardian/components/model/model.c}
-\section{View Component}
-\lstinputlisting[language=C]{../../guardian/components/view/view.c}
+\subsection{Cryptographic Constants}
+\lstinputlisting[language=C, label={lst:constants}]{../../guardian/components/model/util/constants.c}
+\subsection{RNG}
+\lstinputlisting[language=C, label={lst:rng}, firstline=176, lastline=204]{../../guardian/components/model/util/crypto_utils.c}
+\subsection{Hash Functions}
+\lstinputlisting[language=C, label={lst:hash}, firstline=207, lastline=247]{../../guardian/components/model/util/crypto_utils.c}
+\lstinputlisting[language=C, label={lst:get_hmac}, firstline=357, lastline=382]{../../guardian/components/model/util/crypto_utils.c}
+\subsection{RSA Accelerator}
+\lstinputlisting[language=C, label={lst:modular_exp}, firstline=126, lastline=146]{../../guardian/components/model/util/crypto_utils.c}
+\lstinputlisting[language=C, label={lst:compute_polynomial}, firstline=257, lastline=293]{../../guardian/components/model/util/crypto_utils.c}
+\subsection{Data Structures}
+\lstinputlisting[language=C, label={lst:structures}, firstline=16, lastline=117]{../../guardian/components/model/util/include/crypto_utils.h}
+
 \section{Adapter Component}
-\lstinputlisting[language=C]{../../guardian/components/adapter/adapter.c}
+\subsection{Serialization}
+\lstinputlisting[language=C, label={lst:serialize}, firstline=191, lastline=214]{../../guardian/components/adapter/util/serialize.c}
+\subsection{Deserialization}
+\lstinputlisting[language=C, label={lst:deserialise}, firstline=260, lastline=298]{../../guardian/components/adapter/util/serialize.c}
+\subsection{Proto file}
+\lstinputlisting[language=C, label={lst:pre-election}]{../../guardian/components/adapter/util/buff.proto}
+\lstinputlisting[language=C, label={lst:pre-election}]{../../guardian/components/adapter/util/ballot.proto}
+\lstinputlisting[language=C, label={lst:post-election}]{../../guardian/components/adapter/util/tally.proto}
+\subsection{Generated Code}
+\lstinputlisting[language=C, label={lst:generated-c}, firstline=1, lastline=54]{../../guardian/components/adapter/util/buff.pb-c.c}
+\lstinputlisting[language=C, label={lst:generated-python}]{../../initBallotBox/ballot_pb2.py}

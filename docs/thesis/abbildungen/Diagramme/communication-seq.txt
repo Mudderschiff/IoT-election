@@ -1,0 +1,53 @@
+@startuml
+actor Administrator as A
+actor EncryptionDevice as E
+collections Guardians as G
+actor Voter as V
+actor ThirdParties as T
+title Pre-election
+A -> G : Send Ceremony Details (Quorum and number of guardians)
+G -> G : Send key pair to other guardians
+G -> G : Send backup based on received keys
+alt Proof Verifies
+G -> G : Continue
+else Proof Fails
+     G -> G : Send as Challenge to other Guardians
+else proof fails again
+     G -x G : Evict sending guardian and restart the phase
+end
+G -> G : Combine all public keys to create a joint key
+G -> A : Send joint key
+A -> E : Load encryption device with joint key
+
+newpage Intra-election
+A -> V : Send empty ballots to the voters
+loop until a ballot is cast
+    V -> E : Send filled ballot
+    E -> V : Send verification code
+    break Cast ballot
+        V -> E : Cast Ballot 
+	E -> E : Record Encrypted Ballot as Cast
+    end
+    V -> E : Spoil Ballot
+    E -> E : Record Encrypted Ballot as spoiled     
+end
+
+newpage Post-election
+E -> E : Generate Encrypted Tally from cast ballots
+E -> G : Send Encrypted Tally
+alt all guardians present
+    G -> G : Combine Decryption Shares to an decrypted Tally
+    G -> A : Send the decrypted Tally
+else guardians are missing
+    G -> G : Compute Partial Decryption for each missing guardian
+    G -> G : Combine all Decryption Shares including compensated shares
+    G -> A : Send the decrypted Tally
+end
+opt Decryption of Spoiled Ballots
+    E -> G : Send Encrypted Spoiled Ballots
+    G -> G : Decrypt through same process used in Encrypted Tally
+    G -> A : Send decrypted spoiled ballots
+end
+A -> T : Publish the election artifacts
+T -> T : Verify the election
+@enduml

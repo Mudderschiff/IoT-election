@@ -1,0 +1,8 @@
+@startditaa
+/------------------\             /------------------\
+| Plaintext Ballot |             | Encrypted Ballot |
+|                  | Encryption  |                  |
+|    (0,1,0,0)     | ----------> |   (C1,C2,C3,C4)  |
+|   cFFE           |             |   cFFE           |
+\------------------/             \------------------/	
+@endditaa
