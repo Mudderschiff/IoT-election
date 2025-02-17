@@ -132,7 +132,9 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
  * @return 0 on success, -1 on failure
  */
 static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
-    int ret;
+    int ret = sp_exptmod(g, x, p, y);
+    /*
+    
     ret = esp_mp_exptmod(g,x,p,y);
     if(ret == INPUT_CASE_ERROR) {
         ESP_LOGI("MODEXPT", "Input are too small switching to software exptmod");
@@ -142,6 +144,32 @@ static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
             return -1;
         } 
     }
+    */
+    return ret;
+}
+
+/**
+ * @brief Modular Multiplication. If the input parameters are to small switches to the software method
+ * @param a: First element
+ * @param b: Second element
+ * @param c: Modulus
+ * @param result: The result of the multiplication
+ */
+static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
+    int ret = sp_mulmod(a, b, c, result);
+    /*
+    
+    
+    ret = esp_mp_mulmod(a, b, c, result);
+    if(ret == INPUT_CASE_ERROR) {
+        ESP_LOGI("MULMOD", "Input are too smal switching to software mulmod");
+        ret = sp_mulmod(a, b, c, result);
+        if (ret != MP_OKAY) {
+            ESP_LOGE("MULMOD", "Error code: %d", ret);
+            return -1;
+        } 
+    }
+    */
     return ret;
 }
 
@@ -163,7 +191,7 @@ static int g_pow_p(sp_int *seckey, sp_int *pubkey) {
     INIT_MP_INT_SIZE(generator, 3072);
     sp_read_unsigned_bin(generator, g_3072, sizeof(g_3072));
 
-    ret = esp_mp_exptmod(generator,seckey,large_prime,pubkey);
+    ret = exptmod(generator,seckey,large_prime,pubkey);
     if(ret != 0) {
         ESP_LOGE("G_POW_P", "Failed to compute g^x mod p");
         ESP_LOGE("G_POW_P", "Error code: %d", ret);
@@ -281,7 +309,7 @@ int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial
         sp_set_int(exponent_i, i);
         // Not Accelerated. Operator lenght to small
         exptmod(modifier, exponent_i, small_prime, exponent);
-        sp_mulmod(polynomial->coefficients[i].value, exponent, small_prime, factor);
+        mulmod(polynomial->coefficients[i].value, exponent, small_prime, factor);
         sp_addmod(coordinate, factor, small_prime, coordinate);
     }
     FREE_MP_INT_SIZE(exponent_i, NULL, DYNAMIC_TYPE_BIGINT);
@@ -335,7 +363,7 @@ int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial*
         sp_set_int(exponent_i, i);
         exptmod(modifier, exponent_i, large_prime, exponent);
         exptmod(polynomial->coefficients[i].commitment, exponent, large_prime, factor);
-        sp_mulmod(commitment_output, factor, large_prime, commitment_output);
+        mulmod(commitment_output, factor, large_prime, commitment_output);
     }
     g_pow_p(coordinate, value_output);
     if(sp_cmp(value_output, commitment_output) == MP_EQ) {
@@ -404,7 +432,7 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
     NEW_MP_INT_SIZE(session_key, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(session_key, 256);
 
-    esp_mp_exptmod(public_key, nonce, large_prime, pubkey_pow_n); //beta
+    exptmod(public_key, nonce, large_prime, pubkey_pow_n); //beta
     vTaskDelay(1 / portTICK_PERIOD_MS);
     g_pow_p(nonce, encrypted_message->pad); //alpha
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
@@ -474,7 +502,7 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
     NEW_MP_INT_SIZE(pubkey_pow_n, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(pubkey_pow_n, 3072);
 
-    esp_mp_exptmod(encrypted_message->pad, secret_key, large_prime, pubkey_pow_n);
+    exptmod(encrypted_message->pad, secret_key, large_prime, pubkey_pow_n);
     hash(encrypted_message->pad, pubkey_pow_n, session_key);
 
     byte * key_bytes = (byte *)malloc(sp_unsigned_bin_size(session_key));
@@ -604,26 +632,7 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
     return 0;
 }
 
-/**
- * @brief Modular Multiplication. If the input parameters are to small switches to the software method
- * @param a: First element
- * @param b: Second element
- * @param c: Modulus
- * @param result: The result of the multiplication
- */
-static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
-    int ret;
-    ret = esp_mp_mulmod(a, b, c, result);
-    if(ret == INPUT_CASE_ERROR) {
-        ESP_LOGI("MULMOD", "Input are too smal switching to software mulmod");
-        ret = mp_mulmod(a, b, c, result);
-        if (ret != MP_OKAY) {
-            ESP_LOGE("MULMOD", "Error code: %d", ret);
-            return -1;
-        } 
-    }
-    return ret;
-}
+
 
 int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
     DECL_MP_INT_SIZE(large_prime, 3072);
