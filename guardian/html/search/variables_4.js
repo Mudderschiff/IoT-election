@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['g_5f3072_0',['g_3072',['../constants_8c.html#ad6b4e332f91fc07b72658fa1769c82ba',1,'g_3072:&#160;constants.c'],['../constants_8h.html#a1a52e3e4976c63a4c7e1983b2a4afdc0',1,'g_3072:&#160;constants.c']]],
+  ['guardian_1',['guardian',['../adapter_8c.html#aae75fb47be17f4de5fa259b3d4c5d7f0',1,'adapter.c']]],
+  ['guardian_5fid_2',['guardian_id',['../struct_election_key_pair_proto.html#a4ce061ab99a5e1b82ea984698c4d6d18',1,'ElectionKeyPairProto::guardian_id'],['../struct_ciphertext_decryption_selection_proto.html#a87d1842856b8f765dc8b6ab91206a665',1,'CiphertextDecryptionSelectionProto::guardian_id'],['../struct_ciphertext_decryption_contest_proto.html#a3eac9075c39a52e5f723d3701695d24d',1,'CiphertextDecryptionContestProto::guardian_id'],['../struct_decryption_share_proto.html#aeaa036c66e9b106e2bf535a4b36bf66c',1,'DecryptionShareProto::guardian_id'],['../struct_election_key_pair.html#a5271314119f91baecbe1a1948ba846ac',1,'ElectionKeyPair::guardian_id'],['../struct_ciphertext_decryption_selection.html#a29cec94c83decfd35e62b36890531649',1,'CiphertextDecryptionSelection::guardian_id'],['../struct_ciphertext_decryption_contest.html#aa1f1554ecdcef7103c5b73154d6f9f81',1,'CiphertextDecryptionContest::guardian_id'],['../struct_decryption_share.html#acea5b58ffb9ae9064bc6c134deaebf16',1,'DecryptionShare::guardian_id']]]
+];

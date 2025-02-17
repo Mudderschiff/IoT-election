@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['ciphertext_5fballot_5fproto_5f_5finit_0',['CIPHERTEXT_BALLOT_PROTO__INIT',['../ballot_8pb-c_8h.html#a62a875130b93fe3e06080c78102a0c54',1,'ballot.pb-c.h']]],
+  ['ciphertext_5fdecryption_5fcontest_5fproto_5f_5finit_1',['CIPHERTEXT_DECRYPTION_CONTEST_PROTO__INIT',['../tally_8pb-c_8h.html#a23520081fbaa732786129f1209bdd004',1,'tally.pb-c.h']]],
+  ['ciphertext_5fdecryption_5fselection_5fproto_5f_5finit_2',['CIPHERTEXT_DECRYPTION_SELECTION_PROTO__INIT',['../tally_8pb-c_8h.html#a59745f5421bc6159e578cf64fff635df',1,'tally.pb-c.h']]],
+  ['ciphertext_5ftally_5fcontest_5fproto_5f_5finit_3',['CIPHERTEXT_TALLY_CONTEST_PROTO__INIT',['../tally_8pb-c_8h.html#aac1ed5db5753fe9b5a2ed7773421e4ca',1,'tally.pb-c.h']]],
+  ['ciphertext_5ftally_5fproto_5f_5finit_4',['CIPHERTEXT_TALLY_PROTO__INIT',['../tally_8pb-c_8h.html#ad354a20a612ba124d7fd99de51325607',1,'tally.pb-c.h']]],
+  ['ciphertext_5ftally_5fselection_5fproto_5f_5finit_5',['CIPHERTEXT_TALLY_SELECTION_PROTO__INIT',['../tally_8pb-c_8h.html#ae01bd07ea1cd6e178dfe7910bc52ffc5',1,'tally.pb-c.h']]],
+  ['coefficient_5fproto_5f_5finit_6',['COEFFICIENT_PROTO__INIT',['../buff_8pb-c_8h.html#a4c9c642caa6e6121f0a501ac4769ab94',1,'buff.pb-c.h']]],
+  ['ctx_5fca_5fcert_7',['CTX_CA_CERT',['../user__settings_8h.html#ad6d35c4919f8adae6012866c64db2724',1,'user_settings.h']]],
+  ['ctx_5fca_5fcert_5fsize_8',['CTX_CA_CERT_SIZE',['../user__settings_8h.html#aad4942e5b8f26be042f80fc72ab12ebd',1,'user_settings.h']]],
+  ['ctx_5fca_5fcert_5ftype_9',['CTX_CA_CERT_TYPE',['../user__settings_8h.html#a8c57f798c6c2d48baf0c57fd8c914020',1,'user_settings.h']]],
+  ['ctx_5fclient_5fcert_10',['CTX_CLIENT_CERT',['../user__settings_8h.html#a1d846bed91aa54c25349a325a8543b3b',1,'user_settings.h']]],
+  ['ctx_5fclient_5fcert_5fsize_11',['CTX_CLIENT_CERT_SIZE',['../user__settings_8h.html#acab4592710936b10f6367840acddc705',1,'user_settings.h']]],
+  ['ctx_5fclient_5fcert_5ftype_12',['CTX_CLIENT_CERT_TYPE',['../user__settings_8h.html#a8540e9261e67963c141210d2c6260d3f',1,'user_settings.h']]],
+  ['ctx_5fclient_5fkey_13',['CTX_CLIENT_KEY',['../user__settings_8h.html#a255752b4167068aebf53023755307f21',1,'user_settings.h']]],
+  ['ctx_5fclient_5fkey_5fsize_14',['CTX_CLIENT_KEY_SIZE',['../user__settings_8h.html#aec87b9fab775727e230f17dba677150f',1,'user_settings.h']]],
+  ['ctx_5fclient_5fkey_5ftype_15',['CTX_CLIENT_KEY_TYPE',['../user__settings_8h.html#afaaf697ba68ef865d090e190eb443e1e',1,'user_settings.h']]],
+  ['ctx_5fserver_5fcert_16',['CTX_SERVER_CERT',['../user__settings_8h.html#a8a3e6bf8585cb4eb3e083a6a5ae800f6',1,'user_settings.h']]],
+  ['ctx_5fserver_5fcert_5fsize_17',['CTX_SERVER_CERT_SIZE',['../user__settings_8h.html#a547e62c9d5491715c2895f34423a87f2',1,'user_settings.h']]],
+  ['ctx_5fserver_5fcert_5ftype_18',['CTX_SERVER_CERT_TYPE',['../user__settings_8h.html#a109a83c84864d184e1a4f6ef95a95abc',1,'user_settings.h']]],
+  ['ctx_5fserver_5fkey_19',['CTX_SERVER_KEY',['../user__settings_8h.html#a5115c20423a738cd2c3a9541a6db6e86',1,'user_settings.h']]],
+  ['ctx_5fserver_5fkey_5fsize_20',['CTX_SERVER_KEY_SIZE',['../user__settings_8h.html#a5a3453c011c994ca8c15f50b567c0911',1,'user_settings.h']]],
+  ['ctx_5fserver_5fkey_5ftype_21',['CTX_SERVER_KEY_TYPE',['../user__settings_8h.html#a67d4bd18149f43f50902a2a4c38bf583',1,'user_settings.h']]],
+  ['curve25519_5fsmall_22',['CURVE25519_SMALL',['../user__settings_8h.html#afa4de2a9d8251dee1a1016c11b2c51a6',1,'user_settings.h']]]
+];

@@ -1,0 +1,199 @@
+\doxysection{components/adapter/adapter.c File Reference}
+\hypertarget{adapter_8c}{}\label{adapter_8c}\index{components/adapter/adapter.c@{components/adapter/adapter.c}}
+{\ttfamily \#include "{}adapter.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{adapter_8c_a71077f58d780aba2de19f2681057ef84}{publish\+\_\+public\+\_\+key}} (esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t client, const char \texorpdfstring{$\ast$}{*}data, int data\+\_\+len)
+\item 
+void \mbox{\hyperlink{adapter_8c_ab482c8e771c87eb2e5caf5bbf9bcff7f}{handle\+\_\+pubkeys}} (esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t client, const char \texorpdfstring{$\ast$}{*}data, int data\+\_\+len)
+\item 
+void \mbox{\hyperlink{adapter_8c_a3035c0feb719771d245735d6f9500ac6}{handle\+\_\+backups}} (esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t client, const char \texorpdfstring{$\ast$}{*}data, int data\+\_\+len)
+\item 
+void \mbox{\hyperlink{adapter_8c_ae91935be68620ab7308cb7d551e5cf5f}{handle\+\_\+challenge}} (esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t client, const char \texorpdfstring{$\ast$}{*}data, int data\+\_\+len)
+\item 
+void \mbox{\hyperlink{adapter_8c_ac08e64bf3fcffda65349daabb087f2ba}{handle\+\_\+ciphertext\+\_\+tally}} (esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t client, const char \texorpdfstring{$\ast$}{*}data, int data\+\_\+len)
+\item 
+void \mbox{\hyperlink{adapter_8c_a787bc5bc420fb52d958e2a03cc01e3ec}{add\+\_\+key\+\_\+pair}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}key\+\_\+pair)
+\item 
+\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{adapter_8c_abb34e18edf8014ff09d17bf9b700600d}{find\+\_\+key\+\_\+pair}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}guardian\+\_\+id)
+\item 
+void \mbox{\hyperlink{adapter_8c_afaec079fab6e3f1bda45aaf55eb6f706}{delete\+\_\+key\+\_\+pair}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}guardian\+\_\+id)
+\item 
+void \mbox{\hyperlink{adapter_8c_ada3a58e5a6bf5f1514e45a6318111578}{add\+\_\+backup}} (\mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*}backup)
+\item 
+\mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{adapter_8c_ae47731e591448c5834c33e77c0a73c57}{find\+\_\+backup}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}guardian\+\_\+id)
+\item 
+void \mbox{\hyperlink{adapter_8c_a32bf22ab07aebd66af1381f5b47245b2}{delete\+\_\+backup}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}guardian\+\_\+id)
+\item 
+void \mbox{\hyperlink{adapter_8c_ac7140ba270d055f1d85907e6136faeb5}{log\+\_\+error\+\_\+if\+\_\+nonzero}} (const char \texorpdfstring{$\ast$}{*}message, int error\+\_\+code)
+\item 
+void \mbox{\hyperlink{adapter_8c_aba1a82a6a489de5e1433de02f9c1ca35}{log\+\_\+heap\+\_\+info}} ()
+\item 
+void \mbox{\hyperlink{adapter_8c_a9d2dc47a670019ede5b59414930cf090}{mqtt\+\_\+event\+\_\+handler}} (void \texorpdfstring{$\ast$}{*}handler\+\_\+args, esp\+\_\+event\+\_\+base\+\_\+t base, int32\+\_\+t event\+\_\+id, void \texorpdfstring{$\ast$}{*}event\+\_\+data)
+\item 
+void \mbox{\hyperlink{adapter_8c_a23111a2f4585204ffeeaaec70247be3c}{mqtt\+\_\+app\+\_\+start}} (void)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{adapter_8c_a2f32c75fb4bc7ba39243ef4a9f8eacc1}{mac}} \mbox{[}6\mbox{]} = \{0\}
+\item 
+int \mbox{\hyperlink{adapter_8c_a7d8099b54acfbfa5c26352d9167cc50d}{pubkey\+\_\+count}} = 0
+\item 
+int \mbox{\hyperlink{adapter_8c_ad2cab1b47cdff26cb9485a9483d8813f}{backup\+\_\+count}} = 0
+\item 
+int \mbox{\hyperlink{adapter_8c_ad4a2f264d6737f2bcdb4eeea64a99649}{max\+\_\+guardians}}
+\item 
+int \mbox{\hyperlink{adapter_8c_a692a1f7328c6d16bb09778805223b47b}{quorum}}
+\item 
+\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \mbox{\hyperlink{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}{guardian}}
+\item 
+\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\+\_\+map}}
+\item 
+\mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{adapter_8c_a794d371dba3d7e77e8cb5034cbd04b56}{backup\+\_\+map}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{adapter_8c_ada3a58e5a6bf5f1514e45a6318111578}\label{adapter_8c_ada3a58e5a6bf5f1514e45a6318111578} 
+\index{adapter.c@{adapter.c}!add\_backup@{add\_backup}}
+\index{add\_backup@{add\_backup}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{add\_backup()}{add\_backup()}}
+{\footnotesize\ttfamily void add\+\_\+backup (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*}}]{backup }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_a787bc5bc420fb52d958e2a03cc01e3ec}\label{adapter_8c_a787bc5bc420fb52d958e2a03cc01e3ec} 
+\index{adapter.c@{adapter.c}!add\_key\_pair@{add\_key\_pair}}
+\index{add\_key\_pair@{add\_key\_pair}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{add\_key\_pair()}{add\_key\_pair()}}
+{\footnotesize\ttfamily void add\+\_\+key\+\_\+pair (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{key\+\_\+pair }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_a32bf22ab07aebd66af1381f5b47245b2}\label{adapter_8c_a32bf22ab07aebd66af1381f5b47245b2} 
+\index{adapter.c@{adapter.c}!delete\_backup@{delete\_backup}}
+\index{delete\_backup@{delete\_backup}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{delete\_backup()}{delete\_backup()}}
+{\footnotesize\ttfamily void delete\+\_\+backup (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{guardian\+\_\+id }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_afaec079fab6e3f1bda45aaf55eb6f706}\label{adapter_8c_afaec079fab6e3f1bda45aaf55eb6f706} 
+\index{adapter.c@{adapter.c}!delete\_key\_pair@{delete\_key\_pair}}
+\index{delete\_key\_pair@{delete\_key\_pair}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{delete\_key\_pair()}{delete\_key\_pair()}}
+{\footnotesize\ttfamily void delete\+\_\+key\+\_\+pair (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{guardian\+\_\+id }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_ae47731e591448c5834c33e77c0a73c57}\label{adapter_8c_ae47731e591448c5834c33e77c0a73c57} 
+\index{adapter.c@{adapter.c}!find\_backup@{find\_backup}}
+\index{find\_backup@{find\_backup}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{find\_backup()}{find\_backup()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*} find\+\_\+backup (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{guardian\+\_\+id }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_abb34e18edf8014ff09d17bf9b700600d}\label{adapter_8c_abb34e18edf8014ff09d17bf9b700600d} 
+\index{adapter.c@{adapter.c}!find\_key\_pair@{find\_key\_pair}}
+\index{find\_key\_pair@{find\_key\_pair}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{find\_key\_pair()}{find\_key\_pair()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*} find\+\_\+key\+\_\+pair (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{guardian\+\_\+id }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_a3035c0feb719771d245735d6f9500ac6}\label{adapter_8c_a3035c0feb719771d245735d6f9500ac6} 
+\index{adapter.c@{adapter.c}!handle\_backups@{handle\_backups}}
+\index{handle\_backups@{handle\_backups}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{handle\_backups()}{handle\_backups()}}
+{\footnotesize\ttfamily void handle\+\_\+backups (\begin{DoxyParamCaption}\item[{esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t}]{client,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{data,  }\item[{int}]{data\+\_\+len }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_ae91935be68620ab7308cb7d551e5cf5f}\label{adapter_8c_ae91935be68620ab7308cb7d551e5cf5f} 
+\index{adapter.c@{adapter.c}!handle\_challenge@{handle\_challenge}}
+\index{handle\_challenge@{handle\_challenge}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{handle\_challenge()}{handle\_challenge()}}
+{\footnotesize\ttfamily void handle\+\_\+challenge (\begin{DoxyParamCaption}\item[{esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t}]{client,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{data,  }\item[{int}]{data\+\_\+len }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_ac08e64bf3fcffda65349daabb087f2ba}\label{adapter_8c_ac08e64bf3fcffda65349daabb087f2ba} 
+\index{adapter.c@{adapter.c}!handle\_ciphertext\_tally@{handle\_ciphertext\_tally}}
+\index{handle\_ciphertext\_tally@{handle\_ciphertext\_tally}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{handle\_ciphertext\_tally()}{handle\_ciphertext\_tally()}}
+{\footnotesize\ttfamily void handle\+\_\+ciphertext\+\_\+tally (\begin{DoxyParamCaption}\item[{esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t}]{client,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{data,  }\item[{int}]{data\+\_\+len }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_ab482c8e771c87eb2e5caf5bbf9bcff7f}\label{adapter_8c_ab482c8e771c87eb2e5caf5bbf9bcff7f} 
+\index{adapter.c@{adapter.c}!handle\_pubkeys@{handle\_pubkeys}}
+\index{handle\_pubkeys@{handle\_pubkeys}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{handle\_pubkeys()}{handle\_pubkeys()}}
+{\footnotesize\ttfamily void handle\+\_\+pubkeys (\begin{DoxyParamCaption}\item[{esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t}]{client,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{data,  }\item[{int}]{data\+\_\+len }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_ac7140ba270d055f1d85907e6136faeb5}\label{adapter_8c_ac7140ba270d055f1d85907e6136faeb5} 
+\index{adapter.c@{adapter.c}!log\_error\_if\_nonzero@{log\_error\_if\_nonzero}}
+\index{log\_error\_if\_nonzero@{log\_error\_if\_nonzero}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{log\_error\_if\_nonzero()}{log\_error\_if\_nonzero()}}
+{\footnotesize\ttfamily void log\+\_\+error\+\_\+if\+\_\+nonzero (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{message,  }\item[{int}]{error\+\_\+code }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_aba1a82a6a489de5e1433de02f9c1ca35}\label{adapter_8c_aba1a82a6a489de5e1433de02f9c1ca35} 
+\index{adapter.c@{adapter.c}!log\_heap\_info@{log\_heap\_info}}
+\index{log\_heap\_info@{log\_heap\_info}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{log\_heap\_info()}{log\_heap\_info()}}
+{\footnotesize\ttfamily void log\+\_\+heap\+\_\+info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_a23111a2f4585204ffeeaaec70247be3c}\label{adapter_8c_a23111a2f4585204ffeeaaec70247be3c} 
+\index{adapter.c@{adapter.c}!mqtt\_app\_start@{mqtt\_app\_start}}
+\index{mqtt\_app\_start@{mqtt\_app\_start}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{mqtt\_app\_start()}{mqtt\_app\_start()}}
+{\footnotesize\ttfamily void mqtt\+\_\+app\+\_\+start (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_a9d2dc47a670019ede5b59414930cf090}\label{adapter_8c_a9d2dc47a670019ede5b59414930cf090} 
+\index{adapter.c@{adapter.c}!mqtt\_event\_handler@{mqtt\_event\_handler}}
+\index{mqtt\_event\_handler@{mqtt\_event\_handler}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{mqtt\_event\_handler()}{mqtt\_event\_handler()}}
+{\footnotesize\ttfamily void mqtt\+\_\+event\+\_\+handler (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{handler\+\_\+args,  }\item[{esp\+\_\+event\+\_\+base\+\_\+t}]{base,  }\item[{int32\+\_\+t}]{event\+\_\+id,  }\item[{void \texorpdfstring{$\ast$}{*}}]{event\+\_\+data }\end{DoxyParamCaption})}
+
+\Hypertarget{adapter_8c_a71077f58d780aba2de19f2681057ef84}\label{adapter_8c_a71077f58d780aba2de19f2681057ef84} 
+\index{adapter.c@{adapter.c}!publish\_public\_key@{publish\_public\_key}}
+\index{publish\_public\_key@{publish\_public\_key}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{publish\_public\_key()}{publish\_public\_key()}}
+{\footnotesize\ttfamily void publish\+\_\+public\+\_\+key (\begin{DoxyParamCaption}\item[{esp\+\_\+mqtt\+\_\+client\+\_\+handle\+\_\+t}]{client,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{data,  }\item[{int}]{data\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{adapter_8c_ad2cab1b47cdff26cb9485a9483d8813f}\label{adapter_8c_ad2cab1b47cdff26cb9485a9483d8813f} 
+\index{adapter.c@{adapter.c}!backup\_count@{backup\_count}}
+\index{backup\_count@{backup\_count}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{backup\_count}{backup\_count}}
+{\footnotesize\ttfamily int backup\+\_\+count = 0}
+
+\Hypertarget{adapter_8c_a794d371dba3d7e77e8cb5034cbd04b56}\label{adapter_8c_a794d371dba3d7e77e8cb5034cbd04b56} 
+\index{adapter.c@{adapter.c}!backup\_map@{backup\_map}}
+\index{backup\_map@{backup\_map}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{backup\_map}{backup\_map}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}}\texorpdfstring{$\ast$}{*} backup\+\_\+map}
+
+\Hypertarget{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}\label{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0} 
+\index{adapter.c@{adapter.c}!guardian@{guardian}}
+\index{guardian@{guardian}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{guardian}{guardian}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} guardian}
+
+\Hypertarget{adapter_8c_a2f32c75fb4bc7ba39243ef4a9f8eacc1}\label{adapter_8c_a2f32c75fb4bc7ba39243ef4a9f8eacc1} 
+\index{adapter.c@{adapter.c}!mac@{mac}}
+\index{mac@{mac}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{mac}{mac}}
+{\footnotesize\ttfamily uint8\+\_\+t mac\mbox{[}6\mbox{]} = \{0\}}
+
+\Hypertarget{adapter_8c_ad4a2f264d6737f2bcdb4eeea64a99649}\label{adapter_8c_ad4a2f264d6737f2bcdb4eeea64a99649} 
+\index{adapter.c@{adapter.c}!max\_guardians@{max\_guardians}}
+\index{max\_guardians@{max\_guardians}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{max\_guardians}{max\_guardians}}
+{\footnotesize\ttfamily int max\+\_\+guardians}
+
+\Hypertarget{adapter_8c_a7d8099b54acfbfa5c26352d9167cc50d}\label{adapter_8c_a7d8099b54acfbfa5c26352d9167cc50d} 
+\index{adapter.c@{adapter.c}!pubkey\_count@{pubkey\_count}}
+\index{pubkey\_count@{pubkey\_count}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{pubkey\_count}{pubkey\_count}}
+{\footnotesize\ttfamily int pubkey\+\_\+count = 0}
+
+\Hypertarget{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}\label{adapter_8c_ab8b086fa271490586e2074c2f20ebda8} 
+\index{adapter.c@{adapter.c}!pubkey\_map@{pubkey\_map}}
+\index{pubkey\_map@{pubkey\_map}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{pubkey\_map}{pubkey\_map}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}}\texorpdfstring{$\ast$}{*} pubkey\+\_\+map}
+
+\Hypertarget{adapter_8c_a692a1f7328c6d16bb09778805223b47b}\label{adapter_8c_a692a1f7328c6d16bb09778805223b47b} 
+\index{adapter.c@{adapter.c}!quorum@{quorum}}
+\index{quorum@{quorum}!adapter.c@{adapter.c}}
+\doxysubsubsection{\texorpdfstring{quorum}{quorum}}
+{\footnotesize\ttfamily int quorum}
+

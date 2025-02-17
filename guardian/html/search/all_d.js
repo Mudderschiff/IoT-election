@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['n_5fballot_5fselections_0',['n_ballot_selections',['../struct_plaintext_ballot_contest_proto.html#a17f68e02113ec9b82d201df21a2602ed',1,'PlaintextBallotContestProto']]],
+  ['n_5fcoefficients_1',['n_coefficients',['../struct_election_polynomial_proto.html#a759f32344d2dfbfab0bca94826c5a487',1,'ElectionPolynomialProto']]],
+  ['n_5fcontests_2',['n_contests',['../struct_plaintext_ballot_proto.html#aae4fc8fb965ef85a1d141a45209213eb',1,'PlaintextBallotProto::n_contests'],['../struct_ciphertext_tally_proto.html#acfe41f57546fe1c661270bf3a7d17479',1,'CiphertextTallyProto::n_contests'],['../struct_decryption_share_proto.html#a9dea299dd06f2669598af0efd802ad1e',1,'DecryptionShareProto::n_contests']]],
+  ['n_5fselections_3',['n_selections',['../struct_ciphertext_tally_contest_proto.html#a34cd051df9b819c5741c62457ce947ec',1,'CiphertextTallyContestProto::n_selections'],['../struct_ciphertext_decryption_contest_proto.html#a48c42c1040741a9e1e287011a0ec8895',1,'CiphertextDecryptionContestProto::n_selections']]],
+  ['no_5fcrypt_5fbenchmark_4',['NO_CRYPT_BENCHMARK',['../user__settings_8h.html#a96b4d15bc3ec103232526d3f0f288bc5',1,'user_settings.h']]],
+  ['no_5fcrypt_5ftest_5',['NO_CRYPT_TEST',['../user__settings_8h.html#aaf3fb2888ae473e89482b18323a9253a',1,'user_settings.h']]],
+  ['no_5fdsa_6',['NO_DSA',['../user__settings_8h.html#aed916aa8b71fbdcf140051cf0ac47611',1,'user_settings.h']]],
+  ['no_5fesp32_5fcrypt_7',['NO_ESP32_CRYPT',['../user__settings_8h.html#a8ff148498591976252c847f77d38988e',1,'user_settings.h']]],
+  ['no_5fesp_5fsdk_5fwifi_8',['NO_ESP_SDK_WIFI',['../user__settings_8h.html#a198cefd68e31e460b925828b85627505',1,'user_settings.h']]],
+  ['no_5ffilesystem_9',['NO_FILESYSTEM',['../user__settings_8h.html#a03af94e90933761ea641e2ff4785e92b',1,'user_settings.h']]],
+  ['no_5fmd4_10',['NO_MD4',['../user__settings_8h.html#a06f3f162bfbd41b1cdc1a29130d0cc7a',1,'user_settings.h']]],
+  ['no_5fmd5_11',['NO_MD5',['../user__settings_8h.html#a39f37e7ab5ba806c9fd85fadbbcd88fb',1,'user_settings.h']]],
+  ['no_5fold_5ftls_12',['NO_OLD_TLS',['../user__settings_8h.html#a10925cfe0841a805ff2fae0f0325f0d4',1,'NO_OLD_TLS:&#160;user_settings.h'],['../user__settings_8h.html#a10925cfe0841a805ff2fae0f0325f0d4',1,'NO_OLD_TLS:&#160;user_settings.h']]],
+  ['no_5fpwdbased_13',['NO_PWDBASED',['../user__settings_8h.html#a7f104765d6a3301af5bf519cf5cf8eaa',1,'user_settings.h']]],
+  ['no_5frc4_14',['NO_RC4',['../user__settings_8h.html#a77e8846d00607f5e457ae6ba88a981ad',1,'user_settings.h']]],
+  ['no_5fsession_5fcache_15',['NO_SESSION_CACHE',['../user__settings_8h.html#ae30ced6d588919b90a2db7ae49a7eedf',1,'user_settings.h']]],
+  ['no_5fsha_16',['NO_SHA',['../user__settings_8h.html#a8362ba2be1eb796c878121ee6f20c828',1,'user_settings.h']]],
+  ['no_5fwolfssl_5fesp32_5fcrypt_5faes_17',['NO_WOLFSSL_ESP32_CRYPT_AES',['../user__settings_8h.html#a0d0cab2ff231aa21cb8bc8f42d1705ba',1,'user_settings.h']]],
+  ['no_5fwolfssl_5fesp32_5fcrypt_5fhash_18',['NO_WOLFSSL_ESP32_CRYPT_HASH',['../user__settings_8h.html#a7fb942b22d50aadfa7252217cc3f7485',1,'user_settings.h']]],
+  ['no_5fwolfssl_5fesp32_5fcrypt_5frsa_5fpri_19',['NO_WOLFSSL_ESP32_CRYPT_RSA_PRI',['../user__settings_8h.html#ac0b0f6af6bce091e71d462772891160a',1,'user_settings.h']]],
+  ['nonce_20',['nonce',['../crypto__utils_8c.html#a3a242a0b40dede1b761d8c880a6ce387',1,'crypto_utils.c']]],
+  ['num_5fcoefficients_21',['num_coefficients',['../struct_election_polynomial_proto.html#a196485bde4447d7d1ca7ad162920a485',1,'ElectionPolynomialProto::num_coefficients'],['../struct_election_polynomial.html#a1e162dcfcc9bfac3788ecb5fb79fa26f',1,'ElectionPolynomial::num_coefficients']]],
+  ['num_5fcontest_22',['num_contest',['../struct_ciphertext_tally_proto.html#abdb3b600d10869be8c29f6e8ef9b5b11',1,'CiphertextTallyProto::num_contest'],['../struct_ciphertext_tally.html#adc4967056e2aa6fc75e9aa079525539d',1,'CiphertextTally::num_contest'],['../struct_decryption_share.html#aced6cb141aa87be79ff9add20aa84983',1,'DecryptionShare::num_contest']]],
+  ['num_5fcontests_23',['num_contests',['../struct_plaintext_ballot_proto.html#ad6ff9c59b637891a3fb6a589d9abc123',1,'PlaintextBallotProto::num_contests'],['../struct_decryption_share_proto.html#a330e6d68a298b1c315ac7960237ec932',1,'DecryptionShareProto::num_contests']]],
+  ['num_5fselections_24',['num_selections',['../struct_plaintext_ballot_contest_proto.html#aa3efcc9ae87286a6ba1576da52da159b',1,'PlaintextBallotContestProto::num_selections'],['../struct_ciphertext_tally_contest_proto.html#a383623e3d043036602e6d9e13c84c6d5',1,'CiphertextTallyContestProto::num_selections'],['../struct_ciphertext_decryption_contest_proto.html#ac4ea1e7f7298eb66bec656bdee3903cb',1,'CiphertextDecryptionContestProto::num_selections'],['../struct_ciphertext_tally_contest.html#ad83030ad988ece2c6fadff6bb1e86de3',1,'CiphertextTallyContest::num_selections'],['../struct_ciphertext_decryption_contest.html#ad9a8874d52c63c33c59879beaa1d2f79',1,'CiphertextDecryptionContest::num_selections']]]
+];

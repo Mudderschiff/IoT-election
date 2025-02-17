@@ -1,0 +1,554 @@
+\doxysection{components/adapter/util/buff.pb-\/c.c File Reference}
+\hypertarget{buff_8pb-c_8c}{}\label{buff_8pb-c_8c}\index{components/adapter/util/buff.pb-\/c.c@{components/adapter/util/buff.pb-\/c.c}}
+{\ttfamily \#include "{}buff.\+pb-\/c.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{buff_8pb-c_8c_ad9480935c25b5155174487b631af52f5}{PROTOBUF\+\_\+\+C\+\_\+\+\_\+\+NO\+\_\+\+DEPRECATED}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a40fe3ddc1ab77a85ce43202dacf6ac70}{schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+init}} (\mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_af2c00619737f0cc6afc82401a26bc49c}{schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size}} (const \mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a4b6daac6abe5221e07863f38b2746cb9}{schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+pack}} (const \mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}message, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a8e51561f0c20b5b1fdb9eaa2172e1425}{schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer}} (const \mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}buffer)
+\item 
+\mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{buff_8pb-c_8c_a6003e82a40f129ffc93a909890eb00d1}{schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+unpack}} (Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator, size\+\_\+t len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_ace34838ac31eea82c83dcc2d06dbbb0e}{schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked}} (\mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_ae643b5cb86ecdf98b5bb1b20b876db29}{coefficient\+\_\+proto\+\_\+\+\_\+init}} (\mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a25c2525a802ed713d8b4b6a7d889319a}{coefficient\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size}} (const \mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_ae045daf26e4650cdec4699daa81320e8}{coefficient\+\_\+proto\+\_\+\+\_\+pack}} (const \mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}message, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a8bfd592f628efca4268f2321e03b857e}{coefficient\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer}} (const \mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}buffer)
+\item 
+\mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{buff_8pb-c_8c_a24b15b30520ac8296cd1afe84071e477}{coefficient\+\_\+proto\+\_\+\+\_\+unpack}} (Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator, size\+\_\+t len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_ab89aa5c6553e6f26b59551261ef6d551}{coefficient\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked}} (\mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a8150c188de9fe11b8d57f8ff6f008fb3}{election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+init}} (\mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a2021d073d926770ce972509f1a5960a3}{election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size}} (const \mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_ac7139f871f5ff18c69668ba4ba7eb4d3}{election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+pack}} (const \mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}message, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a29a2bc0596a04f90f2280ff78ce3091a}{election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer}} (const \mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}buffer)
+\item 
+\mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{buff_8pb-c_8c_a81a85874513903b46b915327ac66ddf6}{election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+unpack}} (Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator, size\+\_\+t len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a739d23bfb0370912de008221cc864356}{election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked}} (\mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_aa8242986e65a94460a790826d8ba4aec}{election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+init}} (\mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a3a83c69b34bc9ba8f6bb56f4af4f077f}{election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size}} (const \mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_ac69ed46c2e26ea62d7a8632652fd216c}{election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+pack}} (const \mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}message, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a84fb8531693678c07ed8b960994b74b7}{election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer}} (const \mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}buffer)
+\item 
+\mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{buff_8pb-c_8c_a70dd5a5f55a30514863cdbe879e80a79}{election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+unpack}} (Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator, size\+\_\+t len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a94aacf4ede7e72c636d8caef080777e5}{election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked}} (\mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a750de074846731da6ae8cfb1210fc882}{hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+init}} (\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a287134780a15364903e6762c6e3ff82e}{hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size}} (const \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_af3061606bde51e9c86a27d0d16a9b519}{hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+pack}} (const \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}message, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a8cf5cdfe32a9ebb9037e72ec3b851c1e}{hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer}} (const \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}buffer)
+\item 
+\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{buff_8pb-c_8c_a46bf4970083fa998a3b9bd2cbaae7513}{hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+unpack}} (Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator, size\+\_\+t len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a33824d0d1c07bda219e7cecbe2bdb121}{hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked}} (\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_af25aa737409f8d8dbcd772cc77fcb50b}{election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+init}} (\mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_af7d2fc795b4a4d3077886923bb42aea6}{election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size}} (const \mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a9dfc49b39ae512d1d57f28ccd515d5d4}{election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+pack}} (const \mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}message, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_ade2a35f5f7924db4482fcac00ea2ef15}{election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer}} (const \mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}buffer)
+\item 
+\mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{buff_8pb-c_8c_ab764153f67f5779ecdd582f1da5da669}{election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+unpack}} (Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator, size\+\_\+t len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_aff01ea2b4a4a1c148efef91e8b771dc6}{election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked}} (\mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a11b780265588ea6a09adae01eed56968}{election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+init}} (\mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a1faff5e415a84c67c82b3c9287b421f4}{election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size}} (const \mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}message)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_ab800f109cf5d223c14e462b64b070dfc}{election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+pack}} (const \mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}message, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\item 
+size\+\_\+t \mbox{\hyperlink{buff_8pb-c_8c_a76ddbdb929d3b09c663d8900ecc53777}{election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer}} (const \mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}buffer)
+\item 
+\mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{buff_8pb-c_8c_acc0bb5acf23ee881ae36e7e927a53c24}{election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+unpack}} (Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator, size\+\_\+t len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{buff_8pb-c_8c_a47f6d5dda58fd34850e4b411e7c7198d}{election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked}} (\mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}message, Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}allocator)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const Protobuf\+CMessage\+Descriptor \mbox{\hyperlink{buff_8pb-c_8c_ad813a9e488035ddf46eceedeac28deab}{schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+descriptor}}
+\item 
+const Protobuf\+CMessage\+Descriptor \mbox{\hyperlink{buff_8pb-c_8c_aebef669bb8e0f7de74819a1d7a04cf97}{coefficient\+\_\+proto\+\_\+\+\_\+descriptor}}
+\item 
+const Protobuf\+CMessage\+Descriptor \mbox{\hyperlink{buff_8pb-c_8c_a0456650fe87e69e4b243d07e42695bc0}{election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+descriptor}}
+\item 
+const Protobuf\+CMessage\+Descriptor \mbox{\hyperlink{buff_8pb-c_8c_a23e16682296d4fba6d74980a8755dea8}{election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+descriptor}}
+\item 
+const Protobuf\+CMessage\+Descriptor \mbox{\hyperlink{buff_8pb-c_8c_ab6978a10f8167a33452df1019a3b2f12}{hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+descriptor}}
+\item 
+const Protobuf\+CMessage\+Descriptor \mbox{\hyperlink{buff_8pb-c_8c_a2f769a025f710cf47be176ce30c803cc}{election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+descriptor}}
+\item 
+const Protobuf\+CMessage\+Descriptor \mbox{\hyperlink{buff_8pb-c_8c_a09cc9509e6009aa2e5428bcfffa5c4f7}{election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+descriptor}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{buff_8pb-c_8c_ad9480935c25b5155174487b631af52f5}\label{buff_8pb-c_8c_ad9480935c25b5155174487b631af52f5} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!PROTOBUF\_C\_\_NO\_DEPRECATED@{PROTOBUF\_C\_\_NO\_DEPRECATED}}
+\index{PROTOBUF\_C\_\_NO\_DEPRECATED@{PROTOBUF\_C\_\_NO\_DEPRECATED}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{PROTOBUF\_C\_\_NO\_DEPRECATED}{PROTOBUF\_C\_\_NO\_DEPRECATED}}
+{\footnotesize\ttfamily \#define PROTOBUF\+\_\+\+C\+\_\+\+\_\+\+NO\+\_\+\+DEPRECATED}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{buff_8pb-c_8c_ab89aa5c6553e6f26b59551261ef6d551}\label{buff_8pb-c_8c_ab89aa5c6553e6f26b59551261ef6d551} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!coefficient\_proto\_\_free\_unpacked@{coefficient\_proto\_\_free\_unpacked}}
+\index{coefficient\_proto\_\_free\_unpacked@{coefficient\_proto\_\_free\_unpacked}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{coefficient\_proto\_\_free\_unpacked()}{coefficient\_proto\_\_free\_unpacked()}}
+{\footnotesize\ttfamily void coefficient\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a25c2525a802ed713d8b4b6a7d889319a}\label{buff_8pb-c_8c_a25c2525a802ed713d8b4b6a7d889319a} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!coefficient\_proto\_\_get\_packed\_size@{coefficient\_proto\_\_get\_packed\_size}}
+\index{coefficient\_proto\_\_get\_packed\_size@{coefficient\_proto\_\_get\_packed\_size}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{coefficient\_proto\_\_get\_packed\_size()}{coefficient\_proto\_\_get\_packed\_size()}}
+{\footnotesize\ttfamily size\+\_\+t coefficient\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ae643b5cb86ecdf98b5bb1b20b876db29}\label{buff_8pb-c_8c_ae643b5cb86ecdf98b5bb1b20b876db29} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!coefficient\_proto\_\_init@{coefficient\_proto\_\_init}}
+\index{coefficient\_proto\_\_init@{coefficient\_proto\_\_init}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{coefficient\_proto\_\_init()}{coefficient\_proto\_\_init()}}
+{\footnotesize\ttfamily void coefficient\+\_\+proto\+\_\+\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ae045daf26e4650cdec4699daa81320e8}\label{buff_8pb-c_8c_ae045daf26e4650cdec4699daa81320e8} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!coefficient\_proto\_\_pack@{coefficient\_proto\_\_pack}}
+\index{coefficient\_proto\_\_pack@{coefficient\_proto\_\_pack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{coefficient\_proto\_\_pack()}{coefficient\_proto\_\_pack()}}
+{\footnotesize\ttfamily size\+\_\+t coefficient\+\_\+proto\+\_\+\+\_\+pack (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a8bfd592f628efca4268f2321e03b857e}\label{buff_8pb-c_8c_a8bfd592f628efca4268f2321e03b857e} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!coefficient\_proto\_\_pack\_to\_buffer@{coefficient\_proto\_\_pack\_to\_buffer}}
+\index{coefficient\_proto\_\_pack\_to\_buffer@{coefficient\_proto\_\_pack\_to\_buffer}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{coefficient\_proto\_\_pack\_to\_buffer()}{coefficient\_proto\_\_pack\_to\_buffer()}}
+{\footnotesize\ttfamily size\+\_\+t coefficient\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a24b15b30520ac8296cd1afe84071e477}\label{buff_8pb-c_8c_a24b15b30520ac8296cd1afe84071e477} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!coefficient\_proto\_\_unpack@{coefficient\_proto\_\_unpack}}
+\index{coefficient\_proto\_\_unpack@{coefficient\_proto\_\_unpack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{coefficient\_proto\_\_unpack()}{coefficient\_proto\_\_unpack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_coefficient_proto}{Coefficient\+Proto}} \texorpdfstring{$\ast$}{*} coefficient\+\_\+proto\+\_\+\+\_\+unpack (\begin{DoxyParamCaption}\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{size\+\_\+t}]{len,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a94aacf4ede7e72c636d8caef080777e5}\label{buff_8pb-c_8c_a94aacf4ede7e72c636d8caef080777e5} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_key\_pair\_proto\_\_free\_unpacked@{election\_key\_pair\_proto\_\_free\_unpacked}}
+\index{election\_key\_pair\_proto\_\_free\_unpacked@{election\_key\_pair\_proto\_\_free\_unpacked}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_key\_pair\_proto\_\_free\_unpacked()}{election\_key\_pair\_proto\_\_free\_unpacked()}}
+{\footnotesize\ttfamily void election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a3a83c69b34bc9ba8f6bb56f4af4f077f}\label{buff_8pb-c_8c_a3a83c69b34bc9ba8f6bb56f4af4f077f} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_key\_pair\_proto\_\_get\_packed\_size@{election\_key\_pair\_proto\_\_get\_packed\_size}}
+\index{election\_key\_pair\_proto\_\_get\_packed\_size@{election\_key\_pair\_proto\_\_get\_packed\_size}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_key\_pair\_proto\_\_get\_packed\_size()}{election\_key\_pair\_proto\_\_get\_packed\_size()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_aa8242986e65a94460a790826d8ba4aec}\label{buff_8pb-c_8c_aa8242986e65a94460a790826d8ba4aec} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_key\_pair\_proto\_\_init@{election\_key\_pair\_proto\_\_init}}
+\index{election\_key\_pair\_proto\_\_init@{election\_key\_pair\_proto\_\_init}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_key\_pair\_proto\_\_init()}{election\_key\_pair\_proto\_\_init()}}
+{\footnotesize\ttfamily void election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ac69ed46c2e26ea62d7a8632652fd216c}\label{buff_8pb-c_8c_ac69ed46c2e26ea62d7a8632652fd216c} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_key\_pair\_proto\_\_pack@{election\_key\_pair\_proto\_\_pack}}
+\index{election\_key\_pair\_proto\_\_pack@{election\_key\_pair\_proto\_\_pack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_key\_pair\_proto\_\_pack()}{election\_key\_pair\_proto\_\_pack()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+pack (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a84fb8531693678c07ed8b960994b74b7}\label{buff_8pb-c_8c_a84fb8531693678c07ed8b960994b74b7} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_key\_pair\_proto\_\_pack\_to\_buffer@{election\_key\_pair\_proto\_\_pack\_to\_buffer}}
+\index{election\_key\_pair\_proto\_\_pack\_to\_buffer@{election\_key\_pair\_proto\_\_pack\_to\_buffer}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_key\_pair\_proto\_\_pack\_to\_buffer()}{election\_key\_pair\_proto\_\_pack\_to\_buffer()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a70dd5a5f55a30514863cdbe879e80a79}\label{buff_8pb-c_8c_a70dd5a5f55a30514863cdbe879e80a79} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_key\_pair\_proto\_\_unpack@{election\_key\_pair\_proto\_\_unpack}}
+\index{election\_key\_pair\_proto\_\_unpack@{election\_key\_pair\_proto\_\_unpack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_key\_pair\_proto\_\_unpack()}{election\_key\_pair\_proto\_\_unpack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_key_pair_proto}{Election\+Key\+Pair\+Proto}} \texorpdfstring{$\ast$}{*} election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+unpack (\begin{DoxyParamCaption}\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{size\+\_\+t}]{len,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_aff01ea2b4a4a1c148efef91e8b771dc6}\label{buff_8pb-c_8c_aff01ea2b4a4a1c148efef91e8b771dc6} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_pair\_backup\_proto\_\_free\_unpacked@{election\_partial\_key\_pair\_backup\_proto\_\_free\_unpacked}}
+\index{election\_partial\_key\_pair\_backup\_proto\_\_free\_unpacked@{election\_partial\_key\_pair\_backup\_proto\_\_free\_unpacked}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_pair\_backup\_proto\_\_free\_unpacked()}{election\_partial\_key\_pair\_backup\_proto\_\_free\_unpacked()}}
+{\footnotesize\ttfamily void election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_af7d2fc795b4a4d3077886923bb42aea6}\label{buff_8pb-c_8c_af7d2fc795b4a4d3077886923bb42aea6} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_pair\_backup\_proto\_\_get\_packed\_size@{election\_partial\_key\_pair\_backup\_proto\_\_get\_packed\_size}}
+\index{election\_partial\_key\_pair\_backup\_proto\_\_get\_packed\_size@{election\_partial\_key\_pair\_backup\_proto\_\_get\_packed\_size}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_pair\_backup\_proto\_\_get\_packed\_size()}{election\_partial\_key\_pair\_backup\_proto\_\_get\_packed\_size()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_af25aa737409f8d8dbcd772cc77fcb50b}\label{buff_8pb-c_8c_af25aa737409f8d8dbcd772cc77fcb50b} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_pair\_backup\_proto\_\_init@{election\_partial\_key\_pair\_backup\_proto\_\_init}}
+\index{election\_partial\_key\_pair\_backup\_proto\_\_init@{election\_partial\_key\_pair\_backup\_proto\_\_init}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_pair\_backup\_proto\_\_init()}{election\_partial\_key\_pair\_backup\_proto\_\_init()}}
+{\footnotesize\ttfamily void election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a9dfc49b39ae512d1d57f28ccd515d5d4}\label{buff_8pb-c_8c_a9dfc49b39ae512d1d57f28ccd515d5d4} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_pair\_backup\_proto\_\_pack@{election\_partial\_key\_pair\_backup\_proto\_\_pack}}
+\index{election\_partial\_key\_pair\_backup\_proto\_\_pack@{election\_partial\_key\_pair\_backup\_proto\_\_pack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_pair\_backup\_proto\_\_pack()}{election\_partial\_key\_pair\_backup\_proto\_\_pack()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+pack (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ade2a35f5f7924db4482fcac00ea2ef15}\label{buff_8pb-c_8c_ade2a35f5f7924db4482fcac00ea2ef15} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_pair\_backup\_proto\_\_pack\_to\_buffer@{election\_partial\_key\_pair\_backup\_proto\_\_pack\_to\_buffer}}
+\index{election\_partial\_key\_pair\_backup\_proto\_\_pack\_to\_buffer@{election\_partial\_key\_pair\_backup\_proto\_\_pack\_to\_buffer}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_pair\_backup\_proto\_\_pack\_to\_buffer()}{election\_partial\_key\_pair\_backup\_proto\_\_pack\_to\_buffer()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ab764153f67f5779ecdd582f1da5da669}\label{buff_8pb-c_8c_ab764153f67f5779ecdd582f1da5da669} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_pair\_backup\_proto\_\_unpack@{election\_partial\_key\_pair\_backup\_proto\_\_unpack}}
+\index{election\_partial\_key\_pair\_backup\_proto\_\_unpack@{election\_partial\_key\_pair\_backup\_proto\_\_unpack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_pair\_backup\_proto\_\_unpack()}{election\_partial\_key\_pair\_backup\_proto\_\_unpack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_partial_key_pair_backup_proto}{Election\+Partial\+Key\+Pair\+Backup\+Proto}} \texorpdfstring{$\ast$}{*} election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+unpack (\begin{DoxyParamCaption}\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{size\+\_\+t}]{len,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a47f6d5dda58fd34850e4b411e7c7198d}\label{buff_8pb-c_8c_a47f6d5dda58fd34850e4b411e7c7198d} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_verification\_proto\_\_free\_unpacked@{election\_partial\_key\_verification\_proto\_\_free\_unpacked}}
+\index{election\_partial\_key\_verification\_proto\_\_free\_unpacked@{election\_partial\_key\_verification\_proto\_\_free\_unpacked}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_verification\_proto\_\_free\_unpacked()}{election\_partial\_key\_verification\_proto\_\_free\_unpacked()}}
+{\footnotesize\ttfamily void election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a1faff5e415a84c67c82b3c9287b421f4}\label{buff_8pb-c_8c_a1faff5e415a84c67c82b3c9287b421f4} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_verification\_proto\_\_get\_packed\_size@{election\_partial\_key\_verification\_proto\_\_get\_packed\_size}}
+\index{election\_partial\_key\_verification\_proto\_\_get\_packed\_size@{election\_partial\_key\_verification\_proto\_\_get\_packed\_size}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_verification\_proto\_\_get\_packed\_size()}{election\_partial\_key\_verification\_proto\_\_get\_packed\_size()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a11b780265588ea6a09adae01eed56968}\label{buff_8pb-c_8c_a11b780265588ea6a09adae01eed56968} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_verification\_proto\_\_init@{election\_partial\_key\_verification\_proto\_\_init}}
+\index{election\_partial\_key\_verification\_proto\_\_init@{election\_partial\_key\_verification\_proto\_\_init}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_verification\_proto\_\_init()}{election\_partial\_key\_verification\_proto\_\_init()}}
+{\footnotesize\ttfamily void election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ab800f109cf5d223c14e462b64b070dfc}\label{buff_8pb-c_8c_ab800f109cf5d223c14e462b64b070dfc} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_verification\_proto\_\_pack@{election\_partial\_key\_verification\_proto\_\_pack}}
+\index{election\_partial\_key\_verification\_proto\_\_pack@{election\_partial\_key\_verification\_proto\_\_pack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_verification\_proto\_\_pack()}{election\_partial\_key\_verification\_proto\_\_pack()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+pack (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a76ddbdb929d3b09c663d8900ecc53777}\label{buff_8pb-c_8c_a76ddbdb929d3b09c663d8900ecc53777} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_verification\_proto\_\_pack\_to\_buffer@{election\_partial\_key\_verification\_proto\_\_pack\_to\_buffer}}
+\index{election\_partial\_key\_verification\_proto\_\_pack\_to\_buffer@{election\_partial\_key\_verification\_proto\_\_pack\_to\_buffer}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_verification\_proto\_\_pack\_to\_buffer()}{election\_partial\_key\_verification\_proto\_\_pack\_to\_buffer()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_acc0bb5acf23ee881ae36e7e927a53c24}\label{buff_8pb-c_8c_acc0bb5acf23ee881ae36e7e927a53c24} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_verification\_proto\_\_unpack@{election\_partial\_key\_verification\_proto\_\_unpack}}
+\index{election\_partial\_key\_verification\_proto\_\_unpack@{election\_partial\_key\_verification\_proto\_\_unpack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_verification\_proto\_\_unpack()}{election\_partial\_key\_verification\_proto\_\_unpack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_partial_key_verification_proto}{Election\+Partial\+Key\+Verification\+Proto}} \texorpdfstring{$\ast$}{*} election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+unpack (\begin{DoxyParamCaption}\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{size\+\_\+t}]{len,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a739d23bfb0370912de008221cc864356}\label{buff_8pb-c_8c_a739d23bfb0370912de008221cc864356} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_polynomial\_proto\_\_free\_unpacked@{election\_polynomial\_proto\_\_free\_unpacked}}
+\index{election\_polynomial\_proto\_\_free\_unpacked@{election\_polynomial\_proto\_\_free\_unpacked}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_polynomial\_proto\_\_free\_unpacked()}{election\_polynomial\_proto\_\_free\_unpacked()}}
+{\footnotesize\ttfamily void election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a2021d073d926770ce972509f1a5960a3}\label{buff_8pb-c_8c_a2021d073d926770ce972509f1a5960a3} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_polynomial\_proto\_\_get\_packed\_size@{election\_polynomial\_proto\_\_get\_packed\_size}}
+\index{election\_polynomial\_proto\_\_get\_packed\_size@{election\_polynomial\_proto\_\_get\_packed\_size}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_polynomial\_proto\_\_get\_packed\_size()}{election\_polynomial\_proto\_\_get\_packed\_size()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a8150c188de9fe11b8d57f8ff6f008fb3}\label{buff_8pb-c_8c_a8150c188de9fe11b8d57f8ff6f008fb3} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_polynomial\_proto\_\_init@{election\_polynomial\_proto\_\_init}}
+\index{election\_polynomial\_proto\_\_init@{election\_polynomial\_proto\_\_init}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_polynomial\_proto\_\_init()}{election\_polynomial\_proto\_\_init()}}
+{\footnotesize\ttfamily void election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ac7139f871f5ff18c69668ba4ba7eb4d3}\label{buff_8pb-c_8c_ac7139f871f5ff18c69668ba4ba7eb4d3} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_polynomial\_proto\_\_pack@{election\_polynomial\_proto\_\_pack}}
+\index{election\_polynomial\_proto\_\_pack@{election\_polynomial\_proto\_\_pack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_polynomial\_proto\_\_pack()}{election\_polynomial\_proto\_\_pack()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+pack (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a29a2bc0596a04f90f2280ff78ce3091a}\label{buff_8pb-c_8c_a29a2bc0596a04f90f2280ff78ce3091a} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_polynomial\_proto\_\_pack\_to\_buffer@{election\_polynomial\_proto\_\_pack\_to\_buffer}}
+\index{election\_polynomial\_proto\_\_pack\_to\_buffer@{election\_polynomial\_proto\_\_pack\_to\_buffer}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_polynomial\_proto\_\_pack\_to\_buffer()}{election\_polynomial\_proto\_\_pack\_to\_buffer()}}
+{\footnotesize\ttfamily size\+\_\+t election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a81a85874513903b46b915327ac66ddf6}\label{buff_8pb-c_8c_a81a85874513903b46b915327ac66ddf6} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_polynomial\_proto\_\_unpack@{election\_polynomial\_proto\_\_unpack}}
+\index{election\_polynomial\_proto\_\_unpack@{election\_polynomial\_proto\_\_unpack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_polynomial\_proto\_\_unpack()}{election\_polynomial\_proto\_\_unpack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_election_polynomial_proto}{Election\+Polynomial\+Proto}} \texorpdfstring{$\ast$}{*} election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+unpack (\begin{DoxyParamCaption}\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{size\+\_\+t}]{len,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a33824d0d1c07bda219e7cecbe2bdb121}\label{buff_8pb-c_8c_a33824d0d1c07bda219e7cecbe2bdb121} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!hashed\_el\_gamal\_ciphertext\_proto\_\_free\_unpacked@{hashed\_el\_gamal\_ciphertext\_proto\_\_free\_unpacked}}
+\index{hashed\_el\_gamal\_ciphertext\_proto\_\_free\_unpacked@{hashed\_el\_gamal\_ciphertext\_proto\_\_free\_unpacked}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{hashed\_el\_gamal\_ciphertext\_proto\_\_free\_unpacked()}{hashed\_el\_gamal\_ciphertext\_proto\_\_free\_unpacked()}}
+{\footnotesize\ttfamily void hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a287134780a15364903e6762c6e3ff82e}\label{buff_8pb-c_8c_a287134780a15364903e6762c6e3ff82e} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!hashed\_el\_gamal\_ciphertext\_proto\_\_get\_packed\_size@{hashed\_el\_gamal\_ciphertext\_proto\_\_get\_packed\_size}}
+\index{hashed\_el\_gamal\_ciphertext\_proto\_\_get\_packed\_size@{hashed\_el\_gamal\_ciphertext\_proto\_\_get\_packed\_size}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{hashed\_el\_gamal\_ciphertext\_proto\_\_get\_packed\_size()}{hashed\_el\_gamal\_ciphertext\_proto\_\_get\_packed\_size()}}
+{\footnotesize\ttfamily size\+\_\+t hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a750de074846731da6ae8cfb1210fc882}\label{buff_8pb-c_8c_a750de074846731da6ae8cfb1210fc882} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!hashed\_el\_gamal\_ciphertext\_proto\_\_init@{hashed\_el\_gamal\_ciphertext\_proto\_\_init}}
+\index{hashed\_el\_gamal\_ciphertext\_proto\_\_init@{hashed\_el\_gamal\_ciphertext\_proto\_\_init}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{hashed\_el\_gamal\_ciphertext\_proto\_\_init()}{hashed\_el\_gamal\_ciphertext\_proto\_\_init()}}
+{\footnotesize\ttfamily void hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_af3061606bde51e9c86a27d0d16a9b519}\label{buff_8pb-c_8c_af3061606bde51e9c86a27d0d16a9b519} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!hashed\_el\_gamal\_ciphertext\_proto\_\_pack@{hashed\_el\_gamal\_ciphertext\_proto\_\_pack}}
+\index{hashed\_el\_gamal\_ciphertext\_proto\_\_pack@{hashed\_el\_gamal\_ciphertext\_proto\_\_pack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{hashed\_el\_gamal\_ciphertext\_proto\_\_pack()}{hashed\_el\_gamal\_ciphertext\_proto\_\_pack()}}
+{\footnotesize\ttfamily size\+\_\+t hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+pack (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a8cf5cdfe32a9ebb9037e72ec3b851c1e}\label{buff_8pb-c_8c_a8cf5cdfe32a9ebb9037e72ec3b851c1e} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!hashed\_el\_gamal\_ciphertext\_proto\_\_pack\_to\_buffer@{hashed\_el\_gamal\_ciphertext\_proto\_\_pack\_to\_buffer}}
+\index{hashed\_el\_gamal\_ciphertext\_proto\_\_pack\_to\_buffer@{hashed\_el\_gamal\_ciphertext\_proto\_\_pack\_to\_buffer}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{hashed\_el\_gamal\_ciphertext\_proto\_\_pack\_to\_buffer()}{hashed\_el\_gamal\_ciphertext\_proto\_\_pack\_to\_buffer()}}
+{\footnotesize\ttfamily size\+\_\+t hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a46bf4970083fa998a3b9bd2cbaae7513}\label{buff_8pb-c_8c_a46bf4970083fa998a3b9bd2cbaae7513} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!hashed\_el\_gamal\_ciphertext\_proto\_\_unpack@{hashed\_el\_gamal\_ciphertext\_proto\_\_unpack}}
+\index{hashed\_el\_gamal\_ciphertext\_proto\_\_unpack@{hashed\_el\_gamal\_ciphertext\_proto\_\_unpack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{hashed\_el\_gamal\_ciphertext\_proto\_\_unpack()}{hashed\_el\_gamal\_ciphertext\_proto\_\_unpack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_proto}{Hashed\+El\+Gamal\+Ciphertext\+Proto}} \texorpdfstring{$\ast$}{*} hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+unpack (\begin{DoxyParamCaption}\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{size\+\_\+t}]{len,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_ace34838ac31eea82c83dcc2d06dbbb0e}\label{buff_8pb-c_8c_ace34838ac31eea82c83dcc2d06dbbb0e} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!schnorr\_proof\_proto\_\_free\_unpacked@{schnorr\_proof\_proto\_\_free\_unpacked}}
+\index{schnorr\_proof\_proto\_\_free\_unpacked@{schnorr\_proof\_proto\_\_free\_unpacked}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{schnorr\_proof\_proto\_\_free\_unpacked()}{schnorr\_proof\_proto\_\_free\_unpacked()}}
+{\footnotesize\ttfamily void schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+free\+\_\+unpacked (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_af2c00619737f0cc6afc82401a26bc49c}\label{buff_8pb-c_8c_af2c00619737f0cc6afc82401a26bc49c} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!schnorr\_proof\_proto\_\_get\_packed\_size@{schnorr\_proof\_proto\_\_get\_packed\_size}}
+\index{schnorr\_proof\_proto\_\_get\_packed\_size@{schnorr\_proof\_proto\_\_get\_packed\_size}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{schnorr\_proof\_proto\_\_get\_packed\_size()}{schnorr\_proof\_proto\_\_get\_packed\_size()}}
+{\footnotesize\ttfamily size\+\_\+t schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+get\+\_\+packed\+\_\+size (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a40fe3ddc1ab77a85ce43202dacf6ac70}\label{buff_8pb-c_8c_a40fe3ddc1ab77a85ce43202dacf6ac70} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!schnorr\_proof\_proto\_\_init@{schnorr\_proof\_proto\_\_init}}
+\index{schnorr\_proof\_proto\_\_init@{schnorr\_proof\_proto\_\_init}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{schnorr\_proof\_proto\_\_init()}{schnorr\_proof\_proto\_\_init()}}
+{\footnotesize\ttfamily void schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a4b6daac6abe5221e07863f38b2746cb9}\label{buff_8pb-c_8c_a4b6daac6abe5221e07863f38b2746cb9} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!schnorr\_proof\_proto\_\_pack@{schnorr\_proof\_proto\_\_pack}}
+\index{schnorr\_proof\_proto\_\_pack@{schnorr\_proof\_proto\_\_pack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{schnorr\_proof\_proto\_\_pack()}{schnorr\_proof\_proto\_\_pack()}}
+{\footnotesize\ttfamily size\+\_\+t schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+pack (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a8e51561f0c20b5b1fdb9eaa2172e1425}\label{buff_8pb-c_8c_a8e51561f0c20b5b1fdb9eaa2172e1425} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!schnorr\_proof\_proto\_\_pack\_to\_buffer@{schnorr\_proof\_proto\_\_pack\_to\_buffer}}
+\index{schnorr\_proof\_proto\_\_pack\_to\_buffer@{schnorr\_proof\_proto\_\_pack\_to\_buffer}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{schnorr\_proof\_proto\_\_pack\_to\_buffer()}{schnorr\_proof\_proto\_\_pack\_to\_buffer()}}
+{\footnotesize\ttfamily size\+\_\+t schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+pack\+\_\+to\+\_\+buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*}}]{message,  }\item[{Protobuf\+CBuffer \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption})}
+
+\Hypertarget{buff_8pb-c_8c_a6003e82a40f129ffc93a909890eb00d1}\label{buff_8pb-c_8c_a6003e82a40f129ffc93a909890eb00d1} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!schnorr\_proof\_proto\_\_unpack@{schnorr\_proof\_proto\_\_unpack}}
+\index{schnorr\_proof\_proto\_\_unpack@{schnorr\_proof\_proto\_\_unpack}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{schnorr\_proof\_proto\_\_unpack()}{schnorr\_proof\_proto\_\_unpack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_schnorr_proof_proto}{Schnorr\+Proof\+Proto}} \texorpdfstring{$\ast$}{*} schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+unpack (\begin{DoxyParamCaption}\item[{Protobuf\+CAllocator \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{size\+\_\+t}]{len,  }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{buff_8pb-c_8c_aebef669bb8e0f7de74819a1d7a04cf97}\label{buff_8pb-c_8c_aebef669bb8e0f7de74819a1d7a04cf97} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!coefficient\_proto\_\_descriptor@{coefficient\_proto\_\_descriptor}}
+\index{coefficient\_proto\_\_descriptor@{coefficient\_proto\_\_descriptor}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{coefficient\_proto\_\_descriptor}{coefficient\_proto\_\_descriptor}}
+{\footnotesize\ttfamily const Protobuf\+CMessage\+Descriptor coefficient\+\_\+proto\+\_\+\+\_\+descriptor}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ PROTOBUF\_C\_\_MESSAGE\_DESCRIPTOR\_MAGIC,}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}CoefficientProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}CoefficientProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}CoefficientProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}"{}},}
+\DoxyCodeLine{\ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{buff_8pb-c_8h_a27b53e62515edfd4eea14374e0e82abc}{CoefficientProto}}),}
+\DoxyCodeLine{\ \ 3,}
+\DoxyCodeLine{\ \ coefficient\_proto\_\_field\_descriptors,}
+\DoxyCodeLine{\ \ coefficient\_proto\_\_field\_indices\_by\_name,}
+\DoxyCodeLine{\ \ 1,\ \ coefficient\_proto\_\_number\_ranges,}
+\DoxyCodeLine{\ \ (ProtobufCMessageInit)\ \mbox{\hyperlink{buff_8pb-c_8c_ae643b5cb86ecdf98b5bb1b20b876db29}{coefficient\_proto\_\_init}},}
+\DoxyCodeLine{\ \ NULL,NULL,NULL\ \ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\Hypertarget{buff_8pb-c_8c_a23e16682296d4fba6d74980a8755dea8}\label{buff_8pb-c_8c_a23e16682296d4fba6d74980a8755dea8} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_key\_pair\_proto\_\_descriptor@{election\_key\_pair\_proto\_\_descriptor}}
+\index{election\_key\_pair\_proto\_\_descriptor@{election\_key\_pair\_proto\_\_descriptor}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_key\_pair\_proto\_\_descriptor}{election\_key\_pair\_proto\_\_descriptor}}
+{\footnotesize\ttfamily const Protobuf\+CMessage\+Descriptor election\+\_\+key\+\_\+pair\+\_\+proto\+\_\+\+\_\+descriptor}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ PROTOBUF\_C\_\_MESSAGE\_DESCRIPTOR\_MAGIC,}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionKeyPairProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionKeyPairProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionKeyPairProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}"{}},}
+\DoxyCodeLine{\ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{buff_8pb-c_8h_aa10ffd4075cca579abe1536eef250868}{ElectionKeyPairProto}}),}
+\DoxyCodeLine{\ \ 4,}
+\DoxyCodeLine{\ \ election\_key\_pair\_proto\_\_field\_descriptors,}
+\DoxyCodeLine{\ \ election\_key\_pair\_proto\_\_field\_indices\_by\_name,}
+\DoxyCodeLine{\ \ 1,\ \ election\_key\_pair\_proto\_\_number\_ranges,}
+\DoxyCodeLine{\ \ (ProtobufCMessageInit)\ \mbox{\hyperlink{buff_8pb-c_8c_aa8242986e65a94460a790826d8ba4aec}{election\_key\_pair\_proto\_\_init}},}
+\DoxyCodeLine{\ \ NULL,NULL,NULL\ \ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\Hypertarget{buff_8pb-c_8c_a2f769a025f710cf47be176ce30c803cc}\label{buff_8pb-c_8c_a2f769a025f710cf47be176ce30c803cc} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_pair\_backup\_proto\_\_descriptor@{election\_partial\_key\_pair\_backup\_proto\_\_descriptor}}
+\index{election\_partial\_key\_pair\_backup\_proto\_\_descriptor@{election\_partial\_key\_pair\_backup\_proto\_\_descriptor}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_pair\_backup\_proto\_\_descriptor}{election\_partial\_key\_pair\_backup\_proto\_\_descriptor}}
+{\footnotesize\ttfamily const Protobuf\+CMessage\+Descriptor election\+\_\+partial\+\_\+key\+\_\+pair\+\_\+backup\+\_\+proto\+\_\+\+\_\+descriptor}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ PROTOBUF\_C\_\_MESSAGE\_DESCRIPTOR\_MAGIC,}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPartialKeyPairBackupProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPartialKeyPairBackupProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPartialKeyPairBackupProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}"{}},}
+\DoxyCodeLine{\ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{buff_8pb-c_8h_a7850043053cf486a202c498351357109}{ElectionPartialKeyPairBackupProto}}),}
+\DoxyCodeLine{\ \ 3,}
+\DoxyCodeLine{\ \ election\_partial\_key\_pair\_backup\_proto\_\_field\_descriptors,}
+\DoxyCodeLine{\ \ election\_partial\_key\_pair\_backup\_proto\_\_field\_indices\_by\_name,}
+\DoxyCodeLine{\ \ 1,\ \ election\_partial\_key\_pair\_backup\_proto\_\_number\_ranges,}
+\DoxyCodeLine{\ \ (ProtobufCMessageInit)\ \mbox{\hyperlink{buff_8pb-c_8c_af25aa737409f8d8dbcd772cc77fcb50b}{election\_partial\_key\_pair\_backup\_proto\_\_init}},}
+\DoxyCodeLine{\ \ NULL,NULL,NULL\ \ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\Hypertarget{buff_8pb-c_8c_a09cc9509e6009aa2e5428bcfffa5c4f7}\label{buff_8pb-c_8c_a09cc9509e6009aa2e5428bcfffa5c4f7} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_partial\_key\_verification\_proto\_\_descriptor@{election\_partial\_key\_verification\_proto\_\_descriptor}}
+\index{election\_partial\_key\_verification\_proto\_\_descriptor@{election\_partial\_key\_verification\_proto\_\_descriptor}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_partial\_key\_verification\_proto\_\_descriptor}{election\_partial\_key\_verification\_proto\_\_descriptor}}
+{\footnotesize\ttfamily const Protobuf\+CMessage\+Descriptor election\+\_\+partial\+\_\+key\+\_\+verification\+\_\+proto\+\_\+\+\_\+descriptor}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ PROTOBUF\_C\_\_MESSAGE\_DESCRIPTOR\_MAGIC,}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPartialKeyVerificationProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPartialKeyVerificationProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPartialKeyVerificationProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}"{}},}
+\DoxyCodeLine{\ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{buff_8pb-c_8h_aa5f8e0a817c0008902caeb93d82816e2}{ElectionPartialKeyVerificationProto}}),}
+\DoxyCodeLine{\ \ 4,}
+\DoxyCodeLine{\ \ election\_partial\_key\_verification\_proto\_\_field\_descriptors,}
+\DoxyCodeLine{\ \ election\_partial\_key\_verification\_proto\_\_field\_indices\_by\_name,}
+\DoxyCodeLine{\ \ 1,\ \ election\_partial\_key\_verification\_proto\_\_number\_ranges,}
+\DoxyCodeLine{\ \ (ProtobufCMessageInit)\ \mbox{\hyperlink{buff_8pb-c_8c_a11b780265588ea6a09adae01eed56968}{election\_partial\_key\_verification\_proto\_\_init}},}
+\DoxyCodeLine{\ \ NULL,NULL,NULL\ \ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\Hypertarget{buff_8pb-c_8c_a0456650fe87e69e4b243d07e42695bc0}\label{buff_8pb-c_8c_a0456650fe87e69e4b243d07e42695bc0} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!election\_polynomial\_proto\_\_descriptor@{election\_polynomial\_proto\_\_descriptor}}
+\index{election\_polynomial\_proto\_\_descriptor@{election\_polynomial\_proto\_\_descriptor}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{election\_polynomial\_proto\_\_descriptor}{election\_polynomial\_proto\_\_descriptor}}
+{\footnotesize\ttfamily const Protobuf\+CMessage\+Descriptor election\+\_\+polynomial\+\_\+proto\+\_\+\+\_\+descriptor}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ PROTOBUF\_C\_\_MESSAGE\_DESCRIPTOR\_MAGIC,}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPolynomialProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPolynomialProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}ElectionPolynomialProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}"{}},}
+\DoxyCodeLine{\ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{buff_8pb-c_8h_a682b0a4432bc1b3f97779a555b08214b}{ElectionPolynomialProto}}),}
+\DoxyCodeLine{\ \ 2,}
+\DoxyCodeLine{\ \ election\_polynomial\_proto\_\_field\_descriptors,}
+\DoxyCodeLine{\ \ election\_polynomial\_proto\_\_field\_indices\_by\_name,}
+\DoxyCodeLine{\ \ 1,\ \ election\_polynomial\_proto\_\_number\_ranges,}
+\DoxyCodeLine{\ \ (ProtobufCMessageInit)\ \mbox{\hyperlink{buff_8pb-c_8c_a8150c188de9fe11b8d57f8ff6f008fb3}{election\_polynomial\_proto\_\_init}},}
+\DoxyCodeLine{\ \ NULL,NULL,NULL\ \ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\Hypertarget{buff_8pb-c_8c_ab6978a10f8167a33452df1019a3b2f12}\label{buff_8pb-c_8c_ab6978a10f8167a33452df1019a3b2f12} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!hashed\_el\_gamal\_ciphertext\_proto\_\_descriptor@{hashed\_el\_gamal\_ciphertext\_proto\_\_descriptor}}
+\index{hashed\_el\_gamal\_ciphertext\_proto\_\_descriptor@{hashed\_el\_gamal\_ciphertext\_proto\_\_descriptor}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{hashed\_el\_gamal\_ciphertext\_proto\_\_descriptor}{hashed\_el\_gamal\_ciphertext\_proto\_\_descriptor}}
+{\footnotesize\ttfamily const Protobuf\+CMessage\+Descriptor hashed\+\_\+el\+\_\+gamal\+\_\+ciphertext\+\_\+proto\+\_\+\+\_\+descriptor}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ PROTOBUF\_C\_\_MESSAGE\_DESCRIPTOR\_MAGIC,}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}HashedElGamalCiphertextProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}HashedElGamalCiphertextProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}HashedElGamalCiphertextProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}"{}},}
+\DoxyCodeLine{\ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{buff_8pb-c_8h_a57c3165fe09070d253617cf37efc5bb8}{HashedElGamalCiphertextProto}}),}
+\DoxyCodeLine{\ \ 3,}
+\DoxyCodeLine{\ \ hashed\_el\_gamal\_ciphertext\_proto\_\_field\_descriptors,}
+\DoxyCodeLine{\ \ hashed\_el\_gamal\_ciphertext\_proto\_\_field\_indices\_by\_name,}
+\DoxyCodeLine{\ \ 1,\ \ hashed\_el\_gamal\_ciphertext\_proto\_\_number\_ranges,}
+\DoxyCodeLine{\ \ (ProtobufCMessageInit)\ \mbox{\hyperlink{buff_8pb-c_8c_a750de074846731da6ae8cfb1210fc882}{hashed\_el\_gamal\_ciphertext\_proto\_\_init}},}
+\DoxyCodeLine{\ \ NULL,NULL,NULL\ \ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\Hypertarget{buff_8pb-c_8c_ad813a9e488035ddf46eceedeac28deab}\label{buff_8pb-c_8c_ad813a9e488035ddf46eceedeac28deab} 
+\index{buff.pb-\/c.c@{buff.pb-\/c.c}!schnorr\_proof\_proto\_\_descriptor@{schnorr\_proof\_proto\_\_descriptor}}
+\index{schnorr\_proof\_proto\_\_descriptor@{schnorr\_proof\_proto\_\_descriptor}!buff.pb-\/c.c@{buff.pb-\/c.c}}
+\doxysubsubsection{\texorpdfstring{schnorr\_proof\_proto\_\_descriptor}{schnorr\_proof\_proto\_\_descriptor}}
+{\footnotesize\ttfamily const Protobuf\+CMessage\+Descriptor schnorr\+\_\+proof\+\_\+proto\+\_\+\+\_\+descriptor}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ PROTOBUF\_C\_\_MESSAGE\_DESCRIPTOR\_MAGIC,}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}SchnorrProofProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}SchnorrProofProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}SchnorrProofProto"{}},}
+\DoxyCodeLine{\ \ \textcolor{stringliteral}{"{}"{}},}
+\DoxyCodeLine{\ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{buff_8pb-c_8h_a231ef0e83ee6d32a3d40f678813d8eb1}{SchnorrProofProto}}),}
+\DoxyCodeLine{\ \ 4,}
+\DoxyCodeLine{\ \ schnorr\_proof\_proto\_\_field\_descriptors,}
+\DoxyCodeLine{\ \ schnorr\_proof\_proto\_\_field\_indices\_by\_name,}
+\DoxyCodeLine{\ \ 1,\ \ schnorr\_proof\_proto\_\_number\_ranges,}
+\DoxyCodeLine{\ \ (ProtobufCMessageInit)\ \mbox{\hyperlink{buff_8pb-c_8c_a40fe3ddc1ab77a85ce43202dacf6ac70}{schnorr\_proof\_proto\_\_init}},}
+\DoxyCodeLine{\ \ NULL,NULL,NULL\ \ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}

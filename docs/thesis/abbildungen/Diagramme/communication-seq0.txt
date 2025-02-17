@@ -1,0 +1,30 @@
+@startuml
+hide unlinked
+actor Admin as A
+actor EncryptionDevice as E
+collections Guardians as G
+actor Voter as V
+actor ThirdParties as T
+title Pre-election
+A -> G : Ceremony Details
+note right: (Quorum, Max number of Guardians)
+G <-> G : ElectionKeyPair
+note right: Exchange of public keys
+G <-> G : PartialKeyPairBackup
+note right: Exchange designated backups
+alt Backup proof Verifies
+G ->>o G
+note right: Continue
+else Backup proof Fails
+     G -> G : Challenge
+note right: Forward Backup as challenge
+else Backup proof fails again
+     G -x G : 
+note right: Evict original sender and restart phase
+end
+G -> G : 
+note right: Combine public keys to joint key
+G -> A : ElectionJointKey
+A -> E : ElectionJointKey
+note right: Load encryption device with joint key
+@enduml

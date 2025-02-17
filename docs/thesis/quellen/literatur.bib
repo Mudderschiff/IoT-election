@@ -83,21 +83,22 @@
   edition      = {2.8}
 }
 
-@manual{esp-prog,
+
+@manual{esp-prog
   title        = {ESP-IDF Programming Guide},
   organization = { Espressif Systems (Shanghai) Co., Ltd.},
+  month        = {02},
   year         = {2025},
-  url = {https://docs.espressif.com/projects/esp-idf/en/v5.4/esp32/},
-  version      = {5.4},
-  howpublished = {GitHub repository}
+  url = {https://docs.espressif.com/projects/esp-faq/en/latest/esp-faq-en-master.pdf}
+  version = {5.1}
 }
 
 @manual{esp-faq,
   title        = {ESP-FAQ Handbook},
   organization = { Espressif Systems (Shanghai) Co., Ltd.},
-  url = {https://docs.espressif.com/projects/esp-faq},
-  howpublished = {GitHub repository},
-  note = {Accessed on 2025-01-21}
+  month        = {02},
+  year         = {2025},
+  url = {https://docs.espressif.com/projects/esp-faq/en/latest/esp-faq-en-master.pdf}
 }
 
 @manual{eg-docs,
@@ -395,3 +396,38 @@ url="https://doi.org/10.1007/978-3-030-98467-0_9"
   pages={10-18},
   keywords={Protocols;Reliability;Quality of service;Cloud computing;Bandwidth;Servers;Google},
   doi={}}
+
+
+@INPROCEEDINGS {mpc,
+author = { Goyal, Himanshu and Saha, Sudipta },
+booktitle = { 2022 IEEE 42nd International Conference on Distributed Computing Systems (ICDCS) },
+title = {{ Multi-Party Computation in IoT for Privacy-Preservation }},
+year = {2022},
+volume = {},
+ISSN = {},
+pages = {1280-1281},
+abstract = { Preservation of privacy has been a serious concern with the increasing use of IoT-assisted smart systems and their ubiquitous smart sensors. To solve the issue, the smart systems are being trained to depend more on aggregated data instead of directly using raw data. However, most of the existing strategies for privacy-preserving data aggregation, either depend on computation-intensive Homomorphic Encryption based operations or communication-intensive collaborative mechanisms. Unfortunately, none of the approaches are directly suitable for a resource-constrained IoT system. In this work, we leverage the concurrent-transmission-based communication technology to efficiently realize a Multi-Party Computation (MPC) based strategy, the well-known Shamir’s Secret Sharing (SSS), and optimize the same to make it suitable for real-world IoT systems. },
+keywords = {Resistance;Privacy;Data aggregation;Multi-party computation;Energy efficiency;Computational efficiency;Homomorphic encryption},
+doi = {10.1109/ICDCS54860.2022.00133},
+url = {https://doi.ieeecomputersociety.org/10.1109/ICDCS54860.2022.00133},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+month =Jul}
+
+@misc{smpc,
+            year = {2024},
+           month = {February},
+          author = {Rik van de {Haterd}},
+           title = {Enhancing Privacy and Security in IoT Environments through Secure Multiparty Computation},
+             url = {http://essay.utwente.nl/98341/},
+        abstract = {Abstract - With the increasing influence of IoT devices in our daily lives, secure data-sharing is becoming ever more important. Sensors and other devices are communicating vast amounts of possibly unencrypted data, which poses a significant privacy concern. To tackle this problem, this research implements two Partially Homomorphic Encryption (PHE) schemes, RSA and the Paillier cryptosystem, to perform Secure Multiparty Computation (SMPC) in the resource-constrained IoT environment. The environment consists of a laptop connected to an Arduino Uno through a serial connection. The RSA-based SMPC protocol has an average completion time of 2007ms. However, due to the inability to use padding, RSA lacks semantic security. Conversely, the Paillier-based protocol is semantically secure but cannot complete the encryption due to dynamic memory issues. Even if resolved, the estimated encryption time exceeds 103.3 minutes. Despite the potential
+of SMPC in IoT environments for secure data handling, the results from this research suggest that directly implementing PHE schemes on Arduino is not practical based on the observed limitations.}
+}
+
+@misc{combinatorial,
+      author = {Anandarup Roy and Bimal Kumar Roy and Kouichi Sakurai and Suprita Talnikar},
+      title = {A Combinatorial Approach to {IoT} Data Security},
+      howpublished = {Cryptology {ePrint} Archive, Paper 2025/010},
+      year = {2025},
+      url = {https://eprint.iacr.org/2025/010}
+}

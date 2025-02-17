@@ -1,0 +1,143 @@
+\doxysection{crypto\+\_\+utils.\+h}
+\hypertarget{crypto__utils_8h_source}{}\label{crypto__utils_8h_source}\index{components/model/util/include/crypto\_utils.h@{components/model/util/include/crypto\_utils.h}}
+\mbox{\hyperlink{crypto__utils_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CRYPTO\_UTILS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CRYPTO\_UTILS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <wolfssl/wolfcrypt/port/Espressif/esp32-\/crypt.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <wolfssl/wolfcrypt/wolfmath.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <wolfssl/ssl.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}esp\_log.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}esp\_random.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{constants_8h}{constants.h}}"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ BLOCK\_SIZE\ 32}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ MODIFIED\_CHUNK\_SIZE\ (BLOCK\_SIZE\ +\ 8)}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00017\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_schnorr_proof_a8a65b2e8eba8b86965afbe5db93d4005}{pubkey}};}
+\DoxyCodeLine{00018\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_schnorr_proof_a3783b481f6750085015ba33c5c897c20}{commitment}};}
+\DoxyCodeLine{00019\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_schnorr_proof_ac0350a903118e790bab3931c3a04ebea}{challenge}};}
+\DoxyCodeLine{00020\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_schnorr_proof_a6efa7809e247e867d2b9a8ea777513a6}{response}};}
+\DoxyCodeLine{00021\ \}\ \mbox{\hyperlink{struct_schnorr_proof}{SchnorrProof}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00024\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_coefficient_adf4779100fa8e689aefd78eb0ba83cde}{value}};}
+\DoxyCodeLine{00025\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_coefficient_a6be1af9cf2fe7dc6059ba26084fcafc1}{commitment}};}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{struct_schnorr_proof}{SchnorrProof}}\ \mbox{\hyperlink{struct_coefficient_a181df43574913a3afc874f866f80e784}{proof}};}
+\DoxyCodeLine{00027\ \}\ \mbox{\hyperlink{struct_coefficient}{Coefficient}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_election_polynomial_a1e162dcfcc9bfac3788ecb5fb79fa26f}{num\_coefficients}};}
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{struct_coefficient}{Coefficient}}*\ \mbox{\hyperlink{struct_election_polynomial_a26e365ac0cd621a2d2df66fa526aed70}{coefficients}};}
+\DoxyCodeLine{00032\ \}\ \mbox{\hyperlink{struct_election_polynomial}{ElectionPolynomial}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ contains\ also\ private\ key.\ Be\ careful\ when\ sending!}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00036\ \ \ \ \ uint8\_t\ guardian\_id[6];}
+\DoxyCodeLine{00037\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_election_key_pair_a8a425e105922d050867cba9cef32e967}{public\_key}};}
+\DoxyCodeLine{00038\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_election_key_pair_a827431978f82f678e3f32bb7c2d44fac}{private\_key}};}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{struct_election_polynomial}{ElectionPolynomial}}\ \mbox{\hyperlink{struct_election_key_pair_abcc22da6a75bc154b6500318f24bfc24}{polynomial}};}
+\DoxyCodeLine{00040\ \}\ \mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}};}
+\DoxyCodeLine{00041\ \ }
+\DoxyCodeLine{00042\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00043\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_afcec436515073c378d5f114256ea8759}{pad}};}
+\DoxyCodeLine{00044\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_a7e4928e1981cbd116b4c500e3c36c5f1}{data}};}
+\DoxyCodeLine{00045\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext_a63c8ecea9a658d290edc90a0f98038c7}{mac}};}
+\DoxyCodeLine{00046\ \}\ \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{HashedElGamalCiphertext}};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00049\ \ \ \ \ uint8\_t\ sender[6];}
+\DoxyCodeLine{00050\ \ \ \ \ uint8\_t\ receiver[6];}
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{HashedElGamalCiphertext}}\ \mbox{\hyperlink{struct_election_partial_key_pair_backup_af76957df44f722a7074cc186cc427646}{encrypted\_coordinate}};}
+\DoxyCodeLine{00052\ \ \}\ \mbox{\hyperlink{struct_election_partial_key_pair_backup}{ElectionPartialKeyPairBackup}};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ }
+\DoxyCodeLine{00055\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00056\ \ \ \ \ uint8\_t\ sender[6];}
+\DoxyCodeLine{00057\ \ \ \ \ uint8\_t\ receiver[6];}
+\DoxyCodeLine{00058\ \ \ \ \ uint8\_t\ verifier[6];}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_election_partial_key_verification_a400a8c5acbc462cd93d60bcc6c68fbe3}{verified}};}
+\DoxyCodeLine{00060\ \ \}\ \mbox{\hyperlink{struct_election_partial_key_verification}{ElectionPartialKeyVerification}};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00063\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_election_joint_key_ae33942d32a50f547a56ab961efa06479}{joint\_key}};}
+\DoxyCodeLine{00064\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_election_joint_key_a1830bb04e21e1b9ec04995e7bb1099cb}{commitment\_hash}};}
+\DoxyCodeLine{00065\ \ \}\ \mbox{\hyperlink{struct_election_joint_key}{ElectionJointKey}};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{struct_ciphertext_tally_selection_ac5f959b2b36aa2754deeb0674b00ca59}{object\_id}};}
+\DoxyCodeLine{00069\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_ciphertext_tally_selection_a305da6622c9ddabf1dbbdcc32cb41e5e}{ciphertext\_pad}};}
+\DoxyCodeLine{00070\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_ciphertext_tally_selection_a3097bb83ca83d24f3d13c4f8ed420a3f}{ciphertext\_data}};}
+\DoxyCodeLine{00071\ \}\ \mbox{\hyperlink{struct_ciphertext_tally_selection}{CiphertextTallySelection}};}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{struct_ciphertext_tally_contest_aa9dc2bb40ebf91f8743feb08ce16a8b0}{object\_id}};}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_ciphertext_tally_contest_a9f242be885b52ee5de78c5cb814774c8}{sequence\_order}};}
+\DoxyCodeLine{00076\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_ciphertext_tally_contest_a308e482ecc315c31e4b8c08d6959350b}{description\_hash}};}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_ciphertext_tally_contest_ad83030ad988ece2c6fadff6bb1e86de3}{num\_selections}};}
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{struct_ciphertext_tally_selection}{CiphertextTallySelection}}*\ \mbox{\hyperlink{struct_ciphertext_tally_contest_ad8ebbdaa8b8b7db39df38b9a89c33ee0}{selections}};}
+\DoxyCodeLine{00079\ \}\ \mbox{\hyperlink{struct_ciphertext_tally_contest}{CiphertextTallyContest}};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}\{}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{struct_ciphertext_tally_a203fe8bd5ac239d7a38fd775e3dae4df}{object\_id}};}
+\DoxyCodeLine{00083\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_ciphertext_tally_a8131ac8b79e8b66fcd8fc9b429f60a42}{base\_hash}};}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_ciphertext_tally_adc4967056e2aa6fc75e9aa079525539d}{num\_contest}};}
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{struct_ciphertext_tally_contest}{CiphertextTallyContest}}*\ \mbox{\hyperlink{struct_ciphertext_tally_ae63b6fd5ebec94d6cd0258f65a48d8f3}{contests}};}
+\DoxyCodeLine{00086\ \}\ \mbox{\hyperlink{struct_ciphertext_tally}{CiphertextTally}};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00089\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_chaum_pedersen_proof_a2f09958fb8824c87312d45ae84eb0ca1}{pad}};}
+\DoxyCodeLine{00090\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_chaum_pedersen_proof_afc562429d5008075c91913a34508c929}{data}};}
+\DoxyCodeLine{00091\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_chaum_pedersen_proof_a7ab07aa5d1a5d0d5883e04de646782c2}{challenge}};}
+\DoxyCodeLine{00092\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_chaum_pedersen_proof_a01c4abf73d90ab6547e4d8f3f6f3b27c}{response}};}
+\DoxyCodeLine{00093\ \}\ \mbox{\hyperlink{struct_chaum_pedersen_proof}{ChaumPedersenProof}};}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{struct_ciphertext_decryption_selection_a7143161b3a9308dfc3ef82e9386c027f}{object\_id}};}
+\DoxyCodeLine{00097\ \ \ \ \ uint8\_t\ guardian\_id[6];}
+\DoxyCodeLine{00098\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_ciphertext_decryption_selection_aa8897901c56b87cba55a76122feb590e}{decryption}};}
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{struct_chaum_pedersen_proof}{ChaumPedersenProof}}\ \mbox{\hyperlink{struct_ciphertext_decryption_selection_a9de32c2ef492c8eeeaad468eee106a87}{proof}};}
+\DoxyCodeLine{00100\ \}\ \mbox{\hyperlink{struct_ciphertext_decryption_selection}{CiphertextDecryptionSelection}};}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}\{}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{struct_ciphertext_decryption_contest_aed75b134969c73d09a94a11a5cba4147}{object\_id}};}
+\DoxyCodeLine{00104\ \ \ \ \ uint8\_t\ guardian\_id[6];}
+\DoxyCodeLine{00105\ \ \ \ \ sp\_int\ *\mbox{\hyperlink{struct_ciphertext_decryption_contest_a7518ccc1c8449f90b76b804e6c3bcc95}{public\_key}};}
+\DoxyCodeLine{00106\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_ciphertext_decryption_contest_aa59c950c8fb4e33c189d84f98f20930e}{description\_hash}};}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_ciphertext_decryption_contest_ad9a8874d52c63c33c59879beaa1d2f79}{num\_selections}};}
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{struct_ciphertext_decryption_selection}{CiphertextDecryptionSelection}}*\ \mbox{\hyperlink{struct_ciphertext_decryption_contest_ab1aba00dd51777c42c4362115e9a9052}{selections}};}
+\DoxyCodeLine{00109\ \}\ \mbox{\hyperlink{struct_ciphertext_decryption_contest}{CiphertextDecryptionContest}};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{struct_decryption_share_acd40f1a36c011e8f18dcb1243ae00494}{object\_id}};}
+\DoxyCodeLine{00113\ \ \ \ \ uint8\_t\ guardian\_id[6];}
+\DoxyCodeLine{00114\ \ \ \ \ sp\_int*\ \mbox{\hyperlink{struct_decryption_share_a8e38297844ea30b76d3796c8e071dd42}{public\_key}};}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_decryption_share_aced6cb141aa87be79ff9add20aa84983}{num\_contest}};}
+\DoxyCodeLine{00116\ \ \ \ \ \mbox{\hyperlink{struct_ciphertext_decryption_contest}{CiphertextDecryptionContest}}*\ \mbox{\hyperlink{struct_decryption_share_a78f679349d7f45df9412b1c67994c880}{contests}};}
+\DoxyCodeLine{00117\ \}\ \mbox{\hyperlink{struct_decryption_share}{DecryptionShare}};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_a9d5671e5caaf2f317f7cf58785de0108}{hash\_keys}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *\mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\_map}},\ \textcolor{keywordtype}{size\_t}\ count,\ \mbox{\hyperlink{struct_election_joint_key}{ElectionJointKey}}\ *joint\_key);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_aa09f7fb591e63268ec4987d2500cb561}{elgamal\_combine\_public\_keys}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *\mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\_map}},\ \textcolor{keywordtype}{size\_t}\ count,\ \mbox{\hyperlink{struct_election_joint_key}{ElectionJointKey}}\ *joint\_key);}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_a1aaac21ca15f371368fcb20d028fc130}{compute\_polynomial\_coordinate}}(uint8\_t*\ exponent\_modifier,\ \mbox{\hyperlink{struct_election_polynomial}{ElectionPolynomial}}*\ polynomial,\ sp\_int\ *coordinate);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_a18fa85661e1754a2b5acc63843de9c49}{verify\_polynomial\_coordinate}}(uint8\_t*\ exponent\_modifier,\ \mbox{\hyperlink{struct_election_polynomial}{ElectionPolynomial}}*\ polynomial,\ sp\_int\ *coordinate);}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_a2ab953bf2847797172dddfc727846c91}{hashed\_elgamal\_encrypt}}(sp\_int\ *message,\ sp\_int\ *\mbox{\hyperlink{crypto__utils_8c_a3a242a0b40dede1b761d8c880a6ce387}{nonce}},\ sp\_int\ *public\_key,\ sp\_int\ *encryption\_seed,\ \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{HashedElGamalCiphertext}}\ *encrypted\_message);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_ac608c7e033a1f968996b3291145e52de}{hashed\_elgamal\_decrypt}}(\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{HashedElGamalCiphertext}}\ *encrypted\_message,\ sp\_int\ *secret\_key,\ sp\_int\ *encryption\_seed,\ sp\_int\ *message);}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_a0ef8f5df434fea9ec8d927c3880c60fe}{generate\_polynomial}}(\mbox{\hyperlink{struct_election_polynomial}{ElectionPolynomial}}\ *polynomial);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_ae261a8d309f7d924882217bc88102df6}{rand\_q}}(sp\_int\ *result);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_acbac67d33867633b72810b465351dbc1}{hash}}(sp\_int\ *a,\ sp\_int\ *b,\ sp\_int\ *result);}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_a9d5671e5caaf2f317f7cf58785de0108}{hash\_keys}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *\mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\_map}},\ \textcolor{keywordtype}{size\_t}\ count,\ \mbox{\hyperlink{struct_election_joint_key}{ElectionJointKey}}\ *joint\_key);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_aae3fcced9582ecec734a89d4d4bb1a4d}{get\_hmac}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out);}
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_aca535cef821ca793221e687189807cbf}{kdf\_xor}}(sp\_int\ *key,\ sp\_int\ *salt,\ sp\_int\ *message,\ sp\_int\ *encrypted\_message);}
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{crypto__utils_8h_aff67e835c7e405597f93aa91dca2e4b5}{print\_sp\_int}}(sp\_int\ *num);}
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{crypto__utils_8h_a608e1af387f583bb689c693354314640}{print\_byte\_array}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{byte}\ *array,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{crypto__utils_8h_a8b7b8d488cca80d6517c77555d74e5af}{int\_to\_bytes}}(\textcolor{keywordtype}{int}\ value,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes);}
+\DoxyCodeLine{00135\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{crypto__utils_8h_a8fbbd04ef6759e5f2ad5afeea05b92af}{compute\_decryption\_share\_for\_contest}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *\mbox{\hyperlink{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}{guardian}},\ \mbox{\hyperlink{struct_ciphertext_tally_contest}{CiphertextTallyContest}}\ *contest,\ sp\_int*\ base\_hash\ ,\ \mbox{\hyperlink{struct_ciphertext_decryption_contest}{CiphertextDecryptionContest}}\ *dec\_contest);}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CRYPTO\_UTILS\_H}}
+
+\end{DoxyCode}

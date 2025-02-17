@@ -1,0 +1,20 @@
+@startuml
+hide unlinked
+actor EncryptionDevice as E
+collections Guardians as G
+actor Voter as V
+actor ThirdParties as T
+title Intra-election
+E -> V : Empty PlaintextBallot
+loop until a ballot is cast
+    V -> E : Filled PlaintextBallot
+    E -> E : Encrypt PlaintextBallot
+    E -> V : Verification code
+    break Cast EncryptedBallot
+        V -> E : Cast EncryptedBallot 
+	E -> E : Mark EncryptedBallot as Cast
+    end
+    V -> E : Spoil EncryptedBallot
+    E -> E : Mark EncryptedBallot as Spoiled    
+end
+@enduml

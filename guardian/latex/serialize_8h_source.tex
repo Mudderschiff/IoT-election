@@ -1,0 +1,26 @@
+\doxysection{serialize.\+h}
+\hypertarget{serialize_8h_source}{}\label{serialize_8h_source}\index{components/adapter/util/include/serialize.h@{components/adapter/util/include/serialize.h}}
+\mbox{\hyperlink{serialize_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SERIALIZE\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SERIALIZE\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{crypto__utils_8h}{crypto\_utils.h}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{buff_8pb-c_8h}{buff.pb-\/c.h}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{tally_8pb-c_8h}{tally.pb-\/c.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <wolfssl/wolfcrypt/wolfmath.h>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ uint8\_t*\ \mbox{\hyperlink{serialize_8h_a065e4b5853a910851f778c3344281aee}{serialize\_election\_partial\_key\_verification}}(\mbox{\hyperlink{struct_election_partial_key_verification}{ElectionPartialKeyVerification}}*\ verification,\ \textcolor{keywordtype}{unsigned}*\ len);}
+\DoxyCodeLine{00010\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{serialize_8h_ac20766373ee00f826f335039590ce08f}{deserialize\_election\_partial\_key\_verification}}(uint8\_t*\ buffer,\ \textcolor{keywordtype}{unsigned}\ len,\ \mbox{\hyperlink{struct_election_partial_key_verification}{ElectionPartialKeyVerification}}*\ verification);}
+\DoxyCodeLine{00011\ uint8\_t*\ \mbox{\hyperlink{serialize_8h_a2b605b24c3b168fc5907e6abf3b30088}{serialize\_election\_partial\_key\_backup}}(\mbox{\hyperlink{struct_election_partial_key_pair_backup}{ElectionPartialKeyPairBackup}}*\ backup,\ \textcolor{keywordtype}{unsigned}*\ len);}
+\DoxyCodeLine{00012\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{serialize_8h_ae92aa5f7f2e3a5be5d314fd4456e9707}{deserialize\_election\_partial\_key\_backup}}(uint8\_t*\ buffer,\ \textcolor{keywordtype}{unsigned}\ len,\ \mbox{\hyperlink{struct_election_partial_key_pair_backup}{ElectionPartialKeyPairBackup}}*\ backup);}
+\DoxyCodeLine{00013\ uint8\_t*\ \mbox{\hyperlink{serialize_8h_aacb3d0a5afd843eff0caaec1214c99ff}{serialize\_election\_key\_pair}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}*\ key\_pair,\ \textcolor{keywordtype}{unsigned}*\ len);}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{serialize_8h_a46061ba0e4207cf2cc96df4d4c90d944}{deserialize\_election\_key\_pair}}(uint8\_t*\ buffer,\ \textcolor{keywordtype}{unsigned}\ len,\ \mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}*\ key\_pair);}
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{serialize_8h_a7b87bf0665e828281a232cd2429ae5b9}{deserialize\_ciphertext\_tally}}(uint8\_t\ *buffer,\ \textcolor{keywordtype}{unsigned}\ len,\ \mbox{\hyperlink{struct_ciphertext_tally}{CiphertextTally}}*\ ciphertally);}
+\DoxyCodeLine{00016\ uint8\_t*\ \mbox{\hyperlink{serialize_8h_a7640857cd4fc176439198a93f0234188}{serialize\_DecryptionShare}}(\mbox{\hyperlink{struct_decryption_share}{DecryptionShare}}*\ share,\ \textcolor{keywordtype}{unsigned}*\ len);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SERIALIZE\_H}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ }
+
+\end{DoxyCode}

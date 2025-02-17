@@ -1,0 +1,25 @@
+@startuml
+hide unlinked
+actor AdminEncryption as AE
+collections Guardians as G
+actor Voter as V
+actor ThirdParties as T
+title Post-election
+AE -> AE : Generate Encrypted Tally from cast ballots
+AE -> G : Send Encrypted Tally
+alt all guardians present
+    G -> G : Combine Decryption Shares to an decrypted Tally
+    G -> AE : Send the decrypted Tally
+else guardians are missing
+    G -> G : Compute Partial Decryption for each missing guardian
+    G -> G : Combine all Decryption Shares including compensated shares
+    G -> AE : Send the decrypted Tally
+end
+opt Decryption of Spoiled Ballots
+    AE -> G : Send Encrypted Spoiled Ballots
+    G -> G : Decrypt through same process used in Encrypted Tally
+    G -> AE : Send decrypted spoiled ballots
+end
+AE -> T : Publish the election artifacts
+T -> T : Verify the election
+@enduml

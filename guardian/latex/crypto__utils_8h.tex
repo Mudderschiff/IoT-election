@@ -1,0 +1,315 @@
+\doxysection{components/model/util/include/crypto\+\_\+utils.h File Reference}
+\hypertarget{crypto__utils_8h}{}\label{crypto__utils_8h}\index{components/model/util/include/crypto\_utils.h@{components/model/util/include/crypto\_utils.h}}
+{\ttfamily \#include $<$wolfssl/wolfcrypt/port/\+Espressif/esp32-\/crypt.\+h$>$}\newline
+{\ttfamily \#include $<$wolfssl/wolfcrypt/wolfmath.\+h$>$}\newline
+{\ttfamily \#include $<$wolfssl/ssl.\+h$>$}\newline
+{\ttfamily \#include "{}esp\+\_\+log.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+random.\+h"{}}\newline
+{\ttfamily \#include "{}constants.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_schnorr_proof}{Schnorr\+Proof}}
+\item 
+struct \mbox{\hyperlink{struct_coefficient}{Coefficient}}
+\item 
+struct \mbox{\hyperlink{struct_election_polynomial}{Election\+Polynomial}}
+\item 
+struct \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}}
+\item 
+struct \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{Hashed\+El\+Gamal\+Ciphertext}}
+\item 
+struct \mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}}
+\item 
+struct \mbox{\hyperlink{struct_election_partial_key_verification}{Election\+Partial\+Key\+Verification}}
+\item 
+struct \mbox{\hyperlink{struct_election_joint_key}{Election\+Joint\+Key}}
+\item 
+struct \mbox{\hyperlink{struct_ciphertext_tally_selection}{Ciphertext\+Tally\+Selection}}
+\item 
+struct \mbox{\hyperlink{struct_ciphertext_tally_contest}{Ciphertext\+Tally\+Contest}}
+\item 
+struct \mbox{\hyperlink{struct_ciphertext_tally}{Ciphertext\+Tally}}
+\item 
+struct \mbox{\hyperlink{struct_chaum_pedersen_proof}{Chaum\+Pedersen\+Proof}}
+\item 
+struct \mbox{\hyperlink{struct_ciphertext_decryption_selection}{Ciphertext\+Decryption\+Selection}}
+\item 
+struct \mbox{\hyperlink{struct_ciphertext_decryption_contest}{Ciphertext\+Decryption\+Contest}}
+\item 
+struct \mbox{\hyperlink{struct_decryption_share}{Decryption\+Share}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{crypto__utils_8h_ad51ded0bbd705f02f73fc60c0b721ced}{BLOCK\+\_\+\+SIZE}}~32
+\item 
+\#define \mbox{\hyperlink{crypto__utils_8h_a90e1511d938b0fb3570144b622042abb}{MODIFIED\+\_\+\+CHUNK\+\_\+\+SIZE}}~(\mbox{\hyperlink{crypto__utils_8h_ad51ded0bbd705f02f73fc60c0b721ced}{BLOCK\+\_\+\+SIZE}} + 8)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{crypto__utils_8h_a9d5671e5caaf2f317f7cf58785de0108}{hash\+\_\+keys}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\+\_\+map}}, size\+\_\+t count, \mbox{\hyperlink{struct_election_joint_key}{Election\+Joint\+Key}} \texorpdfstring{$\ast$}{*}joint\+\_\+key)
+\item 
+int \mbox{\hyperlink{crypto__utils_8h_aa09f7fb591e63268ec4987d2500cb561}{elgamal\+\_\+combine\+\_\+public\+\_\+keys}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\+\_\+map}}, size\+\_\+t count, \mbox{\hyperlink{struct_election_joint_key}{Election\+Joint\+Key}} \texorpdfstring{$\ast$}{*}joint\+\_\+key)
+\item 
+int \mbox{\hyperlink{crypto__utils_8h_a1aaac21ca15f371368fcb20d028fc130}{compute\+\_\+polynomial\+\_\+coordinate}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}exponent\+\_\+modifier, \mbox{\hyperlink{struct_election_polynomial}{Election\+Polynomial}} \texorpdfstring{$\ast$}{*}polynomial, sp\+\_\+int \texorpdfstring{$\ast$}{*}coordinate)
+\begin{DoxyCompactList}\small\item\em Computes a single coordinate value of the election polynomial used for sharing. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{crypto__utils_8h_a18fa85661e1754a2b5acc63843de9c49}{verify\+\_\+polynomial\+\_\+coordinate}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}exponent\+\_\+modifier, \mbox{\hyperlink{struct_election_polynomial}{Election\+Polynomial}} \texorpdfstring{$\ast$}{*}polynomial, sp\+\_\+int \texorpdfstring{$\ast$}{*}coordinate)
+\begin{DoxyCompactList}\small\item\em Computes a single coordinate value of the election polynomial used for sharing. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{crypto__utils_8h_a2ab953bf2847797172dddfc727846c91}{hashed\+\_\+elgamal\+\_\+encrypt}} (sp\+\_\+int \texorpdfstring{$\ast$}{*}message, sp\+\_\+int \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{crypto__utils_8c_a3a242a0b40dede1b761d8c880a6ce387}{nonce}}, sp\+\_\+int \texorpdfstring{$\ast$}{*}public\+\_\+key, sp\+\_\+int \texorpdfstring{$\ast$}{*}encryption\+\_\+seed, \mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{Hashed\+El\+Gamal\+Ciphertext}} \texorpdfstring{$\ast$}{*}encrypted\+\_\+message)
+\item 
+int \mbox{\hyperlink{crypto__utils_8h_ac608c7e033a1f968996b3291145e52de}{hashed\+\_\+elgamal\+\_\+decrypt}} (\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{Hashed\+El\+Gamal\+Ciphertext}} \texorpdfstring{$\ast$}{*}encrypted\+\_\+message, sp\+\_\+int \texorpdfstring{$\ast$}{*}secret\+\_\+key, sp\+\_\+int \texorpdfstring{$\ast$}{*}encryption\+\_\+seed, sp\+\_\+int \texorpdfstring{$\ast$}{*}message)
+\item 
+int \mbox{\hyperlink{crypto__utils_8h_a0ef8f5df434fea9ec8d927c3880c60fe}{generate\+\_\+polynomial}} (\mbox{\hyperlink{struct_election_polynomial}{Election\+Polynomial}} \texorpdfstring{$\ast$}{*}polynomial)
+\begin{DoxyCompactList}\small\item\em Generates a polynomial for sharing election keys. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{crypto__utils_8h_ae261a8d309f7d924882217bc88102df6}{rand\+\_\+q}} (sp\+\_\+int \texorpdfstring{$\ast$}{*}result)
+\begin{DoxyCompactList}\small\item\em Generate a random number below Q Q is very close to the maximum value for a 256 bit number. It might be worth to compare and regenerate in case mod is expensive. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{crypto__utils_8h_acbac67d33867633b72810b465351dbc1}{hash}} (sp\+\_\+int \texorpdfstring{$\ast$}{*}a, sp\+\_\+int \texorpdfstring{$\ast$}{*}b, sp\+\_\+int \texorpdfstring{$\ast$}{*}result)
+\begin{DoxyCompactList}\small\item\em Given two mp\+\_\+ints, calculate their cryptographic hash using SHA256. Possible collision. In the python implementation a delimiter (\texorpdfstring{$\vert$}{|}) is used. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{crypto__utils_8h_aae3fcced9582ecec734a89d4d4bb1a4d}{get\+\_\+hmac}} (unsigned char \texorpdfstring{$\ast$}{*}key, unsigned char \texorpdfstring{$\ast$}{*}in, unsigned char \texorpdfstring{$\ast$}{*}out)
+\begin{DoxyCompactList}\small\item\em Get a hash-\/based message authentication code(hmac) digest. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{crypto__utils_8h_aca535cef821ca793221e687189807cbf}{kdf\+\_\+xor}} (sp\+\_\+int \texorpdfstring{$\ast$}{*}key, sp\+\_\+int \texorpdfstring{$\ast$}{*}salt, sp\+\_\+int \texorpdfstring{$\ast$}{*}message, sp\+\_\+int \texorpdfstring{$\ast$}{*}encrypted\+\_\+message)
+\begin{DoxyCompactList}\small\item\em generates a Keystream using a KDF then XORs it with the message \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{crypto__utils_8h_aff67e835c7e405597f93aa91dca2e4b5}{print\+\_\+sp\+\_\+int}} (sp\+\_\+int \texorpdfstring{$\ast$}{*}num)
+\item 
+void \mbox{\hyperlink{crypto__utils_8h_a608e1af387f583bb689c693354314640}{print\+\_\+byte\+\_\+array}} (const byte \texorpdfstring{$\ast$}{*}array, int size)
+\item 
+void \mbox{\hyperlink{crypto__utils_8h_a8b7b8d488cca80d6517c77555d74e5af}{int\+\_\+to\+\_\+bytes}} (int value, unsigned char \texorpdfstring{$\ast$}{*}bytes)
+\item 
+int \mbox{\hyperlink{crypto__utils_8h_a8fbbd04ef6759e5f2ad5afeea05b92af}{compute\+\_\+decryption\+\_\+share\+\_\+for\+\_\+contest}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}{guardian}}, \mbox{\hyperlink{struct_ciphertext_tally_contest}{Ciphertext\+Tally\+Contest}} \texorpdfstring{$\ast$}{*}contest, sp\+\_\+int \texorpdfstring{$\ast$}{*}base\+\_\+hash, \mbox{\hyperlink{struct_ciphertext_decryption_contest}{Ciphertext\+Decryption\+Contest}} \texorpdfstring{$\ast$}{*}dec\+\_\+contest)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{crypto__utils_8h_ad51ded0bbd705f02f73fc60c0b721ced}\label{crypto__utils_8h_ad51ded0bbd705f02f73fc60c0b721ced} 
+\index{crypto\_utils.h@{crypto\_utils.h}!BLOCK\_SIZE@{BLOCK\_SIZE}}
+\index{BLOCK\_SIZE@{BLOCK\_SIZE}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{BLOCK\_SIZE}{BLOCK\_SIZE}}
+{\footnotesize\ttfamily \#define BLOCK\+\_\+\+SIZE~32}
+
+\Hypertarget{crypto__utils_8h_a90e1511d938b0fb3570144b622042abb}\label{crypto__utils_8h_a90e1511d938b0fb3570144b622042abb} 
+\index{crypto\_utils.h@{crypto\_utils.h}!MODIFIED\_CHUNK\_SIZE@{MODIFIED\_CHUNK\_SIZE}}
+\index{MODIFIED\_CHUNK\_SIZE@{MODIFIED\_CHUNK\_SIZE}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{MODIFIED\_CHUNK\_SIZE}{MODIFIED\_CHUNK\_SIZE}}
+{\footnotesize\ttfamily \#define MODIFIED\+\_\+\+CHUNK\+\_\+\+SIZE~(\mbox{\hyperlink{crypto__utils_8h_ad51ded0bbd705f02f73fc60c0b721ced}{BLOCK\+\_\+\+SIZE}} + 8)}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{crypto__utils_8h_a8fbbd04ef6759e5f2ad5afeea05b92af}\label{crypto__utils_8h_a8fbbd04ef6759e5f2ad5afeea05b92af} 
+\index{crypto\_utils.h@{crypto\_utils.h}!compute\_decryption\_share\_for\_contest@{compute\_decryption\_share\_for\_contest}}
+\index{compute\_decryption\_share\_for\_contest@{compute\_decryption\_share\_for\_contest}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{compute\_decryption\_share\_for\_contest()}{compute\_decryption\_share\_for\_contest()}}
+{\footnotesize\ttfamily int compute\+\_\+decryption\+\_\+share\+\_\+for\+\_\+contest (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{guardian,  }\item[{\mbox{\hyperlink{struct_ciphertext_tally_contest}{Ciphertext\+Tally\+Contest}} \texorpdfstring{$\ast$}{*}}]{contest,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{base\+\_\+hash,  }\item[{\mbox{\hyperlink{struct_ciphertext_decryption_contest}{Ciphertext\+Decryption\+Contest}} \texorpdfstring{$\ast$}{*}}]{dec\+\_\+contest }\end{DoxyParamCaption})}
+
+\Hypertarget{crypto__utils_8h_a1aaac21ca15f371368fcb20d028fc130}\label{crypto__utils_8h_a1aaac21ca15f371368fcb20d028fc130} 
+\index{crypto\_utils.h@{crypto\_utils.h}!compute\_polynomial\_coordinate@{compute\_polynomial\_coordinate}}
+\index{compute\_polynomial\_coordinate@{compute\_polynomial\_coordinate}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{compute\_polynomial\_coordinate()}{compute\_polynomial\_coordinate()}}
+{\footnotesize\ttfamily int compute\+\_\+polynomial\+\_\+coordinate (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{exponent\+\_\+modifier,  }\item[{\mbox{\hyperlink{struct_election_polynomial}{Election\+Polynomial}} \texorpdfstring{$\ast$}{*}}]{polynomial,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{coordinate }\end{DoxyParamCaption})}
+
+
+
+Computes a single coordinate value of the election polynomial used for sharing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em exponent\+\_\+modifier} & Unique modifier (usually sequence order) for exponent \mbox{[}0, Q\mbox{]} \\
+\hline
+{\em polynomial} & Election polynomial \\
+\hline
+{\em coordinate} & The computed coordinate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8h_aa09f7fb591e63268ec4987d2500cb561}\label{crypto__utils_8h_aa09f7fb591e63268ec4987d2500cb561} 
+\index{crypto\_utils.h@{crypto\_utils.h}!elgamal\_combine\_public\_keys@{elgamal\_combine\_public\_keys}}
+\index{elgamal\_combine\_public\_keys@{elgamal\_combine\_public\_keys}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{elgamal\_combine\_public\_keys()}{elgamal\_combine\_public\_keys()}}
+{\footnotesize\ttfamily int elgamal\+\_\+combine\+\_\+public\+\_\+keys (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{pubkey\+\_\+map,  }\item[{size\+\_\+t}]{count,  }\item[{\mbox{\hyperlink{struct_election_joint_key}{Election\+Joint\+Key}} \texorpdfstring{$\ast$}{*}}]{joint\+\_\+key }\end{DoxyParamCaption})}
+
+\Hypertarget{crypto__utils_8h_a0ef8f5df434fea9ec8d927c3880c60fe}\label{crypto__utils_8h_a0ef8f5df434fea9ec8d927c3880c60fe} 
+\index{crypto\_utils.h@{crypto\_utils.h}!generate\_polynomial@{generate\_polynomial}}
+\index{generate\_polynomial@{generate\_polynomial}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{generate\_polynomial()}{generate\_polynomial()}}
+{\footnotesize\ttfamily int generate\+\_\+polynomial (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_polynomial}{Election\+Polynomial}} \texorpdfstring{$\ast$}{*}}]{polynomial }\end{DoxyParamCaption})}
+
+
+
+Generates a polynomial for sharing election keys. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em coefficients} & Number of coefficients of polynomial \\
+\hline
+{\em Polynomial} & used to share election keys. Contains value, commitment, and proof \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8h_aae3fcced9582ecec734a89d4d4bb1a4d}\label{crypto__utils_8h_aae3fcced9582ecec734a89d4d4bb1a4d} 
+\index{crypto\_utils.h@{crypto\_utils.h}!get\_hmac@{get\_hmac}}
+\index{get\_hmac@{get\_hmac}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{get\_hmac()}{get\_hmac()}}
+{\footnotesize\ttfamily int get\+\_\+hmac (\begin{DoxyParamCaption}\item[{unsigned char \texorpdfstring{$\ast$}{*}}]{key,  }\item[{unsigned char \texorpdfstring{$\ast$}{*}}]{in,  }\item[{unsigned char \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+
+
+Get a hash-\/based message authentication code(hmac) digest. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & key (key) in bytes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+error\+\_\+code 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8h_acbac67d33867633b72810b465351dbc1}\label{crypto__utils_8h_acbac67d33867633b72810b465351dbc1} 
+\index{crypto\_utils.h@{crypto\_utils.h}!hash@{hash}}
+\index{hash@{hash}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{hash()}{hash()}}
+{\footnotesize\ttfamily int hash (\begin{DoxyParamCaption}\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{a,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{b,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{result }\end{DoxyParamCaption})}
+
+
+
+Given two mp\+\_\+ints, calculate their cryptographic hash using SHA256. Possible collision. In the python implementation a delimiter (\texorpdfstring{$\vert$}{|}) is used. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First element \\
+\hline
+{\em b} & Second element \\
+\hline
+{\em result} & The result of the hash \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8h_a9d5671e5caaf2f317f7cf58785de0108}\label{crypto__utils_8h_a9d5671e5caaf2f317f7cf58785de0108} 
+\index{crypto\_utils.h@{crypto\_utils.h}!hash\_keys@{hash\_keys}}
+\index{hash\_keys@{hash\_keys}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{hash\_keys()}{hash\_keys()}}
+{\footnotesize\ttfamily int hash\+\_\+keys (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{pubkey\+\_\+map,  }\item[{size\+\_\+t}]{count,  }\item[{\mbox{\hyperlink{struct_election_joint_key}{Election\+Joint\+Key}} \texorpdfstring{$\ast$}{*}}]{joint\+\_\+key }\end{DoxyParamCaption})}
+
+\Hypertarget{crypto__utils_8h_ac608c7e033a1f968996b3291145e52de}\label{crypto__utils_8h_ac608c7e033a1f968996b3291145e52de} 
+\index{crypto\_utils.h@{crypto\_utils.h}!hashed\_elgamal\_decrypt@{hashed\_elgamal\_decrypt}}
+\index{hashed\_elgamal\_decrypt@{hashed\_elgamal\_decrypt}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{hashed\_elgamal\_decrypt()}{hashed\_elgamal\_decrypt()}}
+{\footnotesize\ttfamily int hashed\+\_\+elgamal\+\_\+decrypt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{Hashed\+El\+Gamal\+Ciphertext}} \texorpdfstring{$\ast$}{*}}]{encrypted\+\_\+message,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{secret\+\_\+key,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{encryption\+\_\+seed,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{message }\end{DoxyParamCaption})}
+
+Decrypt an El\+Gamal ciphertext using a known El\+Gamal secret key 
+\begin{DoxyParams}{Parameters}
+{\em secret\+\_\+key} & The corresponding El\+Gamal secret key. \\
+\hline
+{\em encryption\+\_\+seed} & Encryption seed (Q) for election. \\
+\hline
+{\em plaintext} & Decrypted plaintext message. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{crypto__utils_8h_a2ab953bf2847797172dddfc727846c91}\label{crypto__utils_8h_a2ab953bf2847797172dddfc727846c91} 
+\index{crypto\_utils.h@{crypto\_utils.h}!hashed\_elgamal\_encrypt@{hashed\_elgamal\_encrypt}}
+\index{hashed\_elgamal\_encrypt@{hashed\_elgamal\_encrypt}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{hashed\_elgamal\_encrypt()}{hashed\_elgamal\_encrypt()}}
+{\footnotesize\ttfamily int hashed\+\_\+elgamal\+\_\+encrypt (\begin{DoxyParamCaption}\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{message,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{nonce,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{public\+\_\+key,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{encryption\+\_\+seed,  }\item[{\mbox{\hyperlink{struct_hashed_el_gamal_ciphertext}{Hashed\+El\+Gamal\+Ciphertext}} \texorpdfstring{$\ast$}{*}}]{encrypted\+\_\+message }\end{DoxyParamCaption})}
+
+Encrypts a variable length message with a given random nonce and an El\+Gamal public key. 
+\begin{DoxyParams}{Parameters}
+{\em message} & message (m) to encrypt; must be in bytes. \\
+\hline
+{\em nonce} & Randomly chosen nonce in \mbox{[}1, Q). \\
+\hline
+{\em public\+\_\+key} & El\+Gamal public key. \\
+\hline
+{\em encryption\+\_\+seed} & Encryption seed (Q) for election. \\
+\hline
+{\em encrypted\+\_\+coordinate} & The encrypted message. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{crypto__utils_8h_a8b7b8d488cca80d6517c77555d74e5af}\label{crypto__utils_8h_a8b7b8d488cca80d6517c77555d74e5af} 
+\index{crypto\_utils.h@{crypto\_utils.h}!int\_to\_bytes@{int\_to\_bytes}}
+\index{int\_to\_bytes@{int\_to\_bytes}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{int\_to\_bytes()}{int\_to\_bytes()}}
+{\footnotesize\ttfamily void int\+\_\+to\+\_\+bytes (\begin{DoxyParamCaption}\item[{int}]{value,  }\item[{unsigned char \texorpdfstring{$\ast$}{*}}]{bytes }\end{DoxyParamCaption})}
+
+\Hypertarget{crypto__utils_8h_aca535cef821ca793221e687189807cbf}\label{crypto__utils_8h_aca535cef821ca793221e687189807cbf} 
+\index{crypto\_utils.h@{crypto\_utils.h}!kdf\_xor@{kdf\_xor}}
+\index{kdf\_xor@{kdf\_xor}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{kdf\_xor()}{kdf\_xor()}}
+{\footnotesize\ttfamily int kdf\+\_\+xor (\begin{DoxyParamCaption}\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{key,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{salt,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{message,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{encrypted\+\_\+message }\end{DoxyParamCaption})}
+
+
+
+generates a Keystream using a KDF then XORs it with the message 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Key used for the hashing \\
+\hline
+{\em salt} & Salt used for the hashing \\
+\hline
+{\em message} & Message to be hashed \\
+\hline
+{\em encrypted\+\_\+message} & Write Encrypted message back to encrypted\+\_\+message \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, 1 on failure 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8h_a608e1af387f583bb689c693354314640}\label{crypto__utils_8h_a608e1af387f583bb689c693354314640} 
+\index{crypto\_utils.h@{crypto\_utils.h}!print\_byte\_array@{print\_byte\_array}}
+\index{print\_byte\_array@{print\_byte\_array}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{print\_byte\_array()}{print\_byte\_array()}}
+{\footnotesize\ttfamily void print\+\_\+byte\+\_\+array (\begin{DoxyParamCaption}\item[{const byte \texorpdfstring{$\ast$}{*}}]{array,  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+\Hypertarget{crypto__utils_8h_aff67e835c7e405597f93aa91dca2e4b5}\label{crypto__utils_8h_aff67e835c7e405597f93aa91dca2e4b5} 
+\index{crypto\_utils.h@{crypto\_utils.h}!print\_sp\_int@{print\_sp\_int}}
+\index{print\_sp\_int@{print\_sp\_int}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{print\_sp\_int()}{print\_sp\_int()}}
+{\footnotesize\ttfamily void print\+\_\+sp\+\_\+int (\begin{DoxyParamCaption}\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{num }\end{DoxyParamCaption})}
+
+\Hypertarget{crypto__utils_8h_ae261a8d309f7d924882217bc88102df6}\label{crypto__utils_8h_ae261a8d309f7d924882217bc88102df6} 
+\index{crypto\_utils.h@{crypto\_utils.h}!rand\_q@{rand\_q}}
+\index{rand\_q@{rand\_q}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{rand\_q()}{rand\_q()}}
+{\footnotesize\ttfamily int rand\+\_\+q (\begin{DoxyParamCaption}\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{result }\end{DoxyParamCaption})}
+
+
+
+Generate a random number below Q Q is very close to the maximum value for a 256 bit number. It might be worth to compare and regenerate in case mod is expensive. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em result} & The random number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8h_a18fa85661e1754a2b5acc63843de9c49}\label{crypto__utils_8h_a18fa85661e1754a2b5acc63843de9c49} 
+\index{crypto\_utils.h@{crypto\_utils.h}!verify\_polynomial\_coordinate@{verify\_polynomial\_coordinate}}
+\index{verify\_polynomial\_coordinate@{verify\_polynomial\_coordinate}!crypto\_utils.h@{crypto\_utils.h}}
+\doxysubsubsection{\texorpdfstring{verify\_polynomial\_coordinate()}{verify\_polynomial\_coordinate()}}
+{\footnotesize\ttfamily int verify\+\_\+polynomial\+\_\+coordinate (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{exponent\+\_\+modifier,  }\item[{\mbox{\hyperlink{struct_election_polynomial}{Election\+Polynomial}} \texorpdfstring{$\ast$}{*}}]{polynomial,  }\item[{sp\+\_\+int \texorpdfstring{$\ast$}{*}}]{coordinate }\end{DoxyParamCaption})}
+
+
+
+Computes a single coordinate value of the election polynomial used for sharing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em exponent\+\_\+modifier} & Unique modifier (usually sequence order) for exponent \mbox{[}0, Q\mbox{]} \\
+\hline
+{\em polynomial} & Election polynomial \\
+\hline
+{\em coordinate} & The computed coordinate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure 
+\end{DoxyReturn}

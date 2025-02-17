@@ -1,0 +1,95 @@
+\doxysection{components/model/model.c File Reference}
+\hypertarget{model_8c}{}\label{model_8c}\index{components/model/model.c@{components/model/model.c}}
+{\ttfamily \#include "{}model.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+heap\+\_\+caps.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{model_8c_a79d752bd08f05425c972cb2d452348f1}{generate\+\_\+election\+\_\+key\+\_\+pair}} (int \mbox{\hyperlink{adapter_8c_a692a1f7328c6d16bb09778805223b47b}{quorum}}, \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}key\+\_\+pair)
+\begin{DoxyCompactList}\small\item\em Generates election key pair, proof, and polynomial. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{model_8c_a58d016288fca224065bd1842dfea6bf5}{generate\+\_\+election\+\_\+partial\+\_\+key\+\_\+backup}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}sender, \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}receiver, \mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*}backup)
+\begin{DoxyCompactList}\small\item\em Generate election partal key backup for sharing. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{model_8c_a8fd15aff2949ac5a5fc1e740fc56d86f}{verify\+\_\+election\+\_\+partial\+\_\+key\+\_\+backup}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}receiver, \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}sender, \mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*}backup, \mbox{\hyperlink{struct_election_partial_key_verification}{Election\+Partial\+Key\+Verification}} \texorpdfstring{$\ast$}{*}verification)
+\begin{DoxyCompactList}\small\item\em Verify election partial key backup contain point on owners polynomial. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{model_8c_a6a87f16c94c888eda9aaf5fd5ed3baa6}{combine\+\_\+election\+\_\+public\+\_\+keys}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}{guardian}}, \mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\+\_\+map}}, size\+\_\+t count, \mbox{\hyperlink{struct_election_joint_key}{Election\+Joint\+Key}} \texorpdfstring{$\ast$}{*}joint\+\_\+key)
+\item 
+int \mbox{\hyperlink{model_8c_a643963db772f4d523c4078e473c49ef3}{compute\+\_\+decryption\+\_\+share}} (\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}{guardian}}, \mbox{\hyperlink{struct_ciphertext_tally}{Ciphertext\+Tally}} \texorpdfstring{$\ast$}{*}ciphertally, \mbox{\hyperlink{struct_decryption_share}{Decryption\+Share}} \texorpdfstring{$\ast$}{*}share)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{model_8c_a6a87f16c94c888eda9aaf5fd5ed3baa6}\label{model_8c_a6a87f16c94c888eda9aaf5fd5ed3baa6} 
+\index{model.c@{model.c}!combine\_election\_public\_keys@{combine\_election\_public\_keys}}
+\index{combine\_election\_public\_keys@{combine\_election\_public\_keys}!model.c@{model.c}}
+\doxysubsubsection{\texorpdfstring{combine\_election\_public\_keys()}{combine\_election\_public\_keys()}}
+{\footnotesize\ttfamily int combine\+\_\+election\+\_\+public\+\_\+keys (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{guardian,  }\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{pubkey\+\_\+map,  }\item[{size\+\_\+t}]{count,  }\item[{\mbox{\hyperlink{struct_election_joint_key}{Election\+Joint\+Key}} \texorpdfstring{$\ast$}{*}}]{joint\+\_\+key }\end{DoxyParamCaption})}
+
+\Hypertarget{model_8c_a643963db772f4d523c4078e473c49ef3}\label{model_8c_a643963db772f4d523c4078e473c49ef3} 
+\index{model.c@{model.c}!compute\_decryption\_share@{compute\_decryption\_share}}
+\index{compute\_decryption\_share@{compute\_decryption\_share}!model.c@{model.c}}
+\doxysubsubsection{\texorpdfstring{compute\_decryption\_share()}{compute\_decryption\_share()}}
+{\footnotesize\ttfamily int compute\+\_\+decryption\+\_\+share (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{guardian,  }\item[{\mbox{\hyperlink{struct_ciphertext_tally}{Ciphertext\+Tally}} \texorpdfstring{$\ast$}{*}}]{ciphertally,  }\item[{\mbox{\hyperlink{struct_decryption_share}{Decryption\+Share}} \texorpdfstring{$\ast$}{*}}]{share }\end{DoxyParamCaption})}
+
+\Hypertarget{model_8c_a79d752bd08f05425c972cb2d452348f1}\label{model_8c_a79d752bd08f05425c972cb2d452348f1} 
+\index{model.c@{model.c}!generate\_election\_key\_pair@{generate\_election\_key\_pair}}
+\index{generate\_election\_key\_pair@{generate\_election\_key\_pair}!model.c@{model.c}}
+\doxysubsubsection{\texorpdfstring{generate\_election\_key\_pair()}{generate\_election\_key\_pair()}}
+{\footnotesize\ttfamily int generate\+\_\+election\+\_\+key\+\_\+pair (\begin{DoxyParamCaption}\item[{int}]{quorum,  }\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{key\+\_\+pair }\end{DoxyParamCaption})}
+
+
+
+Generates election key pair, proof, and polynomial. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em quorum} & The number of guardians required to decrypt the election \\
+\hline
+{\em key\+\_\+pair} & The election key pair \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure 
+\end{DoxyReturn}
+\Hypertarget{model_8c_a58d016288fca224065bd1842dfea6bf5}\label{model_8c_a58d016288fca224065bd1842dfea6bf5} 
+\index{model.c@{model.c}!generate\_election\_partial\_key\_backup@{generate\_election\_partial\_key\_backup}}
+\index{generate\_election\_partial\_key\_backup@{generate\_election\_partial\_key\_backup}!model.c@{model.c}}
+\doxysubsubsection{\texorpdfstring{generate\_election\_partial\_key\_backup()}{generate\_election\_partial\_key\_backup()}}
+{\footnotesize\ttfamily int generate\+\_\+election\+\_\+partial\+\_\+key\+\_\+backup (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{sender,  }\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{receiver,  }\item[{\mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*}}]{backup }\end{DoxyParamCaption})}
+
+
+
+Generate election partal key backup for sharing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sender\+\_\+guardian\+\_\+id} & Owner of election key \\
+\hline
+{\em sender\+\_\+guardian\+\_\+polynomial} & The owner\textquotesingle{}s Election polynomial \\
+\hline
+{\em receiver\+\_\+guardian\+\_\+public\+\_\+key} & The receiving guardian\textquotesingle{}s public key \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Partial\+Key\+Backup / Encrypted Coordinate 
+\end{DoxyReturn}
+\Hypertarget{model_8c_a8fd15aff2949ac5a5fc1e740fc56d86f}\label{model_8c_a8fd15aff2949ac5a5fc1e740fc56d86f} 
+\index{model.c@{model.c}!verify\_election\_partial\_key\_backup@{verify\_election\_partial\_key\_backup}}
+\index{verify\_election\_partial\_key\_backup@{verify\_election\_partial\_key\_backup}!model.c@{model.c}}
+\doxysubsubsection{\texorpdfstring{verify\_election\_partial\_key\_backup()}{verify\_election\_partial\_key\_backup()}}
+{\footnotesize\ttfamily int verify\+\_\+election\+\_\+partial\+\_\+key\+\_\+backup (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{receiver,  }\item[{\mbox{\hyperlink{struct_election_key_pair}{Election\+Key\+Pair}} \texorpdfstring{$\ast$}{*}}]{sender,  }\item[{\mbox{\hyperlink{struct_election_partial_key_pair_backup}{Election\+Partial\+Key\+Pair\+Backup}} \texorpdfstring{$\ast$}{*}}]{backup,  }\item[{\mbox{\hyperlink{struct_election_partial_key_verification}{Election\+Partial\+Key\+Verification}} \texorpdfstring{$\ast$}{*}}]{verification }\end{DoxyParamCaption})}
+
+
+
+Verify election partial key backup contain point on owners polynomial. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em guardian\+\_\+id} & Receiving guardian\textquotesingle{}s identifier \\
+\hline
+{\em sender\+\_\+guardian\+\_\+backup} & Sender guardian\textquotesingle{}s election partial key backup \\
+\hline
+{\em sender\+\_\+guardian\+\_\+public\+\_\+key} & Sender guardian\textquotesingle{}s election public key \\
+\hline
+{\em receiver\+\_\+guardian\+\_\+keys} & Receiving guardian\textquotesingle{}s key pair \\
+\hline
+\end{DoxyParams}

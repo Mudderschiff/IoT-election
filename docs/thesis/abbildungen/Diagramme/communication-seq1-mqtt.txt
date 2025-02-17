@@ -1,0 +1,19 @@
+@startuml
+hide unlinked
+actor AdminEncryption as AE
+collections Guardians as G
+actor Voter as V
+actor ThirdParties as T
+title Intra-election
+AE -> V : Send empty ballots to the voters
+loop until a ballot is cast
+    V -> AE : Send filled ballot
+    AE -> V : Send verification code
+    break Cast ballot
+        V -> AE : Cast Ballot 
+	AE -> AE : Record Encrypted Ballot as Cast
+    end
+    V -> AE : Spoil Ballot
+    AE -> AE : Record Encrypted Ballot as spoiled     
+end
+@enduml

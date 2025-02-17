@@ -1,0 +1,20 @@
+\doxysection{model.\+h}
+\hypertarget{model_8h_source}{}\label{model_8h_source}\index{components/model/include/model.h@{components/model/include/model.h}}
+\mbox{\hyperlink{model_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MODEL\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MODEL\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{utils_8h}{utils.h}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{crypto__utils_8h}{crypto\_utils.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{model_8h}{model.h}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{model_8h_a6a87f16c94c888eda9aaf5fd5ed3baa6}{combine\_election\_public\_keys}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *\mbox{\hyperlink{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}{guardian}},\ \mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *\mbox{\hyperlink{adapter_8c_ab8b086fa271490586e2074c2f20ebda8}{pubkey\_map}},\ \textcolor{keywordtype}{size\_t}\ count,\ \mbox{\hyperlink{struct_election_joint_key}{ElectionJointKey}}\ *joint\_key);}
+\DoxyCodeLine{00010\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{model_8h_a79d752bd08f05425c972cb2d452348f1}{generate\_election\_key\_pair}}(\textcolor{keywordtype}{int}\ \mbox{\hyperlink{adapter_8c_a692a1f7328c6d16bb09778805223b47b}{quorum}},\ \mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *key\_pair);}
+\DoxyCodeLine{00011\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{model_8h_a58d016288fca224065bd1842dfea6bf5}{generate\_election\_partial\_key\_backup}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *sender,\ \mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *receiver,\ \mbox{\hyperlink{struct_election_partial_key_pair_backup}{ElectionPartialKeyPairBackup}}\ *backup);}
+\DoxyCodeLine{00012\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{model_8h_a8fd15aff2949ac5a5fc1e740fc56d86f}{verify\_election\_partial\_key\_backup}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *receiver,\ \mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *sender,\ \mbox{\hyperlink{struct_election_partial_key_pair_backup}{ElectionPartialKeyPairBackup}}\ *backup,\ \mbox{\hyperlink{struct_election_partial_key_verification}{ElectionPartialKeyVerification}}\ *verification);}
+\DoxyCodeLine{00013\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{model_8h_a643963db772f4d523c4078e473c49ef3}{compute\_decryption\_share}}(\mbox{\hyperlink{struct_election_key_pair}{ElectionKeyPair}}\ *\mbox{\hyperlink{adapter_8c_aae75fb47be17f4de5fa259b3d4c5d7f0}{guardian}},\ \mbox{\hyperlink{struct_ciphertext_tally}{CiphertextTally}}\ *ciphertally,\ \mbox{\hyperlink{struct_decryption_share}{DecryptionShare}}\ *share);}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ MOD\_MATH\_H}}
+
+\end{DoxyCode}
