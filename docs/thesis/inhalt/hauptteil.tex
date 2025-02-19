@@ -1,40 +1,30 @@
 \chapter{Implementation of an IoT based Electronic Voting Machine}
 
 \section{Hardware and software setup}
-\subsection{Hardware Reference}
 \begin{table}[h!]
     \centering
     \begin{tabular}{|l|c|p{5cm}|}
         \hline
-        \textbf{Basic Component List} & \textbf{Number} & \textbf{Notes} \\
+        \textbf{Device} & \textbf{Number} & \textbf{Notes} \\
         \hline
-        NodeMCU ESP32  & 1 & Development board for prototyping \\
+        ESP32 & 2 & NodeMCU Dev. Board \\
         \hline
-        1,8" LCD Display Module  & 1 & 128x160 Pixel, includes microSD Slot \\
-        \hline
-        Button module with 2 Buttons & 1 & For interacting \\
-        \hline
-		Jumper Wires Female to Male & 22 & For connecting components \\
-        \hline
-        Breadboard & 1 & For building circuits \\
+        Laptop & 1 & Sony Vaio VPCEH3G1E \\
         \hline
     \end{tabular}
-    \caption{Component List for Guardian Prototype}\label{tab:hardware-components}
+    \caption{Hardware devices}\label{tab:hardware-components}
 \end{table}
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=.7]{abbildungen/schematic.png}
-	\caption{Schematic of the Guardian Prototype}\label{Fig:schematic} 
-\end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=.7]{abbildungen/Diagramme/components.png}
+	\includegraphics[scale=.5]{abbildungen/Diagramme/components.png}
 	\caption{Software components for the Guardian Prototype}\label{Fig:software-components} 
 \end{figure}
 
-The hardware configuration for the Guardian prototype is presented in Table \ref{tab:hardware-components}. Figure \ref{Fig:schematic} illustrates the connectivity of the components in the Guardian Prototype. The NodeMCU ESP32 development board serves as the main controller, while the LCD display module is used to present information to the user. The button module allows user interaction, and the jumper wires are used to connect the components. The breadboard is used to build the circuits. 
+The hardware configuration is presented in Table \ref{tab:hardware-components}, providing a detailed account of the devices involved in the experimental setup. The laptop and the ESP32 devices are connected via wi-fi 
+
+
+The NodeMCU ESP32 development board serves as the main controller, while the LCD display module is used to present information to the user. The button module allows user interaction, and the jumper wires are used to connect the components. The breadboard is used to build the circuits. 
 
 Figure \ref{Fig:software-components} depicts the software components used in the Guardian Prototype. The software components model contains the business logic, the adapter component includes the communication logic, and the view component is responsible for the user interface.
 
@@ -239,87 +229,94 @@ In our implementation, the modular exponentiation function switches to a softwar
 
 In summary, the RSA Accelerator effectively accelerates modular exponentiation and modular multiplication in the ElectionGuard implementation. The mbedTLS library offers efficiency gains through caching of the \( \overline{r} \)-inverse and \( M' \)-inverse values. However, its lack of a fallback mechanism for small operands necessitates an additional software implementation to avoid inefficiencies when using the RSA Accelerator with small values.
 
+\subsection{Performance Analysis}
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Function} & \textbf{Metric} & \textbf{Accelerated} & \textbf{Non Accelerated} \\
+        \hline
+        Key generation & Average Time (\(\mu\)s) & 1531095.75 & 10800822.00\\
+        \hline
+         & Standard Deviation (\(\mu\)s) & 221.07 & 23598.24 \\
+        \hline
+        Verification & Average Time (\(\mu\)s) & 832673.31 &  2437181.75\\
+        \hline
+         & Standard Deviation (\(\mu\)s) & 125.65 &  171.50\\
+        \hline
+        Backup & Average Time (\(\mu\)s) & 513578.91 & 3599221.75 \\
+        \hline
+        & Standard Deviation (\(\mu\)s) & 125.65 & 22529.10 \\
+        \hline
+    \end{tabular}
+    \caption{Comparison accelerated and non accelerated Key Ceremony operations}
+    \label{tab:perfromance}
+\end{table}
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Function} & \textbf{Quorum 3} & \textbf{Quorum 4} & \textbf{Quorum 5} \\
+        \hline
+        Average Time (\(\mu\)s) & 1531095.75 & 2041469.88 & 2551797.75\\
+        \hline
+        Standard Deviation (\(\mu\)s) & 221.07 & 252.68 & 291.58 \\
+        \hline
+    \end{tabular}
+    \caption{Comparison accelerated Key generation with different quorums}
+    \label{tab:perfromance-quorum}
+\end{table}
+
+Table \ref{tab:performance} summarizes the performance of hardware-accelerated versus software-based cryptographic operations across three tasks: key generation, verification, and backup. 30 Measurements were taken for each operation. Results include mean execution times and standard deviations (SD) for a quorum of 3 guardians. Hardware-accelerated operations employed dedicated RSA and SHA accelerators, whereas non-accelerated operations relied on the wolfSSL software library. Across all operations, hardware-accelerated tasks exhibited significantly lower mean execution times than software-based implementations. Key generation, for instance, required 1.53 seconds with hardware acceleration compared to 10.8 seconds without—a 7× improvement. Similarly, backup operations completed in 0.51 seconds (accelerated) versus 3.59 seconds (non-accelerated), also reflecting a 7× speed increase. Verification saw a 3× enhancement (0.83 s vs. 2.43 s). Notably, hardware acceleration also improved temporal consistency: standard deviations for key generation and backup were orders of magnitude lower in accelerated runs, suggesting reduced performance variability. These results underscore the efficacy of hardware accelerators in optimizing both the speed and reliability of cryptographic workflows.  Table \ref{tab:perfromance-quorum} compares the performance of accelerated key generation across different quorums. As the quorum size increased from 3 to 5 guardians, mean execution times also increases significantly. The larger the quorum, the longer the operation takes.
+
 
 \begin{comment}
     Single Factroy App (large) no OTA
     Remalloc/CMALLOC
     MQTT5 NoLocal not supported
     MQTT Buffer size changed
-HW
 
-Verification
-Measurements: 30
+HW Verification
 Average time: 832673.31 μs
 Standard deviation: 125.65 μs
-Minimum time: 832599 μs
-Maximum time: 833042 μs
-Variance: 15788.56 μs²
 
-Backup
-Performance Results:
-=====================
-Measurements: 30
+HW Backup
 Average time: 513578.91 μs
 Standard deviation: 96.12 μs
-Minimum time: 513543 μs
-Maximum time: 514088 μs
-Variance: 9238.22 μs²
 
 KeyPair with quorum 3
 Measurements: 30
 Average time: 1531095.75 μs
 Standard deviation: 221.07 μs
-Minimum time: 1531002 μs
-Maximum time: 1532171 μs
-Variance: 48873.25 μs²
 
 KeyPair with quorum 4
 Measurements: 30
 Average time: 2041469.88 μs
 Standard deviation: 252.68 μs
-Minimum time: 2041277 μs
-Maximum time: 2042456 μs
-Variance: 63846.73 μs²
+
 
 KeyPair with quorum 5
 Average time: 2551797.75 μs
 Standard deviation: 291.58 μs
-Minimum time: 2551552 μs
-Maximum time: 2552731 μs
-Variance: 85016.09 μs²
+
 
 KeyPair with quorum 6
 Average time: 3049986.75 μs
 Standard deviation: 54211.33 μs
-Minimum time: 2807551 μs
-Maximum time: 3063001 μs
-Variance: 2938868480.00 μs²
 
-SW
-KeyPair with quorum 3
-Performance Results:
-=====================
-Measurements: 30
+
+SW KeyPair with quorum 3
 Average time: 10800822.00 μs
 Standard deviation: 23598.24 μs
-Minimum time: 10726592 μs
-Maximum time: 10839062 μs
-Variance: 556876736.00 μs²
 
-Backup
-Measurements: 30
+SW Backup
 Average time: 3599221.75 μs
 Standard deviation: 22529.10 μs
-Minimum time: 3518343 μs
-Maximum time: 3616772 μs
-Variance: 507560320.00 μs²
 
-Verification
+
+SW Verification
 Average time: 2437181.75 μs
 Standard deviation: 171.50 μs
-Minimum time: 2437078 μs
-Maximum time: 2437677 μs
-Variance: 29410.69 μs²
 
 
 \end{comment}
