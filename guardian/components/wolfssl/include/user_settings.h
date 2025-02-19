@@ -409,13 +409,13 @@
     /* #define WOLFSSL_ESPWROOM32SE */
 
     /* wolfSSL HW Acceleration supported on ESP32. Uncomment to disable: */
-     #define NO_ESP32_CRYPT                 
-    #define NO_WOLFSSL_ESP32_CRYPT_HASH    
-    #define NO_WOLFSSL_ESP32_CRYPT_AES     
-    #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI 
-    #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI_MP_MUL  
-    #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI_MULMOD  
-    #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI_EXPTMOD 
+    /* #define NO_ESP32_CRYPT  */                
+    /* #define NO_WOLFSSL_ESP32_CRYPT_HASH  */   
+    /* #define NO_WOLFSSL_ESP32_CRYPT_AES */    
+    /* #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI */
+    /* #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI_MP_MUL */ 
+    /* #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI_MULMOD  */
+    /* #define NO_WOLFSSL_ESP32_CRYPT_RSA_PRI_EXPTMOD */
 
     /*  These are defined automatically in esp32-crypt.h, here for clarity:  */
     #define NO_WOLFSSL_ESP32_CRYPT_HASH_SHA224 /* no SHA224 HW on ESP32  */
