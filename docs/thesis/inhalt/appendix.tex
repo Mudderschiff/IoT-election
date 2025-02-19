@@ -19,6 +19,7 @@
 \subsection{Data Structures}
 \lstinputlisting[language=C, label={lst:structures}, firstline=16, lastline=117]{../../guardian/components/model/util/include/crypto_utils.h}
 
+
 \section{Adapter Component}
 \subsection{Serialization}
 \lstinputlisting[language=C, label={lst:serialize}, firstline=191, lastline=214]{../../guardian/components/adapter/util/serialize.c}
@@ -31,3 +32,112 @@
 \subsection{Generated Code}
 \lstinputlisting[language=C, label={lst:generated-c}, firstline=1, lastline=54]{../../guardian/components/adapter/util/buff.pb-c.c}
 \lstinputlisting[language=C, label={lst:generated-python}]{../../initBallotBox/ballot_pb2.py}
+\subsection{MQTT}
+\begin{table}[]
+\begin{tabular}{llllll}
+No. & Time   & Source      & Destination & Length & Info                                                                                                                                   \\
+32  & 12.830 & Guardian\#2 & Laptop      & 124    & Connect Command                                                                                                                        \\
+35  & 12.830 & Laptop      & Guardian\#2 & 58     & Connect Ack                                                                                                                            \\
+37  & 12.836 & Guardian\#2 & Laptop      & 77     & Subscribe Request (id=20201) {[}ceremony\_details{]}                                                                                   \\
+38  & 12.836 & Laptop      & Guardian\#2 & 59     & Subscribe Ack (id=20201)                                                                                                               \\
+79  & 15.120 & Guardian\#1 & Laptop      & 124    & Connect Command                                                                                                                        \\
+82  & 15.120 & Laptop      & Guardian\#1 & 58     & Connect Ack                                                                                                                            \\
+84  & 15.126 & Guardian\#1 & Laptop      & 77     & Subscribe Request (id=25681) {[}ceremony\_details{]}                                                                                   \\
+85  & 15.127 & Laptop      & Guardian\#1 & 59     & Subscribe Ack (id=25681)                                                                                                               \\
+109 & 32.327 & Laptop      & Guardian\#2 & 79     & Publish Message (id=1) {[}ceremony\_details{]}                                                                                         \\
+110 & 32.327 & Laptop      & Guardian\#1 & 79     & Publish Message (id=1) {[}ceremony\_details{]}                                                                                         \\
+111 & 32.450 & Guardian\#2 & Laptop      & 76     & Unsubscribe Request (id=28756)                                                                                                         \\
+112 & 32.450 & Guardian\#1 & Laptop      & 76     & Unsubscribe Request (id=54412)                                                                                                         \\
+113 & 32.450 & Laptop      & Guardian\#2 & 58     & Unsubscribe Ack (id=28756)                                                                                                             \\
+114 & 32.450 & Laptop      & Guardian\#1 & 58     & Unsubscribe Ack (id=54412)                                                                                                             \\
+115 & 32.452 & Guardian\#2 & Laptop      & 99     & Subscribe Request (id=6631) {[}pub\_keys{]}, Subscribe Request (id=28555) {[}backups{]}, Subscribe Request (id=49390) {[}challenge{]}  \\
+116 & 32.452 & Laptop      & Guardian\#2 & 59     & Subscribe Ack (id=6631)                                                                                                                \\
+117 & 32.452 & Guardian\#1 & Laptop      & 99     & Subscribe Request (id=29160) {[}pub\_keys{]}, Subscribe Request (id=26108) {[}backups{]}, Subscribe Request (id=46071) {[}challenge{]} \\
+118 & 32.452 & Laptop      & Guardian\#1 & 59     & Subscribe Ack (id=29160)                                                                                                               \\
+120 & 32.568 & Laptop      & Guardian\#2 & 64     & Subscribe Ack (id=28555), Subscribe Ack (id=49390)                                                                                     \\
+122 & 32.606 & Laptop      & Guardian\#1 & 64     & Subscribe Ack (id=26108), Subscribe Ack (id=46071)                                                                                     \\
+130 & 33.466 & Guardian\#2 & Laptop      & 129    & Publish Message (id=50245) {[}pub\_keys{]}                                                                                             \\
+131 & 33.466 & Laptop      & Guardian\#2 & 58     & Publish Received (id=50245)                                                                                                            \\
+132 & 33.468 & Guardian\#2 & Laptop      & 58     & Publish Ack (id=1)                                                                                                                     \\
+136 & 33.479 & Guardian\#1 & Laptop      & 129    & Publish Message (id=36257) {[}pub\_keys{]}                                                                                             \\
+137 & 33.479 & Laptop      & Guardian\#1 & 58     & Publish Received (id=36257)                                                                                                            \\
+138 & 33.481 & Guardian\#1 & Laptop      & 58     & Publish Ack (id=1)                                                                                                                     \\
+140 & 33.511 & Guardian\#2 & Laptop      & 80     & Unsubscribe Request (id=28756), Publish Release (id=50245)                                                                             \\
+142 & 33.511 & Laptop      & Guardian\#2 & 58     & Unsubscribe Ack (id=28756)                                                                                                             \\
+148 & 33.515 & Laptop      & Guardian\#2 & 133    & Publish Message (id=2) {[}pub\_keys{]}, Publish Complete (id=50245)                                                                    \\
+149 & 33.523 & Guardian\#1 & Laptop      & 80     & Unsubscribe Request (id=54412), Publish Release (id=36257)                                                                             \\
+150 & 33.524 & Laptop      & Guardian\#1 & 129    & Publish Message (id=2) {[}pub\_keys{]}                                                                                                 \\
+157 & 33.524 & Laptop      & Guardian\#1 & 1494   & Unsubscribe Ack (id=54412)                                                                                                             \\
+160 & 33.529 & Laptop      & Guardian\#2 & 129    & Publish Message (id=3) {[}pub\_keys{]}                                                                                                 \\
+162 & 33.531 & Laptop      & Guardian\#1 & 137    & Publish Message (id=3) {[}pub\_keys{]}, Publish Complete (id=36257)                                                                    \\
+164 & 33.533 & Guardian\#2 & Laptop      & 58     & Publish Ack (id=2)                                                                                                                     \\
+165 & 33.539 & Guardian\#1 & Laptop      & 68     & Unsubscribe Request (id=10338)                                                                                                         \\
+166 & 33.540 & Laptop      & Guardian\#1 & 58     & Unsubscribe Ack (id=10338)                                                                                                             \\
+168 & 33.542 & Guardian\#1 & Laptop      & 58     & Publish Ack (id=2)                                                                                                                     \\
+171 & 33.576 & Guardian\#2 & Laptop      & 72     & Unsubscribe Request (id=4750), Publish Ack (id=3)                                                                                      \\
+173 & 33.576 & Laptop      & Guardian\#2 & 58     & Unsubscribe Ack (id=4750)                                                                                                              \\
+175 & 33.585 & Guardian\#1 & Laptop      & 58     & Publish Ack (id=3)                                                                                                                     \\
+180 & 34.117 & Guardian\#1 & Laptop      & 542    & Publish Message (id=34719) {[}backups{]}                                                                                               \\
+182 & 34.117 & Laptop      & Guardian\#1 & 58     & Publish Received (id=34719)                                                                                                            \\
+183 & 34.123 & Guardian\#1 & Laptop      & 58     & Publish Release (id=34719)                                                                                                             \\
+184 & 34.123 & Laptop      & Guardian\#2 & 542    & Publish Message (id=4) {[}backups{]}                                                                                                   \\
+185 & 34.123 & Laptop      & Guardian\#1 & 542    & Publish Message (id=4) {[}backups{]}                                                                                                   \\
+186 & 34.125 & Guardian\#2 & Laptop      & 542    & Publish Message (id=40085) {[}backups{]}                                                                                               \\
+187 & 34.139 & Guardian\#1 & Laptop      & 67     & Unsubscribe Request (id=16895)                                                                                                         \\
+188 & 34.139 & Laptop      & Guardian\#1 & 58     & Publish Complete (id=34719)                                                                                                            \\
+189 & 34.142 & Guardian\#1 & Laptop      & 58     & Publish Ack (id=4)                                                                                                                     \\
+190 & 34.142 & Laptop      & Guardian\#1 & 58     & Unsubscribe Ack (id=16895)                                                                                                             \\
+192 & 34.168 & Guardian\#2 & Laptop      & 58     & Publish Ack (id=4)                                                                                                                     \\
+193 & 34.168 & Laptop      & Guardian\#2 & 58     & Publish Received (id=40085)                                                                                                            \\
+194 & 34.173 & Guardian\#2 & Laptop      & 58     & Publish Release (id=40085)                                                                                                             \\
+195 & 34.173 & Laptop      & Guardian\#2 & 542    & Publish Message (id=5) {[}backups{]}                                                                                                   \\
+196 & 34.189 & Guardian\#2 & Laptop      & 67     & Unsubscribe Request (id=29058)                                                                                                         \\
+197 & 34.189 & Laptop      & Guardian\#2 & 58     & Publish Complete (id=40085)                                                                                                            \\
+198 & 34.192 & Guardian\#2 & Laptop      & 58     & Publish Ack (id=5)                                                                                                                     \\
+199 & 34.192 & Laptop      & Guardian\#2 & 58     & Unsubscribe Ack (id=29058)                                                                                                             \\
+202 & 34.986 & Guardian\#1 & Laptop      & 486    & Publish Message (id=19079) {[}joint\_key{]}                                                                                            \\
+203 & 34.986 & Laptop      & Guardian\#1 & 58     & Publish Received (id=19079)                                                                                                            \\
+204 & 34.989 & Guardian\#1 & Laptop      & 72     & Subscribe Request (id=28226) {[}ciphertally{]}                                                                                         \\
+205 & 34.989 & Laptop      & Guardian\#1 & 59     & Subscribe Ack (id=28226)                                                                                                               \\
+206 & 34.994 & Guardian\#1 & Laptop      & 58     & Publish Release (id=19079)                                                                                                             \\
+207 & 34.995 & Laptop      & Guardian\#1 & 58     & Publish Complete (id=19079)                                                                                                            \\
+208 & 35.035 & Guardian\#2 & Laptop      & 486    & Publish Message (id=37328) {[}joint\_key{]}                                                                                            \\
+209 & 35.035 & Laptop      & Guardian\#2 & 58     & Publish Received (id=37328)                                                                                                            \\
+210 & 35.038 & Guardian\#2 & Laptop      & 72     & Subscribe Request (id=43049) {[}ciphertally{]}                                                                                         \\
+211 & 35.038 & Laptop      & Guardian\#2 & 59     & Subscribe Ack (id=43049)                                                                                                               \\
+212 & 35.043 & Guardian\#2 & Laptop      & 58     & Publish Release (id=37328)                                                                                                             \\
+213 & 35.043 & Laptop      & Guardian\#2 & 58     & Publish Complete (id=37328)                                                                                                            \\
+217 & 38.163 & Laptop      & Guardian\#1 & 1128   & Publish Message {[}ciphertally{]}                                                                                                      \\
+219 & 38.164 & Laptop      & Guardian\#2 & 1128   & Publish Message {[}ciphertally{]}                                                                                                      \\
+225 & 38.369 & Laptop      & Guardian\#2 & 1128   & Publish Message {[}ciphertally{]}                                                                                                      \\
+227 & 38.369 & Laptop      & Guardian\#1 & 1128   & Publish Message {[}ciphertally{]}                                                                                                      \\
+240 & 41.728 & Guardian\#1 & Laptop      & 236    & Publish Message (id=36447) {[}decryption\_share{]}                                                                                     \\
+242 & 41.728 & Laptop      & Guardian\#1 & 58     & Publish Received (id=36447)                                                                                                            \\
+243 & 41.732 & Guardian\#2 & Laptop      & 237    & Publish Message (id=55963) {[}decryption\_share{]}                                                                                     \\
+245 & 41.732 & Laptop      & Guardian\#2 & 58     & Publish Received (id=55963)                                                                                                            \\
+256 & 45.018 & Guardian\#2 & Laptop      & 1494   & Publish Message (id=21599) {[}decryption\_share{]}                                                                                     \\
+258 & 45.018 & Guardian\#1 & Laptop      & 1494   & Publish Message (id=10686) {[}decryption\_share{]}                                                                                     \\
+260 & 45.018 & Laptop      & Guardian\#2 & 58     & Publish Received (id=21599)                                                                                                            \\
+261 & 45.018 & Laptop      & Guardian\#1 & 58     & Publish Received (id=10686)                                                                                                            \\
+268 & 45.023 & Guardian\#2 & Laptop      & 194    & Publish Message (id=55963) {[}decryption\_share{]}                                                                                     \\
+269 & 45.023 & Guardian\#1 & Laptop      & 193    & Publish Message (id=36447) {[}decryption\_share{]}                                                                                     \\
+270 & 45.024 & Laptop      & Guardian\#2 & 58     & Publish Received (id=55963)                                                                                                            \\
+271 & 45.024 & Laptop      & Guardian\#1 & 58     & Publish Received (id=36447)                                                                                                            \\
+272 & 45.026 & Guardian\#2 & Laptop      & 58     & Publish Release (id=55963)                                                                                                             \\
+273 & 45.026 & Guardian\#1 & Laptop      & 58     & Publish Release (id=36447)                                                                                                             \\
+274 & 45.027 & Laptop      & Guardian\#2 & 58     & Publish Complete (id=55963)                                                                                                            \\
+275 & 45.028 & Laptop      & Guardian\#1 & 58     & Publish Complete (id=36447)                                                                                                            \\
+276 & 45.030 & Guardian\#2 & Laptop      & 58     & Publish Release (id=21599)                                                                                                             \\
+277 & 45.031 & Guardian\#1 & Laptop      & 58     & Publish Release (id=10686)                                                                                                             \\
+278 & 45.032 & Laptop      & Guardian\#2 & 58     & Publish Complete (id=21599)                                                                                                            \\
+279 & 45.033 & Laptop      & Guardian\#1 & 58     & Publish Complete (id=10686)                                                                                                            \\
+280 & 45.035 & Guardian\#2 & Laptop      & 58     & Publish Release (id=55963)                                                                                                             \\
+281 & 45.035 & Laptop      & Guardian\#2 & 58     & Publish Complete (id=55963)                                                                                                            \\
+282 & 45.037 & Guardian\#1 & Laptop      & 58     & Publish Release (id=36447)                                                                                                             \\
+283 & 45.037 & Laptop      & Guardian\#1 & 58     & Publish Complete (id=36447)                                                                                                            \\
+294 & 73.317 & Guardian\#2 & Laptop      & 56     & Ping Request                                                                                                                           \\
+295 & 73.317 & Laptop      & Guardian\#2 & 56     & Ping Response                                                                                                                          \\
+299 & 75.348 & Guardian\#1 & Laptop      & 56     & Ping Request                                                                                                                           \\
+300 & 75.348 & Laptop      & Guardian\#1 & 56     & Ping Response                                                                                                                         
+\end{tabular}
+\end{table}

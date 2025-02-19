@@ -132,9 +132,8 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
  * @return 0 on success, -1 on failure
  */
 static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
-    int ret = sp_exptmod(g, x, p, y);
-    /*
-    
+    int ret;
+    //int ret = sp_exptmod(g, x, p, y);
     ret = esp_mp_exptmod(g,x,p,y);
     if(ret == INPUT_CASE_ERROR) {
         ESP_LOGI("MODEXPT", "Input are too small switching to software exptmod");
@@ -144,7 +143,6 @@ static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
             return -1;
         } 
     }
-    */
     return ret;
 }
 
@@ -156,10 +154,8 @@ static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
  * @param result: The result of the multiplication
  */
 static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
-    int ret = sp_mulmod(a, b, c, result);
-    /*
-    
-    
+    int ret;
+    //int ret = sp_mulmod(a, b, c, result);
     ret = esp_mp_mulmod(a, b, c, result);
     if(ret == INPUT_CASE_ERROR) {
         ESP_LOGI("MULMOD", "Input are too smal switching to software mulmod");
@@ -169,7 +165,6 @@ static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
             return -1;
         } 
     }
-    */
     return ret;
 }
 
