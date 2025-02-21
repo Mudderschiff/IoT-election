@@ -236,11 +236,11 @@ int rand_q(sp_int *result) {
  * @return 0 on success, -1 on failure
  */
 int hash(sp_int *a, sp_int *b, sp_int *result) {
+    Sha256 sha256;
     int ret;
     word32 a_size = sp_unsigned_bin_size(a);
     word32 b_size = sp_unsigned_bin_size(b); 
     word32 tmp_size = a_size + b_size;
-    ESP_LOGI("HASH_ELEMS", "a_size: %d, b_size: %d, tmp_size: %d", a_size, b_size, tmp_size);
 
     byte *tmp = (byte *)malloc(tmp_size);
     if (tmp == NULL) {
@@ -257,13 +257,38 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
         return -1; // Return an error code
     }
 
-    // Conveniencefunction. Handles Initialisation, Update and Finalisation
-    if ((ret = wc_Sha256Hash(tmp, tmp_size, result_byte)) != 0) {
-        WOLFSSL_MSG("Hashing Failed");
-        return ret;
+    // Initialize the SHA256 context
+    if (wc_InitSha256(&sha256) != 0) {
+        ESP_LOGE("HASH_ELEMS", "Failed to initialize sha256");
+        free(tmp);
+        free(result_byte);
+        return -1;
+    } else {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        if (wc_Sha256Update(&sha256, tmp, tmp_size) != 0) {
+            ESP_LOGE("HASH_ELEMS", "Failed to update sha256");
+            wc_Sha256Free(&sha256);
+            free(tmp);
+            free(result_byte);
+            return -1;
+        }
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        if (wc_Sha256Final(&sha256, result_byte) != 0) {
+            ESP_LOGE("HASH_ELEMS", "Failed to finalize sha256");
+            wc_Sha256Free(&sha256);
+            free(tmp);
+            free(result_byte);
+            return -1;
+        }
+        wc_Sha256Free(&sha256);
+        ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE);   
     }
-
-    ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE);   
     free(tmp);
     free(result_byte);
     return ret;
@@ -649,27 +674,43 @@ int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, Elect
 }
 
 int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
-    Sha256 sha256[1];
+    Sha256 sha256;
     byte* commitment = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
-    if(wc_InitSha256(sha256) != 0) {
+    if(wc_InitSha256(&sha256) != 0) {
         ESP_LOGE("HASH_KEYS", "Failed to initialise sha256");
+        free(commitment);
         return -1;
     } else {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
         for(size_t i = 0; i < count; i++) {
             int size = sp_unsigned_bin_size(pubkey_map[i].public_key);
             byte* elem = (byte *)malloc(size);
             sp_to_unsigned_bin(pubkey_map[i].public_key, elem);
-            if(wc_Sha256Update(sha256, elem, size) != 0) {
+            if(wc_Sha256Update(&sha256, elem, size) != 0) {
                 ESP_LOGE("HASH_KEYS", "Failed to update sha256");
                 return -1;
             }
+            if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+                ESP_LOGE("HASH_KEYS", "Failed to update sha256 with delimiter");
+                return -1;
+            }
+            free(elem);
         }
-        if(wc_Sha256Final(sha256, commitment) != 0) {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with delimiter");
+            return -1;
+        }
+        if(wc_Sha256Final(&sha256, commitment) != 0) {
             ESP_LOGE("HASH_KEYS", "Failed to finalise sha256");
             return -1;
         }
+        wc_Sha256Free(&sha256);
         sp_read_unsigned_bin(joint_key->commitment_hash, commitment, WC_SHA256_DIGEST_SIZE);
     }
+    free(commitment);    
     return 0;
 }
 
@@ -680,34 +721,50 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
  * @return 0 on success, -1 on failure
  */
 int nonce(sp_int* seed, sp_int* nonce) {
-    Sha256 sha256[1];
+    Sha256 sha256;
     char* header = "constant-chaum-pedersen-proof";
     int index = 0;
-    int ret;
     byte* bseed = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     sp_to_unsigned_bin(seed, bseed);
-    if(wc_InitSha256(sha256) != 0) {
+    if(wc_InitSha256(&sha256) != 0) {
         ESP_LOGE("NONCE", "Failed to initialise sha256");
         return -1;
     } else {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
         // Update the hash with the seed, header and index
-        if(wc_Sha256Update(sha256, bseed, WC_SHA256_DIGEST_SIZE) != 0) {
+        if(wc_Sha256Update(&sha256, bseed, WC_SHA256_DIGEST_SIZE) != 0) {
             ESP_LOGE("NONCE", "Failed to update sha256");
             return -1;
         }
-        if(wc_Sha256Update(sha256, (byte*)header, strlen(header)) != 0) {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        if(wc_Sha256Update(&sha256, (byte*)header, strlen(header)) != 0) {
             ESP_LOGE("NONCE", "Failed to update sha256");
             return -1;
         }
-        if(wc_Sha256Update(sha256, (byte*)&index, sizeof(index)) != 0) {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        if(wc_Sha256Update(&sha256, (byte*)&index, sizeof(index)) != 0) {
             ESP_LOGE("NONCE", "Failed to update sha256");
+            return -1;
+        }
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
             return -1;
         }
         // Finalise the hash
-        if(wc_Sha256Final(sha256, bseed) != 0) {
+        if(wc_Sha256Final(&sha256, bseed) != 0) {
             ESP_LOGE("NONCE", "Failed to finalise sha256");
             return -1;
         }
+        wc_Sha256Free(&sha256);
         sp_read_unsigned_bin(nonce, bseed, WC_SHA256_DIGEST_SIZE);
     }
     free(bseed);

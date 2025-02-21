@@ -4,4 +4,4 @@
 mosquitto -c config/mosquitto.conf &
 
 # Run node-red
-#node-red &
+node-red &

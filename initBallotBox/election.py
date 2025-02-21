@@ -4,7 +4,7 @@ import electionguard
 import binascii
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
-from typing import List, Dict
+from typing import List, Dict, Optional
 from random import randint
 import logging
 
@@ -48,8 +48,17 @@ from electionguard.tally import (
     CiphertextTally,
     PlaintextTally,
 )
+from electionguard.chaum_pedersen import ChaumPedersenProof
+from electionguard.decryption_share import (
+    CiphertextDecryptionSelection,
+    CiphertextDecryptionContest,
+    DecryptionShare,
+)
+from electionguard.decrypt_with_shares import decrypt_tally
+
 from electionguard.decryption_mediator import DecryptionMediator
 from electionguard.election_polynomial import LagrangeCoefficientsRecord
+from electionguard.key_ceremony import ElectionPublicKey
 
 # Step 5 - Publish and Verify
 from electionguard.serialize import from_file, construct_path
@@ -81,6 +90,7 @@ from electionguard_tools.factories.ballot_factory import BallotFactory
 
 logger = logging.getLogger("electionguard")
 logger.setLevel(logging.WARNING)
+#logger.setLevel(logging.WARNING)
 
 # Step 0 - Configure Election
 manifest: Manifest
@@ -96,6 +106,7 @@ JOINT_KEY_SIZE = 384
 COMMITMENT_SIZE = 32
 joint_key = None
 commitment = None
+build_election_called = False
 
 # Step 2 - Encrypt Votes
 device: EncryptionDevice
@@ -116,49 +127,43 @@ plaintext_spoiled_ballots: Dict[str, PlaintextTally]
 decryption_mediator: DecryptionMediator
 lagrange_coefficients: LagrangeCoefficientsRecord
 
+def parse_ciphertext_decryption_selection(data):
+	return CiphertextDecryptionSelection(
+	object_id=data.object_id,
+	guardian_id=data.guardian_id.hex(),
+	share=hex_to_p(data.decryption.hex()),
+	proof=ChaumPedersenProof(
+		pad=hex_to_p(data.proof_pad.hex()),
+		data=hex_to_p(data.proof_data.hex()),
+		challenge=hex_to_q(data.proof_challenge.hex()),
+		response=hex_to_q(data.proof_response.hex())
+	)
+	)
 
-#def parse_ciphertext_tally_selection(data):
-#    selection = tally_pb2.CiphertextTallySelectionProto()
-#    print("Object id")
-#    print("description hash")
-#    description_hash = data.description_hash
-#    print(description_hash)
-#    print("Ciphertext pad")
-#    ciphertext_pad = data.ciphertext.pad
-#    print(ciphertext_pad)
-#    print("ciphertext data")
-#    ciphertext_data = data.ciphertext.data
-#    print(ciphertext_data)
-#    selection.object_id = data.object_id
-#    selection.description_hash = description_hash.value.to_bytes((description_hash.value.bit_length() + 7) // 8, byteorder='big')
-#    selection.ciphertext_pad = ciphertext_pad.value.to_bytes((ciphertext_pad.value.bit_length() + 7) // 8, byteorder='big')
-#    selection.ciphertext_data = ciphertext_data.value.to_bytes((ciphertext_data.value.bit_length() + 7) // 8, byteorder='big')
-#    return selection
 
-#def parse_ciphertext_tally_selections(data, base_hash):
-#    selections = tally_pb2.CiphertextTallySelectionsProto()
-#    print(base_hash)
-#    selections.base_hash = base_hash.value.to_bytes((base_hash.value.bit_length() + 7) // 8, byteorder='big')
-#    selections.num_selections = len(data.selections)
-#    print("Num selections")
-#    print(selections.num_selections)
-#    for value in data.selections.values():
-#        selection = parse_ciphertext_tally_selection(value)
-#        selections.selections.append(selection)
-#    return selections
+def parse_ciphertext_decryption_contest(data):
+	return CiphertextDecryptionContest(
+	object_id=data.object_id,
+	guardian_id=data.guardian_id.hex(),
+	description_hash=hex_to_q(data.description_hash.hex()),
+	selections={int(selection_id): parse_ciphertext_decryption_selection(selection) for selection_id, selection in enumerate(data.selections)}
+	)
 
-#message CiphertextTallySelectionProto {
-#	required string object_id = 1;
-#	required bytes ciphertext_pad = 2;
-#	required bytes ciphertext_data = 3;
-#}
+
+def parse_decryption_share(data):
+	return DecryptionShare(
+	object_id=data.object_id,
+	guardian_id=data.guardian_id.hex(),
+    public_key=hex_to_p(data.public_key.hex()),
+    contests={int(contest_id): parse_ciphertext_decryption_contest(contest) for contest_id, contest in enumerate(data.contests)}
+    )
+
+
+
+
 
 def parse_ciphertext_tally_selections(data):
 	selection = tally_pb2.CiphertextTallySelectionProto()
-	print("Object Id, Ciphertext Pad, Ciphertext Data")
-	print(data.object_id)
-	print(data.ciphertext.pad)
-	print(data.ciphertext.data)
 	selection.object_id = data.object_id
 	selection.ciphertext_pad = data.ciphertext.pad.value.to_bytes((data.ciphertext.pad.value.bit_length() + 7) // 8, byteorder='big')
 	selection.ciphertext_data = data.ciphertext.data.value.to_bytes((data.ciphertext.data.value.bit_length() + 7) // 8, byteorder='big')
@@ -171,11 +176,6 @@ def parse_ciphertext_tally_contests(data):
 	contests.sequence_order = data.sequence_order
 	contests.description_hash = data.description_hash.value.to_bytes((data.description_hash.value.bit_length() + 7) // 8, byteorder='big')
 	contests.num_selections = len(data.selections)
-	print("Object ID, Dequence Order, Description Hash, Num Selections")
-	print(data.object_id)
-	print(data.sequence_order)
-	print(data.description_hash)
-	print(contests.num_selections)
 	for value in data.selections.values():
 		selection = parse_ciphertext_tally_selections(value)
 		contests.selections.append(selection)
@@ -187,10 +187,6 @@ def parse_ciphertext_tally(tally, base_hash):
 	ciphertext.object_id = tally.object_id
 	ciphertext.base_hash = base_hash.value.to_bytes((base_hash.value.bit_length() + 7) // 8, byteorder='big')
 	ciphertext.num_contest = len(tally.contests)
-	print("Object ID, Base Hash, Num COntests")
-	print(tally.object_id)
-	print(base_hash)
-	print(ciphertext.num_contest)
 	for value in tally.contests.values():
 		contest = parse_ciphertext_tally_contests(value)
 		ciphertext.contests.append(contest)
@@ -251,7 +247,7 @@ def createManifest() -> Manifest:
 		return manifest
 	
 def buildElection() -> None:
-	global election_builder, joint_key, commitment, internal, constants, device, encrypter, plaintext_ballots, ciphertext_ballots, ballot_box, submitted_ballots, ballot_store, ciphertext_tally, plaintext_tally, plaintext_spoiled_ballots,decryption_mediator,lagrange_coefficients,ballot_box_ballot
+	global election_builder, joint_key, commitment, internal, constants, device, encrypter, plaintext_ballots, ciphertext_ballots, ballot_box, submitted_ballots, ballot_store, ciphertext_tally, plaintext_tally, plaintext_spoiled_ballots,decryption_mediator,lagrange_coefficients,ballot_box_ballot, context
 	
 	election_builder = ElectionBuilder(NUMBER_OF_GUARDIANS, QUORUM, manifest)
 	election_builder.set_public_key(hex_to_p(joint_key))
@@ -267,17 +263,17 @@ def buildElection() -> None:
 	
 	plaintext_ballots = BallotFactory().generate_fake_plaintext_ballots_for_election(internal_manifest, 5, None, False, False)
 	for plain in plaintext_ballots:
-		print("PLaintextballot")
-		print(plain)
+		#print("PLaintextballot")
+		#print(plain)
 		for contest in plain.contests:
 			for selection in contest.ballot_selections:
 				if selection.vote == 1:
 					print(f"Ballot ID: {plain.object_id}, Selected: {selection.object_id}")
 		
 	for plain in plaintext_ballots:
-		print("CiphertextBallot")
+		#print("CiphertextBallot")
 		encrypted_ballot = encrypter.encrypt(plain)
-		print(encrypted_ballot)
+		#print(encrypted_ballot)
 		ciphertext_ballots.append(get_optional(encrypted_ballot))
 	
 	ballot_store = DataStore()
@@ -288,33 +284,62 @@ def buildElection() -> None:
 
 	ciphertext_tally = get_optional(tally_ballots(ballot_store, internal_manifest, context))
 	submitted_ballots = get_ballots(ballot_store, BallotBoxState.SPOILED)
-	print(f"cast: {ciphertext_tally.cast()}")
-	print(f"spoiled: {ciphertext_tally.spoiled()}")
-	#print(f"Total: {ciphertext_tally}")
+	#print(f"cast: {ciphertext_tally.cast()}")
+	#print(f"spoiled: {ciphertext_tally.spoiled()}")
 	submitted_ballots_list = list(submitted_ballots.values())
-	decryption_mediator = DecryptionMediator("decryption-mediator",context,)
+	
+	decryption_mediator = DecryptionMediator("decryption-mediator",context)
+	
 	
 	parsed_data = parse_ciphertext_tally(ciphertext_tally, context.crypto_extended_base_hash)
 	serialized_message = parsed_data.SerializeToString()
-	mqttc.publish("ciphertally", serialized_message, 0, False)
-	mqttc.subscribe("decryption_share")
+	mqttc.publish("ciphertally", serialized_message, 2, False)
+	mqttc.subscribe("decryption_share",2)
 
-	
+def decrypt_tally()	-> None:
+	global plaintext_tally, lagrange_coefficients, decryption_mediator, ciphertext_tally, manifest, context
+	#lagrange_coefficients = LagrangeCoefficientsRecord(decryption_mediator.get_lagrange_coefficients())
+	#plaintext_tally = get_optional(decryption_mediator.get_plaintext_tally(ciphertext_tally, manifest))
+	#plaintext_tally = decryption_mediator.get_plaintext_tally(ciphertext_tally, manifest)
+	#plaintext_tally = decrypt_tally(ciphertext_tally,decryption_mediator._tally_shares, decryption_mediator._context.crypto_extended_base_hash, manifest,False)
+	plaintext_tally = decryption_mediator.get_plaintext_tally(ciphertext_tally, manifest)
+	print(plaintext_tally)
 	
 def on_message(mosq, obj, msg):
-	global commitment, joint_key
+	global commitment, joint_key, build_election_called, decryption_shares, decryption_mediator, context, QUORUM
 	#print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 	if msg.topic == "joint_key":
 		mosq.unsubscribe("joint_key")
 		buffer = msg.payload
 		joint_key = binascii.hexlify(buffer[:JOINT_KEY_SIZE]).decode('utf-8')
 		commitment = binascii.hexlify(buffer[JOINT_KEY_SIZE:JOINT_KEY_SIZE + COMMITMENT_SIZE]).decode('utf-8')
-		buildElection()
+		if not build_election_called:
+			buildElection()
+			build_election_called = True
 	if msg.topic == "decryption_share":
+		print("Received Decryption Share")
 		buffer = msg.payload
 		deserialized = tally_pb2.DecryptionShareProto()
 		deserialized.ParseFromString(buffer)
-		print(deserialized)
+		share = parse_decryption_share(deserialized)
+		print(f"Guardian Present: {deserialized.guardian_id.hex()}")
+		#decryption_mediator.announce(guardian_key, share)
+		decryption_mediator.announce(ElectionPublicKey(owner_id=int(deserialized.guardian_id.hex(),16),sequence_order=int(deserialized.guardian_id.hex(),16),key=hex_to_p(deserialized.public_key.hex()),coefficient_commitments=[],coefficient_proofs=[]), share)
+		print(len(decryption_mediator._available_guardians))
+		print(context.quorum)
+		#decryption_mediator._save_tally_share(deserialized.guardian_id.hex(), share)
+		#decryption_mediator._available_guardians[sharecount] = deserialized.public_key.hex()
+		if len(decryption_mediator._available_guardians) == QUORUM:
+			print(len(decryption_mediator._available_guardians))
+			print(context.quorum)
+			print(decryption_mediator.announcement_complete())
+			decrypt_tally()
+		
+
+
+        #self.lagrange_coefficients = LagrangeCoefficientsRecord(
+        #    self.decryption_mediator.get_lagrange_coefficients()
+        #)
 		
 		
 		
@@ -335,7 +360,7 @@ mqttc.connect("192.168.12.1", 1883, 60)
 # Send election information. Set retain flag in order for newly subscribed clients to receive the election information.
 message = f"{QUORUM},{NUMBER_OF_GUARDIANS}"
 mqttc.publish("ceremony_details", message, 2, False)
-mqttc.subscribe("joint_key")
+mqttc.subscribe("joint_key", 2)
 
 mqttc.loop_forever()
 

@@ -70,7 +70,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
         memcpy(guardian.guardian_id, mac, 6);
         break;
     case MQTT_EVENT_CONNECTED:
-        esp_mqtt_client_subscribe(client, "ceremony_details", 1);
+        esp_mqtt_client_subscribe(client, "ceremony_details", 2);
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -128,7 +128,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 sp_to_unsigned_bin(joint_key.joint_key, buffer);
                 sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(joint_key.joint_key), joint_key.commitment_hash, buffer);
                 esp_mqtt_client_publish(client, "joint_key", (char*)buffer, size, 2, 0);
-                esp_mqtt_client_subscribe(client, "ciphertally", 1);
+                esp_mqtt_client_subscribe(client, "ciphertally", 2);
                 free(buffer);
             }
 
@@ -152,9 +152,9 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 pubkey_map = (ElectionKeyPair*)malloc(max_guardians * sizeof(ElectionKeyPair));
                 backup_map = (ElectionPartialKeyPairBackup*)malloc(max_guardians * sizeof(ElectionPartialKeyPairBackup));
                 esp_mqtt_client_unsubscribe(client, "ceremony_details");
-                esp_mqtt_client_subscribe(client, "pub_keys", 1);
-                esp_mqtt_client_subscribe(client, "backups", 1);
-                esp_mqtt_client_subscribe(client, "challenge", 1);
+                esp_mqtt_client_subscribe(client, "pub_keys", 2);
+                esp_mqtt_client_subscribe(client, "backups", 2);
+                esp_mqtt_client_subscribe(client, "challenge", 2);
                 publish_public_key(client, event->data, event->data_len);
             }
         }
@@ -276,6 +276,7 @@ void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, 
     void *buffer;
     size_t len;
     buffer = serialize_DecryptionShare(&share, &len);
+    ESP_LOGI(TAG,"len: %d", len);
     esp_mqtt_client_publish(client, "decryption_share", buffer, len, 2, 0);
 }
 
@@ -353,7 +354,6 @@ void mqtt_app_start(void)
             .retain = 1,
             .msg = "Guardian has disconnected",
         },
-        .buffer.size = 4096,
     };
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
