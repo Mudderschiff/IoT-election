@@ -39,7 +39,162 @@ void print_byte_array(const byte *array, int size) {
     ESP_LOGI("BYTE_ARRAY", "%s", buffer);
 }
 */
+#include <stdlib.h>
+#include "utils.h"
 
+// Free function for CiphertextTallySelection
+void free_CiphertextTallySelection(CiphertextTallySelection* selection) {
+    if (selection == NULL) return;
+
+    if (selection->object_id != NULL) {
+        free(selection->object_id);
+        selection->object_id = NULL;
+    }
+
+    if (selection->ciphertext_pad != NULL) {
+        FREE_MP_INT_SIZE(selection->ciphertext_pad, NULL, DYNAMIC_TYPE_BIGINT);
+        selection->ciphertext_pad = NULL;
+    }
+
+    if (selection->ciphertext_data != NULL) {
+        FREE_MP_INT_SIZE(selection->ciphertext_data, NULL, DYNAMIC_TYPE_BIGINT);
+        selection->ciphertext_data = NULL;
+    }
+}
+
+// Free function for CiphertextTallyContest
+void free_CiphertextTallyContest(CiphertextTallyContest* contest) {
+    if (contest == NULL) return;
+
+    if (contest->object_id != NULL) {
+        free(contest->object_id);
+        contest->object_id = NULL;
+    }
+
+    if (contest->description_hash != NULL) {
+        FREE_MP_INT_SIZE(contest->description_hash, NULL, DYNAMIC_TYPE_BIGINT);
+        contest->description_hash = NULL;
+    }
+
+    if (contest->selections != NULL) {
+        for (int i = 0; i < contest->num_selections; ++i) {
+            free_CiphertextTallySelection(&contest->selections[i]);
+        }
+        free(contest->selections);
+        contest->selections = NULL;
+    }
+}
+
+// Free function for CiphertextTally
+void free_CiphertextTally(CiphertextTally* tally) {
+    if (tally == NULL) return;
+
+    if (tally->object_id != NULL) {
+        free(tally->object_id);
+        tally->object_id = NULL;
+    }
+
+    if (tally->base_hash != NULL) {
+        FREE_MP_INT_SIZE(tally->base_hash, NULL, DYNAMIC_TYPE_BIGINT);
+        tally->base_hash = NULL;
+    }
+
+    if (tally->contests != NULL) {
+        for (int i = 0; i < tally->num_contest; ++i) {
+            free_CiphertextTallyContest(&tally->contests[i]);
+        }
+        free(tally->contests);
+        tally->contests = NULL;
+    }
+}
+
+// Free function for ChaumPedersenProof
+void free_ChaumPedersenProof(ChaumPedersenProof* proof) {
+    if (proof == NULL) return;
+
+    if (proof->pad != NULL) {
+        FREE_MP_INT_SIZE(proof->pad, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->pad = NULL;
+    }
+
+    if (proof->data != NULL) {
+        FREE_MP_INT_SIZE(proof->data, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->data = NULL;
+    }
+
+    if (proof->challenge != NULL) {
+        FREE_MP_INT_SIZE(proof->challenge, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->challenge = NULL;
+    }
+
+    if (proof->response != NULL) {
+        FREE_MP_INT_SIZE(proof->response, NULL, DYNAMIC_TYPE_BIGINT);
+        proof->response = NULL;
+    }
+}
+
+// Free function for CiphertextDecryptionSelection
+void free_CiphertextDecryptionSelection(CiphertextDecryptionSelection* selection) {
+    if (selection == NULL) return;
+
+    if (selection->object_id != NULL) {
+        free(selection->object_id);
+        selection->object_id = NULL;
+    }
+
+    if (selection->decryption != NULL) {
+        FREE_MP_INT_SIZE(selection->decryption, NULL, DYNAMIC_TYPE_BIGINT);
+        selection->decryption = NULL;
+    }
+
+    free_ChaumPedersenProof(&selection->proof);
+}
+
+// Free function for CiphertextDecryptionContest
+void free_CiphertextDecryptionContest(CiphertextDecryptionContest* contest) {
+    if (contest == NULL) return;
+
+    if (contest->object_id != NULL) {
+        free(contest->object_id);
+        contest->object_id = NULL;
+    }
+
+    if (contest->description_hash != NULL) {
+        FREE_MP_INT_SIZE(contest->description_hash, NULL, DYNAMIC_TYPE_BIGINT);
+        contest->description_hash = NULL;
+    }
+
+    if (contest->selections != NULL) {
+        for (int i = 0; i < contest->num_selections; ++i) {
+            free_CiphertextDecryptionSelection(&contest->selections[i]);
+        }
+        free(contest->selections);
+        contest->selections = NULL;
+    }
+}
+
+// Free function for DecryptionShare
+void free_DecryptionShare(DecryptionShare* share) {
+    if (share == NULL) return;
+
+    if (share->object_id != NULL) {
+        free(share->object_id);
+        share->object_id = NULL;
+    }
+
+    if (share->public_key != NULL) {
+        FREE_MP_INT_SIZE(share->public_key, NULL, DYNAMIC_TYPE_BIGINT);
+        share->public_key = NULL;
+    }
+
+    if (share->contests != NULL) {
+        for (int i = 0; i < share->num_contest; ++i) {
+            free_CiphertextDecryptionContest(&share->contests[i]);
+        }
+        free(share->contests);
+        share->contests = NULL;
+    }
+}
 
 void free_ElectionPartialKeyPairBackup(ElectionPartialKeyPairBackup* backup) {
     if (backup == NULL) return;

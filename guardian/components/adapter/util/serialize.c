@@ -268,6 +268,7 @@ int deserialize_ciphertext_tally(uint8_t *buffer, unsigned len, CiphertextTally*
     ciphertally->base_hash = NULL;
     ciphertally->base_hash = (sp_int*)XMALLOC(MP_INT_SIZEOF(MP_BITS_CNT(256)), NULL, DYNAMIC_TYPE_BIGINT);
     sp_read_unsigned_bin(ciphertally->base_hash, tally->base_hash.data, tally->base_hash.len);
+    print_sp_int(ciphertally->base_hash);
 
     ciphertally->num_contest = tally->num_contest;
     ciphertally->contests = (CiphertextTallyContest*)malloc(sizeof(CiphertextTallyContest) * ciphertally->num_contest);
