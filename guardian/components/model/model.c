@@ -143,12 +143,12 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
 }
 
 int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphertally, DecryptionShare *share) {
-    share->object_id = NULL;
+    //share->object_id = NULL;
     share->object_id = strdup(ciphertally->object_id);
-    share->public_key = NULL;
 
     memcpy(share->guardian_id, guardian->guardian_id, sizeof(guardian->guardian_id));
 
+    share->public_key = NULL;
     NEW_MP_INT_SIZE(share->public_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(share->public_key, 3072);
     sp_copy(guardian->public_key, share->public_key);

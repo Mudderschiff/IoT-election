@@ -91,7 +91,8 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
 
                 generate_election_partial_key_backup(sender, &guardian, &backup);
                 buffer = serialize_election_partial_key_backup(&backup, &len);
-                esp_mqtt_client_publish(client, "backups", buffer, len, 2, 0);
+                esp_mqtt_client_enqueue(client, "backups", buffer, len, 2, 0, false);
+                //esp_mqtt_client_publish(client, "backups", buffer, len, 2, 0);
 
                 free(buffer);
                 free_ElectionPartialKeyPairBackup(&backup);
@@ -111,7 +112,8 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                     ESP_LOGI(TAG, "Proof failed");
                     // send challenge
                     buffer = serialize_election_partial_key_verification(&verification, &len);
-                    esp_mqtt_client_publish(client, "challenge", buffer, len, 2, 0);
+                    esp_mqtt_client_enqueue(client, "challenge", buffer, len, 2, 0, false);
+                    //esp_mqtt_client_publish(client, "challenge", buffer, len, 2, 0);
                     free(buffer);
                     all_verified = false;
                 } else {
@@ -127,8 +129,9 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 byte *buffer = malloc(size);
                 sp_to_unsigned_bin(joint_key.joint_key, buffer);
                 sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(joint_key.joint_key), joint_key.commitment_hash, buffer);
-                esp_mqtt_client_publish(client, "joint_key", (char*)buffer, size, 2, 0);
-                esp_mqtt_client_subscribe(client, "ciphertally", 1);
+                esp_mqtt_client_enqueue(client, "joint_key", (char*)buffer, size, 1, 0, false);
+                //esp_mqtt_client_publish(client, "joint_key", (char*)buffer, size, 1, 0);
+                esp_mqtt_client_subscribe(client, "ciphertally", 2);
                 free(buffer);
             }
 
@@ -172,7 +175,8 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
         {
             ESP_LOGI(TAG, "Received Challenge");
             handle_challenge(client, event->data, event->data_len);
-        } else if (strncmp(topic, "ciphertally", event->topic_len) == 0)
+        } 
+        else if (strncmp(topic, "ciphertally", event->topic_len) == 0)
         {
             ESP_LOGI(TAG, "Received ciphertext tally");
             handle_ciphertext_tally(client, event->data, event->data_len);
@@ -203,7 +207,7 @@ void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int d
     size_t len;
     generate_election_key_pair(quorum, &guardian);
     buffer = serialize_election_key_pair(&guardian, &len);
-    esp_mqtt_client_publish(client, "pub_keys", buffer, len, 2, 0);
+    esp_mqtt_client_enqueue(client, "pub_keys", buffer, len, 2, 0,false);
     ESP_LOGI(TAG, "Sent Public Key");
     free(buffer);
 }
@@ -271,12 +275,16 @@ void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, 
 {
     CiphertextTally tally;
     DecryptionShare share;
+    print_byte_array((uint8_t*)data, data_len);
     deserialize_ciphertext_tally((uint8_t*)data, data_len, &tally);
     compute_decryption_share(&guardian, &tally, &share);
+    free_CiphertextTally(&tally);
     void *buffer;
     size_t len;
     buffer = serialize_DecryptionShare(&share, &len);
-    esp_mqtt_client_publish(client, "decryption_share", buffer, len, 2, 0);
+    ESP_LOGI(TAG,"len: %d", len);
+    esp_mqtt_client_enqueue(client, "decryption_share", buffer, len, 2, 0, false);
+    free_DecryptionShare(&share);
 }
 
 // Function to add an entry to the key pair map
@@ -353,7 +361,6 @@ void mqtt_app_start(void)
             .retain = 1,
             .msg = "Guardian has disconnected",
         },
-        .buffer.size = 4096,
     };
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
