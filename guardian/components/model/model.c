@@ -137,8 +137,9 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
     memcpy(extend, pubkey_map, count * sizeof(ElectionKeyPair));
     extend[count] = *guardian;
 
-    elgamal_combine_public_keys(extend, count + 1, joint_key);
-    hash_keys(extend, count + 1, joint_key);
+    elgamal_combine_public_keys(extend, count + 1, &joint_key->joint_key);
+
+    hash_keys(extend, count + 1, &joint_key->commitment_hash);
     return 0;
 }
 
@@ -158,6 +159,6 @@ int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphert
     for (int i = 0; i < ciphertally->num_contest; i++) {
         compute_decryption_share_for_contest(guardian, &ciphertally->contests[i], ciphertally->base_hash , &share->contests[i]);
     }
-    
+
     return 0;
 }

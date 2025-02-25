@@ -6,7 +6,7 @@ uint8_t mac[6] = {0};
 int pubkey_count = 0;
 int backup_count = 0;
 //int verification_count = 0;
-int max_guardians;
+int max_guardians = 0;
 int quorum;
 
 ElectionKeyPair guardian;
@@ -14,6 +14,8 @@ ElectionKeyPair guardian;
 ElectionKeyPair *pubkey_map;
 ElectionPartialKeyPairBackup *backup_map;
 
+void verify_backups(esp_mqtt_client_handle_t client);
+void generate_backups(esp_mqtt_client_handle_t client);
 void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int data_len);
 void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_len);
 void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_len);
@@ -74,68 +76,17 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+        esp_mqtt_client_unsubscribe(client, "ceremony_details");
+        esp_mqtt_client_unsubscribe(client, "pub_keys");
+        esp_mqtt_client_unsubscribe(client, "backups");
+        esp_mqtt_client_unsubscribe(client, "challenge");
+        esp_mqtt_client_unsubscribe(client, "ciphertally");
         break;
     case MQTT_EVENT_SUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
         break;
     case MQTT_EVENT_UNSUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
-        if (strncmp(event->topic, "pub_keys", event->topic_len) == 0) {
-            // Generate all backups and publish them
-            ESP_LOGI(TAG, "Unsubscribed from pub_keys topic");
-            for (int i = 0; i < max_guardians; i++) {
-                ElectionKeyPair *sender = &pubkey_map[i];
-                ElectionPartialKeyPairBackup backup;
-                void *buffer;
-                size_t len;
-
-                generate_election_partial_key_backup(sender, &guardian, &backup);
-                buffer = serialize_election_partial_key_backup(&backup, &len);
-                esp_mqtt_client_enqueue(client, "backups", buffer, len, 2, 0, false);
-                //esp_mqtt_client_publish(client, "backups", buffer, len, 2, 0);
-
-                free(buffer);
-                free_ElectionPartialKeyPairBackup(&backup);
-            }
-        } else if(strncmp(event->topic, "backups", event->topic_len) == 0) {
-            // Verify all backups. If verify fails send challenge
-            bool all_verified = true;
-            for (int i = 0; i < max_guardians; i++) {
-                ElectionPartialKeyPairBackup *backup = &backup_map[i];
-                ElectionPartialKeyVerification verification;
-                void *buffer;
-                size_t len;
-
-                verify_election_partial_key_backup(&guardian, find_key_pair(backup->sender), backup, &verification);
-                if(verification.verified == 0)
-                {
-                    ESP_LOGI(TAG, "Proof failed");
-                    // send challenge
-                    buffer = serialize_election_partial_key_verification(&verification, &len);
-                    esp_mqtt_client_enqueue(client, "challenge", buffer, len, 2, 0, false);
-                    //esp_mqtt_client_publish(client, "challenge", buffer, len, 2, 0);
-                    free(buffer);
-                    all_verified = false;
-                } else {
-                    ESP_LOGI(TAG, "Proof verified");
-                }
-            }
-            if(all_verified)
-            {
-                ESP_LOGI(TAG, "All backups verified");
-                ElectionJointKey joint_key;
-                combine_election_public_keys(&guardian, pubkey_map, pubkey_count, &joint_key); 
-                int size = sp_unsigned_bin_size(joint_key.joint_key) + sp_unsigned_bin_size(joint_key.commitment_hash);
-                byte *buffer = malloc(size);
-                sp_to_unsigned_bin(joint_key.joint_key, buffer);
-                sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(joint_key.joint_key), joint_key.commitment_hash, buffer);
-                esp_mqtt_client_enqueue(client, "joint_key", (char*)buffer, size, 1, 0, false);
-                //esp_mqtt_client_publish(client, "joint_key", (char*)buffer, size, 1, 0);
-                esp_mqtt_client_subscribe(client, "ciphertally", 2);
-                free(buffer);
-            }
-
-        }
         break;
     case MQTT_EVENT_PUBLISHED:
         ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
@@ -152,6 +103,7 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 ESP_LOGI(TAG, "Quorum: %d, Max Guardians: %d", quorum, max_guardians);
                 // Exclude self from guardian count
                 max_guardians--;
+                ESP_LOGI(TAG, "Max Guardians: %d", max_guardians);
                 pubkey_map = (ElectionKeyPair*)malloc(max_guardians * sizeof(ElectionKeyPair));
                 backup_map = (ElectionPartialKeyPairBackup*)malloc(max_guardians * sizeof(ElectionPartialKeyPairBackup));
                 esp_mqtt_client_unsubscribe(client, "ceremony_details");
@@ -201,6 +153,55 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
     }
 }
 
+void verify_backups(esp_mqtt_client_handle_t client) {
+    bool all_verified = true;
+    ElectionPartialKeyVerification verification;
+    void *buffer;
+    size_t len;
+    for (int i = 0; i < max_guardians; i++) {
+        ElectionPartialKeyPairBackup *backup = &backup_map[i];
+        verify_election_partial_key_backup(&guardian, find_key_pair(backup->sender), backup, &verification);
+        if(verification.verified == 0)
+        {
+            // send challenge
+            buffer = serialize_election_partial_key_verification(&verification, &len);
+            esp_mqtt_client_enqueue(client, "challenge", buffer, len, 2, 0, false);
+            free(buffer);
+            all_verified = false;
+        }
+    }
+    if(all_verified)
+    {
+        ElectionJointKey joint_key;
+        combine_election_public_keys(&guardian, pubkey_map, pubkey_count, &joint_key); 
+        int size = sp_unsigned_bin_size(joint_key.joint_key) + sp_unsigned_bin_size(joint_key.commitment_hash);
+        byte *buffer = malloc(size);
+        sp_to_unsigned_bin(joint_key.joint_key, buffer);
+        sp_to_unsigned_bin_at_pos(sp_unsigned_bin_size(joint_key.joint_key), joint_key.commitment_hash, buffer);
+
+        esp_mqtt_client_enqueue(client, "joint_key", (char*)buffer, size, 1, 0, false);
+        esp_mqtt_client_subscribe(client, "ciphertally", 2);
+        FREE_MP_INT_SIZE(joint_key.joint_key, NULL, DYNAMIC_TYPE_BIGINT);
+        FREE_MP_INT_SIZE(joint_key.commitment_hash, NULL, DYNAMIC_TYPE_BIGINT);
+        free(buffer);
+    }
+
+}
+
+void generate_backups(esp_mqtt_client_handle_t client) {
+    for (int i = 0; i < max_guardians; i++) {
+        ElectionKeyPair *sender = &pubkey_map[i];
+        ElectionPartialKeyPairBackup backup;
+        void *buffer;
+        size_t len;
+        generate_election_partial_key_backup(sender, &guardian, &backup);
+        buffer = serialize_election_partial_key_backup(&backup, &len);
+        esp_mqtt_client_enqueue(client, "backups", buffer, len, 2, 0, false);
+        free(buffer);
+        free_ElectionPartialKeyPairBackup(&backup);
+    }
+}
+
 void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
     void *buffer;
@@ -216,7 +217,7 @@ void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_
 {
     ElectionKeyPair sender;
     deserialize_election_key_pair((uint8_t*)data, data_len, &sender);
-   
+    ESP_LOGI(TAG, "pubkey_count: %d", pubkey_count);
     if(memcmp(sender.guardian_id, mac, 6) == 0)
     {
         ESP_LOGI(TAG, "Received own public key");
@@ -231,6 +232,7 @@ void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_
         if(pubkey_count == max_guardians)
         {   
             ESP_LOGI(TAG, "All Public Keys received");
+            generate_backups(client);
             esp_mqtt_client_unsubscribe(client, "pub_keys");
         }
     } else {
@@ -258,6 +260,7 @@ void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_
         if(backup_count == max_guardians)
         {
             ESP_LOGI(TAG, "All Backups received");
+            verify_backups(client);
             esp_mqtt_client_unsubscribe(client, "backups");
         }
     } else {
@@ -275,7 +278,6 @@ void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, 
 {
     CiphertextTally tally;
     DecryptionShare share;
-    print_byte_array((uint8_t*)data, data_len);
     deserialize_ciphertext_tally((uint8_t*)data, data_len, &tally);
     compute_decryption_share(&guardian, &tally, &share);
     free_CiphertextTally(&tally);

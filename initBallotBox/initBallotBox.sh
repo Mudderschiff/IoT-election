@@ -3,4 +3,4 @@
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate myenv
 
-python election.py &
+python -m pdb election.py &

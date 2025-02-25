@@ -126,7 +126,6 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
 int generate_polynomial(ElectionPolynomial *polynomial);
 int rand_q(sp_int *result);
 int hash(sp_int *a, sp_int *b, sp_int *result);
-int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
 int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out);
 int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message);
 void print_sp_int(sp_int *num);

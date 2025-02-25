@@ -9,6 +9,8 @@ from random import randint
 import logging
 import threading
 import paho.mqtt.subscribe as subscribe
+import pdb
+import sys
 
 from electionguard import SpecVersion, ElectionType, GeopoliticalUnit, ReportingUnitType, Party, Candidate, BallotStyle, \
     SelectionDescription, VoteVariationType, \
@@ -88,8 +90,7 @@ from electionguard_tools.factories.ballot_factory import BallotFactory
 
 
 logger = logging.getLogger("electionguard")
-logger.setLevel(logging.WARNING)
-#logger.setLevel(logging.WARNING)
+logger.setLevel(logging.DEBUG)
 mutex = threading.Lock()
 
 
@@ -146,8 +147,8 @@ def parse_decryption_share(data):
 def parse_ciphertext_tally_selections(data):
 	selection = tally_pb2.CiphertextTallySelectionProto()
 	selection.object_id = data.object_id
-	selection.ciphertext_pad = data.ciphertext.pad.value.to_bytes((data.ciphertext.pad.value.bit_length() + 7) // 8, byteorder='big')
-	selection.ciphertext_data = data.ciphertext.data.value.to_bytes((data.ciphertext.data.value.bit_length() + 7) // 8, byteorder='big')
+	selection.ciphertext_pad = data.ciphertext.pad.value.to_bytes(384, byteorder='big')
+	selection.ciphertext_data = data.ciphertext.data.value.to_bytes(384, byteorder='big')
 	return selection
 	
 
@@ -155,7 +156,7 @@ def parse_ciphertext_tally_contests(data):
 	contests = tally_pb2.CiphertextTallyContestProto()
 	contests.object_id = data.object_id
 	contests.sequence_order = data.sequence_order
-	contests.description_hash = data.description_hash.value.to_bytes((data.description_hash.value.bit_length() + 7) // 8, byteorder='big')
+	contests.description_hash = data.description_hash.value.to_bytes(32, byteorder='big')
 	contests.num_selections = len(data.selections)
 	for value in data.selections.values():
 		selection = parse_ciphertext_tally_selections(value)
@@ -166,8 +167,7 @@ def parse_ciphertext_tally_contests(data):
 def parse_ciphertext_tally(tally, base_hash):
 	ciphertext = tally_pb2.CiphertextTallyProto()
 	ciphertext.object_id = tally.object_id
-	ciphertext.base_hash = base_hash.value.to_bytes((base_hash.value.bit_length() + 7) // 8, byteorder='big')
-	print(base_hash.value)
+	ciphertext.base_hash = base_hash.value.to_bytes(32, byteorder='big')
 	ciphertext.num_contest = len(tally.contests)
 	for value in tally.contests.values():
 		contest = parse_ciphertext_tally_contests(value)
@@ -295,10 +295,6 @@ def decrypt_tally()	-> None:
 	global decryption_mediator, ciphertext_tally, manifest
 	print("decrypt tally")
 	plaintext_tally: PlaintextTally
-	#lagrange_coefficients = LagrangeCoefficientsRecord(decryption_mediator.get_lagrange_coefficients())
-	#plaintext_tally = get_optional(decryption_mediator.get_plaintext_tally(ciphertext_tally, manifest))
-	#plaintext_tally = decryption_mediator.get_plaintext_tally(ciphertext_tally, manifest)
-	#plaintext_tally = decrypt_tally(ciphertext_tally,decryption_mediator._tally_shares, decryption_mediator._context.crypto_extended_base_hash, manifest,False)
 	plaintext_tally = decryption_mediator.get_plaintext_tally(ciphertext_tally, manifest)
 	print(plaintext_tally)
 		
@@ -307,6 +303,7 @@ def process_share(client, userdata, message):
 	deserialized = tally_pb2.DecryptionShareProto()
 	deserialized.ParseFromString(message.payload)
 	share = parse_decryption_share(deserialized)
+	#print(share)
 	print(f"Guardian Present: {deserialized.guardian_id.hex()}")
 	with mutex:
 		decryption_mediator.announce(ElectionPublicKey(owner_id=int(deserialized.guardian_id.hex(),16),sequence_order=int(deserialized.guardian_id.hex(),16),key=hex_to_p(deserialized.public_key.hex()),coefficient_commitments=[],coefficient_proofs=[]), share)

@@ -21,5 +21,5 @@
         "cmath": "c"
     },
     "idf.flashType": "UART",
-    "idf.port": "/dev/ttyUSB0"
+    "idf.port": "/dev/ttyUSB1"
 }

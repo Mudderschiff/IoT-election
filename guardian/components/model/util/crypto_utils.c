@@ -250,6 +250,10 @@ int rand_q(sp_int *result) {
  * @return 0 on success, -1 on failure
  */
 int hash(sp_int *a, sp_int *b, sp_int *result) {
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
     Sha256 sha256;
     int ret;
     byte *result_byte = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
@@ -278,8 +282,11 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
             return -1;
         }
         wc_Sha256Free(&sha256);
-        ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE);   
+        ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE); 
+        sp_mod(result, small_prime, result);  
+
     }
+    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
     free(result_byte);
     return ret;
 }
@@ -659,16 +666,20 @@ int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, Elect
         mulmod(product, pubkey_map[i].public_key, large_prime, product);
     }
     sp_copy(product, joint_key->joint_key);
+    FREE_MP_INT_SIZE(product, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 
 int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
+    DECL_MP_INT_SIZE(commitment, 256);
+    NEW_MP_INT_SIZE(commitment, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(commitment, 256);
     Sha256 sha256;
-    byte* hash = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
+    byte* hash_result = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(wc_InitSha256(&sha256) != 0) {
         ESP_LOGE("HASH_KEYS", "Failed to initialise sha256");
-        free(hash);
+        free(hash_result);
         return -1;
     } else {
         if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
@@ -676,16 +687,28 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
             return -1;
         }
         for(size_t i = 0; i < count; i++) {
-            update_sha256_with_sp_int(&sha256, pubkey_map[i].public_key);
+            for(size_t j = 0; j < pubkey_map->polynomial.num_coefficients; j++) {
+                update_sha256_with_sp_int(&sha256, pubkey_map[i].polynomial.coefficients[j].commitment);
+            }
         }
-        if(wc_Sha256Final(&sha256, hash) != 0) {
+        if(wc_Sha256Final(&sha256, hash_result) != 0) {
             ESP_LOGE("HASH_KEYS", "Failed to finalise sha256");
             return -1;
         }
         wc_Sha256Free(&sha256);
-        sp_read_unsigned_bin(joint_key->commitment_hash, hash, WC_SHA256_DIGEST_SIZE);
+        sp_read_unsigned_bin(commitment, hash_result, WC_SHA256_DIGEST_SIZE);
     }
-    free(hash);    
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
+
+    sp_mod(commitment, small_prime, commitment);
+    sp_copy(commitment, joint_key->joint_key);
+
+    FREE_MP_INT_SIZE(commitment, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    free(hash_result);    
     return 0;
 }
 
@@ -697,9 +720,9 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
  */
 int nonce(sp_int* seed, sp_int* nonce) {
     Sha256 sha256;
-    char* header = "constant-chaum-pedersen-proof";
-    int index = 0;
-    byte* hash = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
+    char* header = "constant-chaum-pedersen-proof|";
+    char* index = "|0|";
+    byte* base_seed = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(wc_InitSha256(&sha256) != 0) {
         ESP_LOGE("NONCE", "Failed to initialise sha256");
         return -1;
@@ -714,33 +737,49 @@ int nonce(sp_int* seed, sp_int* nonce) {
             ESP_LOGE("NONCE", "Failed to update sha256");
             return -1;
         }
-        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
-            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
-            return -1;
-        }
-        if(wc_Sha256Update(&sha256, (byte*)&index, sizeof(index)) != 0) {
-            ESP_LOGE("NONCE", "Failed to update sha256");
-            return -1;
-        }
-        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
-            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
-            return -1;
-        }
         // Finalise the hash
-        if(wc_Sha256Final(&sha256, hash) != 0) {
+        if(wc_Sha256Final(&sha256, base_seed) != 0) {
             ESP_LOGE("NONCE", "Failed to finalise sha256");
             return -1;
         }
         wc_Sha256Free(&sha256);
-        sp_read_unsigned_bin(nonce, hash, WC_SHA256_DIGEST_SIZE);
+        //sp_read_unsigned_bin(nonce, hash, WC_SHA256_DIGEST_SIZE);
     }
-    free(hash);
+
+    if(wc_InitSha256(&sha256) != 0) {
+        ESP_LOGE("NONCE", "Failed to initialise sha256");
+        return -1;
+    } else {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        if (wc_Sha256Update(&sha256, base_seed, WC_SHA256_DIGEST_SIZE) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        if (wc_Sha256Update(&sha256, (byte*)index, strlen(index)) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        if(wc_Sha256Final(&sha256, base_seed) != 0) {
+            ESP_LOGE("NONCE", "Failed to finalise sha256");
+            return -1;
+        }
+        wc_Sha256Free(&sha256);
+        sp_read_unsigned_bin(nonce, base_seed, WC_SHA256_DIGEST_SIZE);
+    }
+    free(base_seed);
     return 0;
 }
 
 
 
 static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge) {
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
     Sha256 sha256;
     byte* challenge_bytes = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(challenge_bytes == NULL) {
@@ -769,7 +808,9 @@ static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* p
         }
         wc_Sha256Free(&sha256);
         sp_read_unsigned_bin(challenge, challenge_bytes, WC_SHA256_DIGEST_SIZE);
+        sp_mod(challenge, small_prime, challenge);
     }
+    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
     free(challenge_bytes);
     return 0;
 }
@@ -819,20 +860,14 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
 
     hash_challenge(hash_header, alpha, beta, proof->pad, proof->data, m, proof->challenge);
 
-
-    ESP_LOGI("CHAUM_PEDERSEN", "Challenge");
-    print_sp_int(proof->challenge);
-
     DECL_MP_INT_SIZE(small_prime, 256);
     NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(small_prime, 256);
     sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
 
     // a + bc ^ q = u + c * secret ^ q
-    sp_mul(proof->challenge,secret,proof->response);
-    sp_addmod(u,proof->response,small_prime,proof->response);
-    ESP_LOGI("CHAUM_PEDERSEN", "Response");
-    print_sp_int(proof->response);
+    sp_mul(secret, proof->challenge, proof->response);
+    sp_addmod(u, proof->response, small_prime, proof->response);
 
     FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
     
@@ -872,6 +907,56 @@ static int compute_decryption_share_for_selection(sp_int* privatekey, sp_int* pa
     return 0;
 }
 
+int verify_chaum_pedersen(sp_int* public_key, ChaumPedersenProof* proof, sp_int* alpha, sp_int* m) {
+    DECL_MP_INT_SIZE(large_prime, 3072);
+    NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(large_prime, 3072);
+    sp_read_unsigned_bin(large_prime, p_3072, sizeof(p_3072));
+
+    DECL_MP_INT_SIZE(lhs, 3072);
+    NEW_MP_INT_SIZE(lhs, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(lhs, 3072);
+
+    DECL_MP_INT_SIZE(rhs, 3072);
+    NEW_MP_INT_SIZE(rhs, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(rhs, 3072);
+
+    DECL_MP_INT_SIZE(tmp, 3072);
+    NEW_MP_INT_SIZE(tmp, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(tmp, 3072);
+    sp_set_int(tmp, 1);
+
+    g_pow_p(proof->response, lhs);
+
+    exptmod(public_key, proof->challenge, large_prime, rhs);
+    mulmod(tmp, proof->pad, large_prime, tmp);
+    mulmod(tmp, rhs, large_prime, rhs);
+
+    if(sp_cmp(lhs, rhs) != MP_EQ) {
+        ESP_LOGI("VERIFY_CHAUM_PEDERSEN", "inconsistent gv");
+    }
+    sp_zero(lhs);
+    sp_zero(rhs);
+    sp_zero(tmp);
+    sp_set_int(tmp, 1);
+
+    exptmod(alpha, proof->response, large_prime, lhs);
+
+    exptmod(m, proof->challenge, large_prime, rhs);
+    mulmod(tmp, proof->data, large_prime, tmp);
+    mulmod(tmp, rhs, large_prime, rhs);
+
+    if(sp_cmp(lhs, rhs) != MP_EQ) {
+        ESP_LOGI("VERIFY_CHAUM_PEDERSEN", "inconsistent av");
+    }
+
+
+    FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(lhs, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(rhs, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(tmp, NULL, DYNAMIC_TYPE_BIGINT);
+    return 0;
+}
 
 int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTallyContest *contest, sp_int* base_hash , CiphertextDecryptionContest *dec_contest) {
     dec_contest->object_id = strdup(contest->object_id);
@@ -898,6 +983,7 @@ int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTa
         dec_contest->selections[i].object_id = strdup(contest->selections[i].object_id);
         memcpy(dec_contest->selections[i].guardian_id, guardian->guardian_id, sizeof(guardian->guardian_id));
         compute_decryption_share_for_selection(guardian->private_key, contest->selections[i].ciphertext_pad, contest->selections[i].ciphertext_data, base_hash, &dec_contest->selections[i]);
+        //verify_chaum_pedersen(guardian->public_key, &dec_contest->selections[i].proof, contest->selections[i].ciphertext_pad, dec_contest->selections[i].decryption);
     }
     return 0;
 }
