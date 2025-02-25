@@ -443,6 +443,9 @@ In our case, choosing a binary serialization approach could be beneficial. The i
 
 Our implementation, therefore, chooses Protocol Buffers as the serialization format. A Protocol Buffer implementation is already included in the ESP32 as a component. A significant advantage of Protocol Buffers is that we only need to define the structure for the data to be transferred once and can then exchange it over a wide variety of channels. The programming language is secondary since Protocol Buffers are language-neutral \cite[224]{protobuffer}. Thus, with our .proto files, as seen in Appendix \ref{pre-election}, we can generate code for both the ESP32 and the Python client, as seen in Appendices \ref{lst:generated-c} and \ref{lst:generated-python}. An example of serialising ElectionPartialKeyPair which is the backup shared with other guardians is seen in Appendix \ref{lst:serialize} an example of deserialisation is seen in Appendix \ref{lst:deserialise}. 
 
+\subsection{Networ Traffic Analysis}
+Network traffice between the Laptop and the ESP32 was captured using Wireshark (4.4.3) by listening to the access point interface of the laptop. The traffic was narrowed down by applying a display filter to filter out all non mqtt traffic. The precision of the timestamps is in milliseconds. The capture focused on the communication related to the key ceremony and the decryption phase. \ac{RTT} was calculated based on the time difference between request and acknowlegement packets for specific message exchanges. A display filter 
+
 \section{Security}
 Furthermore,
 IoT devices are generally used by humans which makes them
