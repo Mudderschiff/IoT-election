@@ -116,9 +116,9 @@ typedef struct {
     CiphertextDecryptionContest* contests;
 } DecryptionShare;
 
-
-int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
-int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
+int nonces(sp_int* seed, sp_int* nonce);
+int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *commitment);
+int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *key);
 int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
 int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
 int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message);

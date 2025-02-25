@@ -128,18 +128,33 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
     joint_key->joint_key = NULL;
     NEW_MP_INT_SIZE(joint_key->joint_key, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(joint_key->joint_key, 3072);
-    
     joint_key->commitment_hash = NULL;
     NEW_MP_INT_SIZE(joint_key->commitment_hash, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(joint_key->commitment_hash, 256);
-    
-    ElectionKeyPair *extend = (ElectionKeyPair*)XMALLOC((count + 1) * sizeof(ElectionKeyPair), NULL, DYNAMIC_TYPE_BIGINT);
-    memcpy(extend, pubkey_map, count * sizeof(ElectionKeyPair));
-    extend[count] = *guardian;
 
-    elgamal_combine_public_keys(extend, count + 1, &joint_key->joint_key);
+    DECL_MP_INT_SIZE(jointkey, 3072);
+    NEW_MP_INT_SIZE(jointkey, 3072, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(jointkey, 3072);
+    DECL_MP_INT_SIZE(commitment, 256);
+    NEW_MP_INT_SIZE(commitment, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(commitment, 256);
 
-    hash_keys(extend, count + 1, &joint_key->commitment_hash);
+    //ElectionKeyPair *extend = (ElectionKeyPair*)XMALLOC((count + 1) * sizeof(ElectionKeyPair), NULL, DYNAMIC_TYPE_BIGINT);
+    //memcpy(extend, pubkey_map, count * sizeof(ElectionKeyPair));
+    //extend[count] = *guardian;
+
+    elgamal_combine_public_keys(guardian, pubkey_map, count, jointkey);
+    hash_keys(guardian, pubkey_map, count, commitment);
+
+    ESP_LOGI("COMBINE_ELECTION_PUBLIC_KEYS", "Joint Key: ");
+    sp_copy(jointkey, joint_key->joint_key);
+    print_sp_int(joint_key->joint_key);
+
+    ESP_LOGI("COMBINE_ELECTION_PUBLIC_KEYS", "Commitment: ");
+    sp_copy(commitment, joint_key->commitment_hash);
+    print_sp_int(joint_key->commitment_hash);
+    FREE_MP_INT_SIZE(jointkey, NULL, DYNAMIC_TYPE_BIGINT);
+    FREE_MP_INT_SIZE(commitment, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 
@@ -161,4 +176,15 @@ int compute_decryption_share(ElectionKeyPair *guardian, CiphertextTally *ciphert
     }
 
     return 0;
+}
+
+void test_hash() {
+    DECL_MP_INT_SIZE(seed, 256);
+    NEW_MP_INT_SIZE(seed, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(seed, 256);
+    DECL_MP_INT_SIZE(result, 256);
+    NEW_MP_INT_SIZE(result, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(result, 256);
+    sp_read_radix(seed, "5FCFB59F318CA12CA29ACE93818567CC069737980F68481715ADBD9244499EE4", 16);
+    nonces(seed, result);
 }

@@ -6,6 +6,7 @@
 #include "crypto_utils.h"
 #include "model.h"
 
+void test_hash();
 int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key);
 int generate_election_key_pair(int quorum, ElectionKeyPair *key_pair);
 int generate_election_partial_key_backup(ElectionKeyPair *sender, ElectionKeyPair *receiver, ElectionPartialKeyPairBackup *backup);

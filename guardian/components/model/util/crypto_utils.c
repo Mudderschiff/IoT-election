@@ -65,12 +65,16 @@ void print_byte_array(const byte *array, int size) {
 static int update_sha256_with_sp_int(Sha256 *sha256, sp_int *value) {
     int size;
     sp_radix_size(value, 16, &size);
-    char* elem = (char *)malloc(size + 1);
+    char* elem = (char *)malloc(size);
     sp_tohex(value, elem);
-    strcat(elem, "|");
-    if(wc_Sha256Update(sha256, (byte *)elem, size) != 0) {
+    if(wc_Sha256Update(sha256, (byte *)elem, size -1) != 0) {
         ESP_LOGE("HASH_KEYS", "Failed to update sha256");
         free(elem);
+        return -1;
+    }
+    if(wc_Sha256Update(sha256, (byte *)"|", 1) != 0) {
+        ESP_LOGE("HASH_KEYS", "Failed to update sha256");
+        //free(elem);
         return -1;
     }
     free(elem);
@@ -240,6 +244,45 @@ int rand_q(sp_int *result) {
     return 0;
 }
 
+static int finalise_hash(sp_int *result) {
+    Sha256 sha256;
+    int ret;
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
+    byte *result_byte = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
+    if (result_byte == NULL) {
+        ESP_LOGE("HASH_ELEMS", "Failed to allocate memory for result_byte");
+        return -1; // Return an error code
+    }
+    if (wc_InitSha256(&sha256) != 0) {
+        ESP_LOGE("HASH_ELEMS", "Failed to initialize sha256");
+        free(result_byte);
+        return -1;
+    } else {
+        if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+            return -1;
+        }
+        update_sha256_with_sp_int(&sha256, result);
+
+        if (wc_Sha256Final(&sha256, result_byte) != 0) {
+            ESP_LOGE("HASH_ELEMS", "Failed to finalize sha256");
+            wc_Sha256Free(&sha256);
+            free(result_byte);
+            return -1;
+        }
+        wc_Sha256Free(&sha256);
+        sp_zero(result);
+        ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE); 
+        sp_mod(result, small_prime, result);  
+
+    }
+    free(result_byte);
+    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    return ret;
+}
 
 /**
  * @brief Given two mp_ints, calculate their cryptographic hash using SHA256.
@@ -250,10 +293,6 @@ int rand_q(sp_int *result) {
  * @return 0 on success, -1 on failure
  */
 int hash(sp_int *a, sp_int *b, sp_int *result) {
-    DECL_MP_INT_SIZE(small_prime, 256);
-    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(small_prime, 256);
-    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
     Sha256 sha256;
     int ret;
     byte *result_byte = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
@@ -261,7 +300,6 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
         ESP_LOGE("HASH_ELEMS", "Failed to allocate memory for result_byte");
         return -1; // Return an error code
     }
-
     // Initialize the SHA256 context
     if (wc_InitSha256(&sha256) != 0) {
         ESP_LOGE("HASH_ELEMS", "Failed to initialize sha256");
@@ -272,6 +310,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
             ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
             return -1;
         }
+        
         update_sha256_with_sp_int(&sha256, a);
         update_sha256_with_sp_int(&sha256, b);
 
@@ -283,10 +322,8 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
         }
         wc_Sha256Free(&sha256);
         ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE); 
-        sp_mod(result, small_prime, result);  
-
     }
-    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    finalise_hash(result);
     free(result_byte);
     return ret;
 }
@@ -651,7 +688,7 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
 
 
 
-int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
+int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *key) {
     DECL_MP_INT_SIZE(large_prime, 3072);
     NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(large_prime, 3072);
@@ -661,20 +698,17 @@ int elgamal_combine_public_keys(ElectionKeyPair *pubkey_map, size_t count, Elect
     NEW_MP_INT_SIZE(product, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(product, 3072);
     sp_set_int(product, 1);
-
+    mulmod(product, guardian->public_key, large_prime, product);
     for(size_t i = 0; i < count; i++) {
         mulmod(product, pubkey_map[i].public_key, large_prime, product);
     }
-    sp_copy(product, joint_key->joint_key);
+    sp_copy(product, key);
     FREE_MP_INT_SIZE(product, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
 
-int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint_key) {
-    DECL_MP_INT_SIZE(commitment, 256);
-    NEW_MP_INT_SIZE(commitment, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(commitment, 256);
+int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *commitment) {
     Sha256 sha256;
     byte* hash_result = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(wc_InitSha256(&sha256) != 0) {
@@ -685,6 +719,10 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
         if (wc_Sha256Update(&sha256, (byte *)"|", 1) != 0) {
             ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
             return -1;
+        }
+        ESP_LOGI("HASH_KEYS", "Commitments");
+        for(size_t i = 0; i < guardian->polynomial.num_coefficients; i++) {
+            update_sha256_with_sp_int(&sha256, guardian->polynomial.coefficients[i].commitment);
         }
         for(size_t i = 0; i < count; i++) {
             for(size_t j = 0; j < pubkey_map->polynomial.num_coefficients; j++) {
@@ -698,16 +736,8 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
         wc_Sha256Free(&sha256);
         sp_read_unsigned_bin(commitment, hash_result, WC_SHA256_DIGEST_SIZE);
     }
-    DECL_MP_INT_SIZE(small_prime, 256);
-    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(small_prime, 256);
-    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
-
-    sp_mod(commitment, small_prime, commitment);
-    sp_copy(commitment, joint_key->joint_key);
-
-    FREE_MP_INT_SIZE(commitment, NULL, DYNAMIC_TYPE_BIGINT);
-    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    finalise_hash(commitment);
+    ESP_LOGI("HASH_KEYS", "Commitment");
     free(hash_result);    
     return 0;
 }
@@ -718,10 +748,13 @@ int hash_keys(ElectionKeyPair *pubkey_map, size_t count, ElectionJointKey *joint
  * @param seed: The seed for the random number
  * @return 0 on success, -1 on failure
  */
-int nonce(sp_int* seed, sp_int* nonce) {
+int nonces(sp_int* seed, sp_int* nonce) {
+    DECL_MP_INT_SIZE(small_prime, 256);
+    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(small_prime, 256);
+    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
     Sha256 sha256;
     char* header = "constant-chaum-pedersen-proof|";
-    char* index = "|0|";
     byte* base_seed = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(wc_InitSha256(&sha256) != 0) {
         ESP_LOGE("NONCE", "Failed to initialise sha256");
@@ -737,15 +770,21 @@ int nonce(sp_int* seed, sp_int* nonce) {
             ESP_LOGE("NONCE", "Failed to update sha256");
             return -1;
         }
+        
         // Finalise the hash
         if(wc_Sha256Final(&sha256, base_seed) != 0) {
             ESP_LOGE("NONCE", "Failed to finalise sha256");
             return -1;
         }
         wc_Sha256Free(&sha256);
-        //sp_read_unsigned_bin(nonce, hash, WC_SHA256_DIGEST_SIZE);
+        sp_read_unsigned_bin(nonce, base_seed, WC_SHA256_DIGEST_SIZE);
+        ESP_LOGI("NONCE", "Nonce");
     }
-
+    int size;
+    sp_radix_size(nonce, 16, &size);
+    char* elem = (char *)malloc(size);
+    sp_tohex(nonce, elem);
+    byte* result = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(wc_InitSha256(&sha256) != 0) {
         ESP_LOGE("NONCE", "Failed to initialise sha256");
         return -1;
@@ -754,21 +793,29 @@ int nonce(sp_int* seed, sp_int* nonce) {
             ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
             return -1;
         }
-        if (wc_Sha256Update(&sha256, base_seed, WC_SHA256_DIGEST_SIZE) != 0) {
-            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+        if(wc_Sha256Update(&sha256, (byte *)elem, size -1) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256");
+            free(elem);
             return -1;
         }
-        if (wc_Sha256Update(&sha256, (byte*)index, strlen(index)) != 0) {
-            ESP_LOGE("HASH_KEYS", "Failed to update sha256 with initial delimiter");
+        if(wc_Sha256Update(&sha256, (byte *)"|0|", 3) != 0) {
+            ESP_LOGE("HASH_KEYS", "Failed to update sha256");
+            free(elem);
             return -1;
         }
-        if(wc_Sha256Final(&sha256, base_seed) != 0) {
+        // Finalise the hash
+        if(wc_Sha256Final(&sha256, result) != 0) {
             ESP_LOGE("NONCE", "Failed to finalise sha256");
             return -1;
         }
         wc_Sha256Free(&sha256);
-        sp_read_unsigned_bin(nonce, base_seed, WC_SHA256_DIGEST_SIZE);
+        sp_zero(nonce);
+        sp_read_unsigned_bin(nonce, result, WC_SHA256_DIGEST_SIZE);
+        sp_mod(nonce, small_prime, nonce);
     }
+    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    free(result);
+    free(elem);
     free(base_seed);
     return 0;
 }
@@ -776,10 +823,6 @@ int nonce(sp_int* seed, sp_int* nonce) {
 
 
 static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge) {
-    DECL_MP_INT_SIZE(small_prime, 256);
-    NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(small_prime, 256);
-    sp_read_unsigned_bin(small_prime, q_256, sizeof(q_256));
     Sha256 sha256;
     byte* challenge_bytes = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(challenge_bytes == NULL) {
@@ -808,9 +851,8 @@ static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* p
         }
         wc_Sha256Free(&sha256);
         sp_read_unsigned_bin(challenge, challenge_bytes, WC_SHA256_DIGEST_SIZE);
-        sp_mod(challenge, small_prime, challenge);
     }
-    FREE_MP_INT_SIZE(small_prime, NULL, DYNAMIC_TYPE_BIGINT);
+    finalise_hash(challenge);
     free(challenge_bytes);
     return 0;
 }
@@ -850,8 +892,10 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
     DECL_MP_INT_SIZE(u, 256);
     NEW_MP_INT_SIZE(u, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(u, 256);
-
-    nonce(seed, u);
+    ESP_LOGI("CHAUM_PEDERSEN", "Seed");
+    print_sp_int(seed);
+    nonces(seed, u);
+    print_sp_int(u);
     g_pow_p(u, proof->pad);
     exptmod(alpha, u, large_prime, proof->data);
 
