@@ -323,7 +323,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
         wc_Sha256Free(&sha256);
         ret = sp_read_unsigned_bin(result, result_byte, WC_SHA256_DIGEST_SIZE); 
     }
-    finalise_hash(result);
+    //finalise_hash(result);
     free(result_byte);
     return ret;
 }
@@ -822,7 +822,7 @@ int nonces(sp_int* seed, sp_int* nonce) {
 
 
 
-static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge) {
+int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge) {
     Sha256 sha256;
     byte* challenge_bytes = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(challenge_bytes == NULL) {
@@ -852,7 +852,7 @@ static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* p
         wc_Sha256Free(&sha256);
         sp_read_unsigned_bin(challenge, challenge_bytes, WC_SHA256_DIGEST_SIZE);
     }
-    finalise_hash(challenge);
+    //finalise_hash(challenge);
     free(challenge_bytes);
     return 0;
 }
@@ -892,10 +892,7 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
     DECL_MP_INT_SIZE(u, 256);
     NEW_MP_INT_SIZE(u, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(u, 256);
-    ESP_LOGI("CHAUM_PEDERSEN", "Seed");
-    print_sp_int(seed);
     nonces(seed, u);
-    print_sp_int(u);
     g_pow_p(u, proof->pad);
     exptmod(alpha, u, large_prime, proof->data);
 
@@ -903,6 +900,20 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
 
     hash_challenge(hash_header, alpha, beta, proof->pad, proof->data, m, proof->challenge);
+    ESP_LOGI("CHAUM_PEDERSEN", "hash_header");
+    print_sp_int(hash_header);
+    ESP_LOGI("CHAUM_PEDERSEN", "alpha");
+    print_sp_int(alpha);
+    ESP_LOGI("CHAUM_PEDERSEN", "beta");
+    print_sp_int(beta);
+    ESP_LOGI("CHAUM_PEDERSEN", "pad");
+    print_sp_int(proof->pad);
+    ESP_LOGI("CHAUM_PEDERSEN", "data");
+    print_sp_int(proof->data);
+    ESP_LOGI("CHAUM_PEDERSEN", "m");
+    print_sp_int(m);
+    ESP_LOGI("CHAUM_PEDERSEN", "challenge");
+    print_sp_int(proof->challenge);
 
     DECL_MP_INT_SIZE(small_prime, 256);
     NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);

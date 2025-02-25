@@ -116,6 +116,7 @@ typedef struct {
     CiphertextDecryptionContest* contests;
 } DecryptionShare;
 
+int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge);
 int nonces(sp_int* seed, sp_int* nonce);
 int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *commitment);
 int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *key);
