@@ -1,48 +1,16 @@
 #include "utils.h"
-
-/** 
- * @brief Print the value of a sp_int
- * @param num: The number to print
- * @return void
-*/
-/*
-void print_sp_int(sp_int *num) {   
-    int size = sp_unsigned_bin_size(num);
-    char *buffer = (char *)calloc(size * 2 + 1, sizeof(char));
-    if (buffer == NULL) {
-        ESP_LOGE("Print mp_int", "Failed to allocate memory for buffer");
-        return;
-    }
-    if (sp_toradix(num, buffer, 16) == MP_OKAY) {
-        ESP_LOGI("Print mp_int", "mp_int value: %s", buffer);
-    } else {
-        ESP_LOGE("Print mp_int", "Failed to convert mp_int to string");
-    }
-    free(buffer);
-}
-*/
-
-/*
-void int_to_bytes(int value, unsigned char *bytes) {
-    for (int i = 0; i < 4; i++) {
-        bytes[3 - i] = (value >> (i * 8)) & 0xFF;
-    }
-}
-
-// Function to print byte array
-void print_byte_array(const byte *array, int size) {
-    char buffer[size * 3 + 1]; // Each byte will be represented by 2 hex digits and a space
-    for (int i = 0; i < size; i++) {
-        sprintf(&buffer[i * 3], "%02x ", array[i]);
-    }
-    buffer[size * 3] = '\0'; // Null-terminate the string
-    ESP_LOGI("BYTE_ARRAY", "%s", buffer);
-}
-*/
 #include <stdlib.h>
-#include "utils.h"
 
-// Free function for CiphertextTallySelection
+/**
+ * @brief Frees the memory allocated for a CiphertextTallySelection struct.
+ *
+ * This function releases the memory associated with the object_id,
+ * ciphertext_pad, and ciphertext_data members of the CiphertextTallySelection struct.
+ * It also sets these pointers to NULL to prevent double freeing.
+ *
+ * @param selection A pointer to the CiphertextTallySelection object to free.
+ *                  If selection is NULL, the function returns immediately.
+ */
 void free_CiphertextTallySelection(CiphertextTallySelection* selection) {
     if (selection == NULL) return;
 
@@ -62,7 +30,18 @@ void free_CiphertextTallySelection(CiphertextTallySelection* selection) {
     }
 }
 
-// Free function for CiphertextTallyContest
+/**
+ * @brief Frees the memory allocated for a CiphertextTallyContest struct.
+ *
+ * This function releases the memory associated with the object_id,
+ * description_hash, and selections members of the CiphertextTallyContest struct.
+ * It iterates through the selections array and calls free_CiphertextTallySelection
+ * for each element before freeing the array itself.  It also sets pointers to NULL
+ * to prevent double freeing.
+ *
+ * @param contest A pointer to the CiphertextTallyContest struct to free.
+ *                If contest is NULL, the function returns immediately.
+ */
 void free_CiphertextTallyContest(CiphertextTallyContest* contest) {
     if (contest == NULL) return;
 
@@ -85,7 +64,18 @@ void free_CiphertextTallyContest(CiphertextTallyContest* contest) {
     }
 }
 
-// Free function for CiphertextTally
+/**
+ * @brief Frees the memory allocated for a CiphertextTally struct.
+ *
+ * This function releases the memory associated with the object_id,
+ * base_hash, and contests members of the CiphertextTally struct.
+ * It iterates through the contests array and calls free_CiphertextTallyContest
+ * for each element before freeing the array itself. It also sets pointers to NULL
+ * to prevent double freeing.
+ *
+ * @param tally A pointer to the CiphertextTally struct to free.
+ *              If tally is NULL, the function returns immediately.
+ */
 void free_CiphertextTally(CiphertextTally* tally) {
     if (tally == NULL) return;
 
@@ -108,7 +98,16 @@ void free_CiphertextTally(CiphertextTally* tally) {
     }
 }
 
-// Free function for ChaumPedersenProof
+/**
+ * @brief Frees the memory allocated for a ChaumPedersenProof struct.
+ *
+ * This function releases the memory associated with the pad, data, challenge,
+ * and response members of the ChaumPedersenProof struct. It also sets these
+ * pointers to NULL to prevent double freeing.
+ *
+ * @param proof A pointer to the ChaumPedersenProof struct to free.
+ *              If proof is NULL, the function returns immediately.
+ */
 void free_ChaumPedersenProof(ChaumPedersenProof* proof) {
     if (proof == NULL) return;
 
@@ -133,7 +132,17 @@ void free_ChaumPedersenProof(ChaumPedersenProof* proof) {
     }
 }
 
-// Free function for CiphertextDecryptionSelection
+/**
+ * @brief Frees the memory allocated for a CiphertextDecryptionSelection struct.
+ *
+ * This function releases the memory associated with the object_id and
+ * decryption members of the CiphertextDecryptionSelection struct. It also calls
+ * free_ChaumPedersenProof to free the proof member. It sets pointers to NULL
+ * to prevent double freeing.
+ *
+ * @param selection A pointer to the CiphertextDecryptionSelection struct to free.
+ *                  If selection is NULL, the function returns immediately.
+ */
 void free_CiphertextDecryptionSelection(CiphertextDecryptionSelection* selection) {
     if (selection == NULL) return;
 
@@ -150,7 +159,18 @@ void free_CiphertextDecryptionSelection(CiphertextDecryptionSelection* selection
     free_ChaumPedersenProof(&selection->proof);
 }
 
-// Free function for CiphertextDecryptionContest
+/**
+ * @brief Frees the memory allocated for a CiphertextDecryptionContest struct.
+ *
+ * This function releases the memory associated with the object_id,
+ * description_hash, and selections members of the CiphertextDecryptionContest struct.
+ * It iterates through the selections array and calls
+ * free_CiphertextDecryptionSelection for each element before freeing the array
+ * itself. It also sets pointers to NULL to prevent double freeing.
+ *
+ * @param contest A pointer to the CiphertextDecryptionContest struct to free.
+ *                If contest is NULL, the function returns immediately.
+ */
 void free_CiphertextDecryptionContest(CiphertextDecryptionContest* contest) {
     if (contest == NULL) return;
 
@@ -173,7 +193,18 @@ void free_CiphertextDecryptionContest(CiphertextDecryptionContest* contest) {
     }
 }
 
-// Free function for DecryptionShare
+/**
+ * @brief Frees the memory allocated for a DecryptionShare struct.
+ *
+ * This function releases the memory associated with the object_id, public_key,
+ * and contests members of the DecryptionShare struct. It iterates through the
+ * contests array and calls free_CiphertextDecryptionContest for each element
+ * before freeing the array itself. It also sets pointers to NULL to prevent
+ * double freeing.
+ *
+ * @param share A pointer to the DecryptionShare struct to free.
+ *              If share is NULL, the function returns immediately.
+ */
 void free_DecryptionShare(DecryptionShare* share) {
     if (share == NULL) return;
 
@@ -195,7 +226,16 @@ void free_DecryptionShare(DecryptionShare* share) {
         share->contests = NULL;
     }
 }
-
+/**
+ * @brief Frees the memory allocated for an ElectionPartialKeyPairBackup struct.
+ *
+ * This function releases the memory associated with the encrypted_coordinate
+ * members of the ElectionPartialKeyPairBackup struct. It also sets pointers to NULL
+ * to prevent double freeing.
+ *
+ * @param backup A pointer to the ElectionPartialKeyPairBackup struct to free.
+ *               If backup is NULL, the function returns immediately.
+ */
 void free_ElectionPartialKeyPairBackup(ElectionPartialKeyPairBackup* backup) {
     if (backup == NULL) return;
 
@@ -215,7 +255,17 @@ void free_ElectionPartialKeyPairBackup(ElectionPartialKeyPairBackup* backup) {
     }
 }
 
-
+/**
+ * @brief Frees the memory allocated for an ElectionKeyPair struct.
+ *
+ * This function releases the memory associated with the public_key and
+ * private_key members of the ElectionKeyPair struct. It also calls
+ * free_ElectionPolynomial to free the polynomial member. It sets pointers to NULL
+ * to prevent double freeing.  The private key is zeroed out before freeing.
+ *
+ * @param key_pair A pointer to the ElectionKeyPair struct to free.
+ *                 If key_pair is NULL, the function returns immediately.
+ */
 void free_ElectionKeyPair(ElectionKeyPair* key_pair) {
     if (key_pair == NULL) return;
 
@@ -234,6 +284,18 @@ void free_ElectionKeyPair(ElectionKeyPair* key_pair) {
     free_ElectionPolynomial(&key_pair->polynomial);
 }
 
+/**
+ * @brief Frees the memory allocated for an ElectionPolynomial struct.
+ *
+ * This function releases the memory associated with the coefficients
+ * member of the ElectionPolynomial struct. It iterates through the
+ * coefficients array and calls free_Coefficient for each element
+ * before freeing the array itself. It also sets the pointer to NULL to prevent
+ * double freeing.
+ *
+ * @param polynomial A pointer to the ElectionPolynomial struct to free.
+ *                   If polynomial is NULL, the function returns immediately.
+ */
 void free_ElectionPolynomial(ElectionPolynomial* polynomial) {
     if (polynomial == NULL) return;
 
@@ -246,6 +308,16 @@ void free_ElectionPolynomial(ElectionPolynomial* polynomial) {
     }
 }
 
+/**
+ * @brief Frees the memory allocated for a Coefficient struct.
+ *
+ * This function releases the memory associated with the commitment and value
+ * members of the Coefficient struct. It also calls free_SchnorrProof to free
+ * the proof member. It sets pointers to NULL to prevent double freeing.
+ *
+ * @param coefficient A pointer to the Coefficient struct to free.
+ *                    If coefficient is NULL, the function returns immediately.
+ */
 void free_Coefficient(Coefficient* coefficient) {
     if (coefficient == NULL) return;
 
@@ -260,6 +332,16 @@ void free_Coefficient(Coefficient* coefficient) {
     free_SchnorrProof(&coefficient->proof);
 }
 
+/**
+ * @brief Frees the memory allocated for a SchnorrProof struct.
+ *
+ * This function releases the memory associated with the pubkey, commitment,
+ * challenge, and response members of the SchnorrProof struct. It also sets
+ * pointers to NULL to prevent double freeing.
+ *
+ * @param proof A pointer to the SchnorrProof struct to free.
+ *              If proof is NULL, the function returns immediately.
+ */
 void free_SchnorrProof(SchnorrProof* proof) {
     if (proof == NULL) return;
 

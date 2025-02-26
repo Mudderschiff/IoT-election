@@ -116,22 +116,22 @@ typedef struct {
     CiphertextDecryptionContest* contests;
 } DecryptionShare;
 
-int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge);
-int nonces(sp_int* seed, sp_int* nonce);
-int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *commitment);
 int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *key);
+int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTallyContest *contest, sp_int* base_hash , CiphertextDecryptionContest *dec_contest);
+
 int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
 int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate);
+
 int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message);
 int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *secret_key, sp_int *encryption_seed, sp_int *message);
+
 int generate_polynomial(ElectionPolynomial *polynomial);
-int rand_q(sp_int *result);
+
 int hash(sp_int *a, sp_int *b, sp_int *result);
-int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out);
-int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message);
+int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *commitment);
+int rand_q(sp_int *result);
+
 void print_sp_int(sp_int *num);
 void print_byte_array(const byte *array, int size);
-void int_to_bytes(int value, unsigned char *bytes);
-int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTallyContest *contest, sp_int* base_hash , CiphertextDecryptionContest *dec_contest);
 
 #endif // CRYPTO_UTILS_H

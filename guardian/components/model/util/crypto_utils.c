@@ -22,7 +22,13 @@
 #include "crypto_utils.h"
 
 
-
+/**
+ * @brief Prints an sp_int to the ESP_LOGI.
+ *
+ * This function converts an sp_int to a hexadecimal string and prints it using ESP_LOGI.
+ *
+ * @param num The sp_int to print.
+ */
 void print_sp_int(sp_int *num) {   
     int size = sp_unsigned_bin_size(num);
     char *buffer = (char *)calloc(size * 2 + 1, sizeof(char));
@@ -38,13 +44,28 @@ void print_sp_int(sp_int *num) {
     free(buffer);
 }
 
-void int_to_bytes(int value, unsigned char *bytes) {
+/**
+ * @brief Converts an integer to a byte array (big-endian).
+ *
+ * This helper function converts a 32-bit integer to a 4-byte array in big-endian order.
+ *
+ * @param value The integer to convert.
+ * @param bytes A pointer to the byte array where the result will be stored.
+ */
+static void int_to_bytes(int value, unsigned char *bytes) {
     for (int i = 0; i < 4; i++) {
         bytes[3 - i] = (value >> (i * 8)) & 0xFF;
     }
 }
 
-// Function to print byte array
+/**
+ * @brief Prints a byte array to the ESP_LOGI.
+ *
+ * This function converts a byte array to a hexadecimal string and prints it using ESP_LOGI.
+ *
+ * @param array The byte array to print.
+ * @param size The size of the byte array.
+ */
 void print_byte_array(const byte *array, int size) {
     char *buffer = (char *)calloc(size * 3 + 1, sizeof(char));
     if (buffer == NULL)
@@ -62,6 +83,18 @@ void print_byte_array(const byte *array, int size) {
     free(buffer);
 }
 
+/**
+ * @brief Updates a SHA256 context with an sp_int.
+ *
+ * This function converts an sp_int to a hexadecimal string and updates a SHA256 context with it.
+ * It also adds a delimiter "|" after the hexadecimal string.
+ *
+ * @param sha256 A pointer to the SHA256 context.
+ * @param value A pointer to the sp_int to hash.
+ *
+ * @return 0 on success.
+ * @return -1 on failure.
+ */
 static int update_sha256_with_sp_int(Sha256 *sha256, sp_int *value) {
     int size;
     sp_radix_size(value, 16, &size);
@@ -81,6 +114,35 @@ static int update_sha256_with_sp_int(Sha256 *sha256, sp_int *value) {
     return 0;
 }
 
+/**
+ * @brief Get a hash-based message authentication code(hmac) digest
+ * @param key: key (key) in bytes
+ * @param in: input data in bytes
+ * @param out: output hmac digest in bytes
+ * @return 0 on success, -1 on failure
+ */
+static int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out) {
+    Hmac hmac;
+    // Initialise HMAC as SHA256
+    if(wc_HmacSetKey(&hmac, WC_SHA256, key, sizeof(key)) != 0) {
+        ESP_LOGE("HMAC", "Failed to initialise hmac");
+        wc_HmacFree(&hmac);
+        return -1;
+    }
+    if(wc_HmacUpdate(&hmac, in, sizeof(in)) != 0) {
+        ESP_LOGE("HMAC", "Failed to update data");
+        wc_HmacFree(&hmac);
+        return -1;
+    }
+    if(wc_HmacFinal(&hmac, out) != 0) {
+        ESP_LOGE("HMAC", "Failed to compute hash");
+        wc_HmacFree(&hmac);
+        return -1;
+    }
+    wc_HmacFree(&hmac);
+    return 0;
+}
+
 
 /**
  * @brief generates a Keystream using a KDF then XORs it with the message
@@ -90,7 +152,7 @@ static int update_sha256_with_sp_int(Sha256 *sha256, sp_int *value) {
  * @param encrypted_message: Write Encrypted message back to encrypted_message
  * @return 0 on success, 1 on failure
  */
-int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message) {
+static int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_message) {
     // pad message with 0 if not multiple of 32
     int message_len = sp_unsigned_bin_size(message);
     int remainder = message_len % BLOCK_SIZE;
@@ -142,7 +204,7 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
 }
 
 /** 
- * @brief Compute Large number Modular Exponetiation with hardware Y = (G ^ X) mod P. If the inputs are to small switches to unaccelerated version
+ * @brief Modular Exponetiation. If the inputs are to small switches to unaccelerated version
  * @param g: Base
  * @param x: Exponent
  * @param p: Modulus
@@ -151,7 +213,6 @@ int kdf_xor(sp_int *key, sp_int *salt, sp_int *message, sp_int *encrypted_messag
  */
 static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
     int ret;
-    //int ret = sp_exptmod(g, x, p, y);
     ret = esp_mp_exptmod(g,x,p,y);
     if(ret == INPUT_CASE_ERROR) {
         ESP_LOGI("MODEXPT", "Input are too small switching to software exptmod");
@@ -165,11 +226,12 @@ static int exptmod(sp_int *g, sp_int *x, sp_int *p, sp_int *y) {
 }
 
 /**
- * @brief Modular Multiplication. If the input parameters are to small switches to the software method
+ * @brief Modular Multiplication. If the inputs are to small switches to unaccelerated version
  * @param a: First element
  * @param b: Second element
  * @param c: Modulus
  * @param result: The result of the multiplication
+ * @return 0 on success, -1 on failure
  */
 static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
     int ret;
@@ -188,7 +250,7 @@ static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
 
 /**
  * @brief Compute Large number Modular Exponetiation with known G (generator also known as base) and P (large prime also known as modulus). Y = (G ^ X) mod P
- * @param seckey: Exponent
+ * @param seckey: Exponent (X)
  * @param pubkey: Result
  * @return 0 on success, -1 on failure
  */
@@ -215,8 +277,7 @@ static int g_pow_p(sp_int *seckey, sp_int *pubkey) {
 }
 
 /**
- * @brief Generate a random number below Q
- * Q is very close to the maximum value for a 256 bit number. It might be worth to compare and regenerate in case mod is expensive
+ * @brief Generate a random number below constant Prime Q (small prime)
  * @param result: The random number
  * @return 0 on success, -1 on failure
  */
@@ -244,6 +305,15 @@ int rand_q(sp_int *result) {
     return 0;
 }
 
+/**
+ * @brief Some hash operations require the intermediate results to be hashed again
+ *
+ * This function takes an sp_int and hashes it with delimiters before and after the value (e.g. H(|value|)).
+ * To ensure the result is below the small prime Q, the result is taken modulo Q.
+ *
+ * @param result A pointer to the sp_int to be finalized.
+ * @return 0 on success, -1 on failure.
+ */
 static int finalise_hash(sp_int *result) {
     Sha256 sha256;
     int ret;
@@ -286,7 +356,9 @@ static int finalise_hash(sp_int *result) {
 
 /**
  * @brief Given two mp_ints, calculate their cryptographic hash using SHA256.
- * Possible collision. In the python implementation a delimiter (|) is used
+ * 
+ * Each value is converted to a hexadecimal string and hashed with a delimiter in between (e.g. H( |a|b| ) ).
+ * 
  * @param a: First element
  * @param b: Second element
  * @param result: The result of the hash
@@ -331,7 +403,7 @@ int hash(sp_int *a, sp_int *b, sp_int *result) {
 
 /**
  * @brief Computes a single coordinate value of the election polynomial used for sharing
- * @param exponent_modifier: Unique modifier (usually sequence order) for exponent [0, Q]
+ * @param exponent_modifier: Unique modifier (guardian id) for exponent [0, Q]
  * @param polynomial: Election polynomial
  * @param coordinate: The computed coordinate
  * @return 0 on success, -1 on failure
@@ -375,11 +447,16 @@ int compute_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial
 }
 
 /**
- * @brief Computes a single coordinate value of the election polynomial used for sharing
- * @param exponent_modifier: Unique modifier (usually sequence order) for exponent [0, Q]
- * @param polynomial: Election polynomial
- * @param coordinate: The computed coordinate
- * @return 0 on success, -1 on failure
+ * @brief Verifies that a coordinate lies on the election polynomial.
+ *
+ * Given a guardian's identifier, a polynomial, and a coordinate, this function verifies
+ * that the coordinate corresponds to a point on the polynomial. This is used to validate
+ * partial key backups.
+ *
+ * @param exponent_modifier The unique identifier of the guardian (usually sequence order).
+ * @param polynomial The election polynomial to verify against.
+ * @param coordinate The coordinate to verify.
+ * @return 1 if the coordinate is on the polynomial, 0 otherwise. Returns -1 on failure.
  */
 int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial* polynomial, sp_int *coordinate) {
     DECL_MP_INT_SIZE(exponent, 3072);
@@ -437,40 +514,18 @@ int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial*
 
 
 /**
- * @brief Get a hash-based message authentication code(hmac) digest
- * @param key: key (key) in bytes
- * @return error_code
- */
-int get_hmac(unsigned char *key, unsigned char *in, unsigned char *out) {
-    Hmac hmac;
-    // Initialise HMAC as SHA256
-    if(wc_HmacSetKey(&hmac, WC_SHA256, key, sizeof(key)) != 0) {
-        ESP_LOGE("HMAC", "Failed to initialise hmac");
-        wc_HmacFree(&hmac);
-        return -1;
-    }
-    if(wc_HmacUpdate(&hmac, in, sizeof(in)) != 0) {
-        ESP_LOGE("HMAC", "Failed to update data");
-        wc_HmacFree(&hmac);
-        return -1;
-    }
-    if(wc_HmacFinal(&hmac, out) != 0) {
-        ESP_LOGE("HMAC", "Failed to compute hash");
-        wc_HmacFree(&hmac);
-        return -1;
-    }
-    wc_HmacFree(&hmac);
-    return 0;
-}
-
-
-/**
- * Encrypts a variable length message with a given random nonce and an ElGamal public key.
- * @param message: message (m) to encrypt; must be in bytes.
- * @param nonce: Randomly chosen nonce in [1, Q).
- * @param public_key: ElGamal public key.
- * @param encryption_seed: Encryption seed (Q) for election.
- * @param encrypted_coordinate: The encrypted message.
+ * @brief Encrypts a message using Hashed ElGamal encryption.
+ *
+ * This function encrypts a given message using the Hashed ElGamal encryption scheme. It generates a ciphertext consisting
+ * of a pad, data, and MAC (Message Authentication Code).
+ *
+ * @param message The message (`sp_int`) to be encrypted.
+ * @param nonce A random nonce (`sp_int`) used for encryption.
+ * @param public_key The recipient's public key (`sp_int`).
+ * @param encryption_seed An encryption seed (`sp_int`) used in the key derivation function.
+ * @param encrypted_message A pointer to the `HashedElGamalCiphertext` structure where the resulting ciphertext will be stored.
+ *
+ * @return 0 on success, 1 on memory allocation failure.
  */
 int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, sp_int *encryption_seed, HashedElGamalCiphertext *encrypted_message) {
     DECL_MP_INT_SIZE(large_prime, 3072);
@@ -538,9 +593,11 @@ int hashed_elgamal_encrypt(sp_int *message, sp_int *nonce, sp_int *public_key, s
 
 /**
  * Decrypt an ElGamal ciphertext using a known ElGamal secret key
+ * @param encrypted_message: struct containing pad, data, and mac
  * @param secret_key: The corresponding ElGamal secret key.
  * @param encryption_seed: Encryption seed (Q) for election.
- * @param plaintext: Decrypted plaintext message.
+ * @param message: Decrypted plaintext message.
+ * @return 0 on success, -1 on failure
  */
 int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *secret_key, sp_int *encryption_seed, sp_int *message) {
     DECL_MP_INT_SIZE(session_key, 256);
@@ -612,12 +669,29 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
 
 
 /**
- * @brief Given an ElGamal keypair and a nonce, generates a proof that the prover knows the secret key without revealing it.
- * @param seckey: The secret key
- * @param pubkey: The public key
- * @param nonce: A random element in [0,Q)
- * @param proof: The Schnorr proof
- * @return 0 on success, -1 on failure
+ * @brief Generates a Schnorr proof to demonstrate knowledge of a secret key without revealing it.
+ *
+ * This function creates a Schnorr proof, which is a cryptographic proof-of-knowledge protocol.
+ * It proves that the prover (the entity possessing the secret key) knows the secret key
+ * corresponding to a given public key, without disclosing the secret key itself.
+ *
+ * The Schnorr proof is generated using the provided secret key, public key, and a nonce (a random number).
+ * The proof consists of a commitment, a challenge, and a response.
+ *
+ * @param seckey A pointer to the secret key (\(x\)), which is a large integer.
+ * @param pubkey A pointer to the public key (\(g^x \mod p\)), which is a large integer.
+ * @param nonce A pointer to the nonce (\(k\)), a random element in the range \([0, Q)\).
+ * @param proof A pointer to the `SchnorrProof` struct where the generated proof will be stored.
+ *              The caller is responsible for allocating memory for the `SchnorrProof` struct.
+ *              The function will allocate memory for the `pubkey`, `commitment`, `challenge`, and `response` fields within the `SchnorrProof` struct.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., memory allocation error).
+ *
+ * @note The function allocates memory for the fields within the `proof` structure.
+ *       It is the caller's responsibility to free this memory when the proof is no longer needed
+ *       to prevent memory leaks.  See `SchnorrProof` documentation for details.
+ *
  */
 static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, SchnorrProof *proof) {
     proof->pubkey = NULL;
@@ -659,10 +733,34 @@ static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, Sch
 
 
 /**
- * @brief Generates a polynomial for sharing election keys
- * @param coefficients:  Number of coefficients of polynomial
- * @param Polynomial used to share election keys. Contains value, commitment, and proof
- * @return 0 on success, -1 on failure
+ * @brief Generates a polynomial for sharing election keys using Shamir's Secret Sharing.
+ *
+ * This function generates a polynomial of a specified degree, where each coefficient
+ * is a secret value.  The polynomial is used to share an election key among multiple
+ * guardians using Shamir's Secret Sharing scheme.  Each guardian receives a share
+ * of the secret key, which is an evaluation of the polynomial at a specific point.
+ * Any subset of guardians above a threshold can reconstruct the original secret key.
+ *
+ * For each coefficient of the polynomial, the function generates a random value,
+ * computes a commitment to that value, and creates a Schnorr proof of knowledge
+ * for the coefficient.
+ *
+ * @param polynomial A pointer to the `ElectionPolynomial` struct where the generated polynomial
+ *                   will be stored.  The caller must allocate memory for the
+ *                   `ElectionPolynomial` struct and set the `num_coefficients` field
+ *                   before calling this function.  This function will allocate memory
+ *                   for the `coefficients` array within the `ElectionPolynomial` struct,
+ *                   as well as for the `value`, `commitment`, and `proof` fields
+ *                   within each `PolynomialCoefficient` struct.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., memory allocation error).
+ *
+ * @note The function allocates memory for the fields within the `polynomial` structure.
+ *       It is the caller's responsibility to free this memory when the polynomial is
+ *       no longer needed to prevent memory leaks. See `ElectionPolynomial` and
+ *       `PolynomialCoefficient` documentation for details.
+ *
  */
 int generate_polynomial(ElectionPolynomial *polynomial) {
     SchnorrProof proof;
@@ -692,7 +790,27 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
 }
 
 
-
+/**
+ * @brief Combines multiple ElGamal public keys into a single aggregate key.
+ *
+ * This function combines the public keys of a guardian and a set of other guardians
+ * into a single aggregate public key. The aggregate key is computed by
+ * multiplying all the individual public keys together modulo a large prime \(p\).
+ *
+ * @param guardian A pointer to the `ElectionKeyPair` struct of the primary guardian.
+ *                 Its public key will be included in the combination.
+ * @param pubkey_map An array of `ElectionKeyPair` structs representing the other guardians
+ *                   whose public keys will be combined.
+ * @param count The number of elements in the `pubkey_map` array.
+ * @param key A pointer to an `sp_int` where the resulting combined public key will be stored.
+ *            The caller must allocate memory for this `sp_int` before calling the function.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., if any of the multiplication operations fail).
+ *
+ * @note The function assumes that all public keys are valid ElGamal public keys
+ *       with respect to the same large prime \(p\).
+ */
 int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *key) {
     DECL_MP_INT_SIZE(large_prime, 3072);
     NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
@@ -712,7 +830,27 @@ int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubk
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
-
+/**
+ * @brief Computes a SHA256 hash of the commitments from multiple guardians.
+ *
+ * This function calculates a SHA256 hash of the commitments made by a primary guardian
+ * and a set of other guardians. The hash serves as a binding
+ * value that commits all guardians to their respective commitments.
+ *
+ * @param guardian A pointer to the `ElectionKeyPair` struct of the primary guardian.
+ *                 The commitments from its polynomial will be included in the hash.
+ * @param pubkey_map An array of `ElectionKeyPair` structs representing the other guardians
+ *                   whose commitments will be included in the hash.
+ * @param count The number of elements in the `pubkey_map` array.
+ * @param commitment A pointer to an `sp_int` where the resulting hash value will be stored.
+ *                   The caller must allocate memory for this `sp_int` before calling the function.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., if SHA256 initialization or update fails, or memory allocation error).
+ *
+ * @note The function concatenates the commitments of all guardians, separated by delimiters,
+ *       before hashing the result.
+ */
 int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *commitment) {
     Sha256 sha256;
     byte* hash_result = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
@@ -749,11 +887,26 @@ int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t cou
 
 
 /**
- * @brief Generates a random element in [0,Q) from an initial element in [0,Q). If you start with the same seed, you'll get exactly the same number
- * @param seed: The seed for the random number
- * @return 0 on success, -1 on failure
+ * @brief Generates a deterministic nonces using SHA256 hashing.
+ *
+ * This function generates a nonces in the range [0, Q),
+ * where Q is a small prime number. The nonce is generated deterministically from an initial
+ * seed value using SHA256 hashing.  If the same seed is used, the same sequence of nonces
+ * will be generated. 
+ *
+ * The function uses a header string "constant-chaum-pedersen-proof|" to ensure that the
+ * generated nonces are specific to a particular context (e.g., a Chaum-Pedersen proof).
+ *
+ * @param seed A pointer to the initial seed value, which is an `sp_int`.
+ * @param nonce A pointer to an `sp_int` where the generated nonce will be stored.
+ *              The caller must allocate memory for this `sp_int` before calling the function.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., if SHA256 initialization or update fails, or memory allocation error).
+ *
+ * @note The function uses the WolfCrypt library for SHA256 hashing.
  */
-int nonces(sp_int* seed, sp_int* nonce) {
+static int nonces(sp_int* seed, sp_int* nonce) {
     DECL_MP_INT_SIZE(small_prime, 256);
     NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(small_prime, 256);
@@ -826,8 +979,31 @@ int nonces(sp_int* seed, sp_int* nonce) {
 }
 
 
-
-int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge) {
+/**
+ * @brief Computes a SHA256 hash to generate a challenge value for a Chaum-Pedersen proof.
+ *
+ * This function computes a SHA256 hash of several input values to generate a challenge
+ * value for a Chaum-Pedersen proof.  The input values include a header, two ElGamal
+ * ciphertext components (alpha and beta), two commitment values (pad and data), and
+ * the message being proven (m).  The hash serves to bind all these values together
+ * in the challenge, ensuring that the proof is sound.
+ *
+ * @param header A pointer to a header value (`sp_int`) that provides context for the hash.
+ *               This is often the election extended base hash.
+ * @param alpha A pointer to the ElGamal ciphertext's alpha component (`sp_int`).
+ * @param beta A pointer to the ElGamal ciphertext's beta component (`sp_int`).
+ * @param pad A pointer to the commitment's pad value (`sp_int`).
+ * @param data A pointer to the commitment's data value (`sp_int`).
+ * @param m A pointer to the message being proven (`sp_int`).
+ * @param challenge A pointer to an `sp_int` where the resulting challenge value will be stored.
+ *                  The caller must allocate memory for this `sp_int` before calling the function.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., if SHA256 initialization or update fails, or memory allocation error).
+ *
+ * @note The function uses the WolfCrypt library for SHA256 hashing.
+ */
+static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_int* data, sp_int* m, sp_int* challenge) {
     Sha256 sha256;
     byte* challenge_bytes = (byte *)malloc(WC_SHA256_DIGEST_SIZE);
     if(challenge_bytes == NULL) {
@@ -862,18 +1038,30 @@ int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_
     return 0;
 }
 
-
-
 /**
- * @brief Produces a proof that a given value corresponds to a specific encryption
- * @param alpha: Message Pad
- * @param beta: Message Data
- * @param secret: The nonce or secret used to derive the value
- * @param m: The value we are trying to prove
- * @param seed: Used to generate other random values here
- * @param hash_header: A value used when generating the challenge, usually the election extended base hash
- * @param proof: The proof that the value corresponds to the encryption
- * @return 0 on success, -1 on failure
+ * @brief Generates a Chaum-Pedersen proof to demonstrate that a ciphertext corresponds to a specific plaintext.
+ *
+ * This function generates a Chaum-Pedersen proof, which is a zero-knowledge proof
+ * that demonstrates that a given ElGamal ciphertext (alpha, beta) encrypts a specific
+ * plaintext value (m).  The proof shows that the prover knows the secret (nonce) used
+ * to create the ciphertext, without revealing the secret itself.
+ *
+ * @param alpha A pointer to the ElGamal ciphertext's alpha component (\(g^r \mod p\)), which is a large integer.
+ * @param beta A pointer to the ElGamal ciphertext's beta component (\(m \cdot y^r \mod p\)), which is a large integer.
+ * @param secret A pointer to the nonce (\(r\)) used to encrypt the message, which is a large integer.
+ * @param m A pointer to the plaintext message (\(m\)), which is a large integer.
+ * @param seed A pointer to a seed value used to generate random values within the proof.
+ * @param hash_header A pointer to a header value used when generating the challenge, typically the election extended base hash.
+ * @param proof A pointer to the `ChaumPedersenProof` struct where the generated proof will be stored.
+ *              The caller is responsible for allocating memory for the `ChaumPedersenProof` struct.
+ *              The function will allocate memory for the `pad`, `data`, `challenge`, and `response` fields within the `ChaumPedersenProof` struct.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., memory allocation error).
+ *
+ * @note The function allocates memory for the fields within the `proof` structure.
+ *       It is the caller's responsibility to free this memory when the proof is no longer needed
+ *       to prevent memory leaks.  See `ChaumPedersenProof` documentation for details.
  */
 static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_int* m, sp_int* seed, sp_int* hash_header, ChaumPedersenProof* proof) {
     proof->pad = NULL;
@@ -925,13 +1113,31 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
 }
 
 /**
- * @brief Compute a partial decryption of an elgamal encryption
- * @param private_key: The secret key used to decrypt the ciphertext
- * @param pad: The pad of the ciphertext
- * @param data: The data of the ciphertext
- * @param base_hash: The base hash of the election
- * @param dec_selection: The decryption selection
- * @return 0 on success, -1 on failure
+ * @brief Computes a partial decryption share of an ElGamal ciphertext for a specific selection.
+ *
+ * This function computes a partial decryption share of an ElGamal ciphertext using a
+ * known ElGamal secret key.  The partial decryption share is computed for a specific
+ * selection within a contest.  The function also generates a Chaum-Pedersen proof
+ * to demonstrate that the decryption share is computed correctly.
+ *
+ * @param privatekey A pointer to the secret key used to decrypt the ciphertext.
+ * @param pad A pointer to the pad (\(g^r \mod p\)) of the ElGamal ciphertext.
+ * @param data A pointer to the data (\(m \cdot y^r \mod p\)) of the ElGamal ciphertext.
+ * @param base_hash A pointer to the base hash of the election.
+ * @param dec_selection A pointer to the `CiphertextDecryptionSelection` struct where the
+ *                      decryption share and proof will be stored.  The caller is
+ *                      responsible for allocating memory for the `CiphertextDecryptionSelection`
+ *                      struct.  The function will allocate memory for the `decryption`
+ *                      field within the `CiphertextDecryptionSelection` struct, as well
+ *                      as for the fields within the `proof` field.
+ *
+ * @return 0 on success.
+ * @return -1 on failure (e.g., memory allocation error).
+ *
+ * @note The function allocates memory for the fields within the `dec_selection` structure.
+ *       It is the caller's responsibility to free this memory when the decryption share
+ *       is no longer needed to prevent memory leaks.  See `CiphertextDecryptionSelection`
+ *       and `ChaumPedersenProof` documentation for details.
  */
 static int compute_decryption_share_for_selection(sp_int* privatekey, sp_int* pad, sp_int* data, sp_int* base_hash , CiphertextDecryptionSelection *dec_selection) {
     dec_selection->decryption = NULL;
@@ -957,6 +1163,21 @@ static int compute_decryption_share_for_selection(sp_int* privatekey, sp_int* pa
     return 0;
 }
 
+/**
+ * @brief Verifies a Chaum-Pedersen proof.
+ *
+ * This function verifies that a given Chaum-Pedersen proof is valid with respect to the provided public key,
+ * challenge, alpha, and message. It performs two checks:
+ * 1.  The equation 𝑔^𝑣𝑖 = 𝑎𝑖𝐾^𝑐𝑖 holds true
+ * 2.  The equation 𝐴^𝑣𝑖 = 𝑏𝑖𝑀𝑖^𝑐𝑖 mod 𝑝 holds true
+ *
+ * @param public_key The public key (`sp_int`) used in the Chaum-Pedersen proof.
+ * @param proof A pointer to the `ChaumPedersenProof` structure containing the proof data.
+ * @param alpha An `sp_int` representing the generator `g` of the group.
+ * @param m An `sp_int` representing the message.
+ *
+ * @return 0 if the proof is valid, otherwise logs an error message and returns a non-zero value.
+ */
 int verify_chaum_pedersen(sp_int* public_key, ChaumPedersenProof* proof, sp_int* alpha, sp_int* m) {
     DECL_MP_INT_SIZE(large_prime, 3072);
     NEW_MP_INT_SIZE(large_prime, 3072, NULL, DYNAMIC_TYPE_BIGINT);
@@ -1008,6 +1229,20 @@ int verify_chaum_pedersen(sp_int* public_key, ChaumPedersenProof* proof, sp_int*
     return 0;
 }
 
+/**
+ * @brief Computes a decryption share for a contest.
+ *
+ * This function computes a decryption share for a given contest based on the guardian's key pair and the contest data.
+ * It allocates memory for the decryption contest and its selections, copies relevant data, and computes the decryption
+ * share for each selection in the contest.
+ *
+ * @param guardian A pointer to the `ElectionKeyPair` structure containing the guardian's key pair.
+ * @param contest A pointer to the `CiphertextTallyContest` structure representing the contest data.
+ * @param base_hash A pointer to the base hash (`sp_int`) used in the decryption process.
+ * @param dec_contest A pointer to the `CiphertextDecryptionContest` structure where the computed decryption share will be stored.
+ *
+ * @return 0 on success, -1 on memory allocation failure.
+ */
 int compute_decryption_share_for_contest(ElectionKeyPair *guardian, CiphertextTallyContest *contest, sp_int* base_hash , CiphertextDecryptionContest *dec_contest) {
     dec_contest->object_id = strdup(contest->object_id);
 

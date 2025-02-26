@@ -228,11 +228,9 @@
 /* when you want to use SINGLE THREAD. Note Default ESP-IDF is FreeRTOS */
 /* #define SINGLE_THREADED */
 
-/* When you don't want to use the old SHA */
-#define NO_SHA //++
-#define NO_OLD_TLS //++
-
-// Turning of more features //++ Reducing library size
+/* Turning off features reducing library size */
+#define NO_SHA
+#define NO_OLD_TLS
 #define NO_DSA
 #define NO_MD4
 #define NO_MD5
@@ -241,6 +239,8 @@
 #define WOLFSSL_SP_NO_256
 #define NO_CRYPT_BENCHMARK
 #define NO_CRYPT_TEST
+#define NO_PSK
+#define NO_TLS
 
 // Hardening Enable TFM Timing Resistant Code
 #define TFM_TIMING_RESISTANT
@@ -578,40 +578,10 @@
 #endif
 
 
-//#define DEBUG_WOLFSSL
-//#define DEBUG_WOLFSSL_VERBOSE
-//#define WOLFSSL_ESP32_CRYPT_DEBUG
-//#define WOLFSSL_ESP32_HW_LOCK_DEBUG
-
-/* Debug options:
-See wolfssl/wolfcrypt/port/Espressif/esp32-crypt.h for details on debug options
-
-#define ESP_VERIFY_MEMBLOCK
-#define DEBUG_WOLFSSL
-#define DEBUG_WOLFSSL_VERBOSE
-#define DEBUG_WOLFSSL_SHA_MUTEX
-#define WOLFSSL_ESP32_CRYPT_DEBUG
-#define WOLFSSL_ESP32_CRYPT_HASH_SHA224_DEBUG
-#define NO_RECOVER_SOFTWARE_CALC
-#define WOLFSSL_TEST_STRAY 1
-#define USE_ESP_DPORT_ACCESS_READ_BUFFER
-#define WOLFSSL_ESP32_HW_LOCK_DEBUG
-#define WOLFSSL_DEBUG_ESP_RSA_MULM_BITS
-#define ESP_DISABLE_HW_TASK_LOCK
-
-See wolfcrypt/benchmark/benchmark.c for debug and other settings:
-
-Turn on benchmark timing debugging (CPU Cycles, RTOS ticks, etc)
-#define DEBUG_WOLFSSL_BENCHMARK_TIMING
-
-Turn on timer debugging (used when CPU cycles not available)
-#define WOLFSSL_BENCHMARK_TIMER_DEBUG
-*/
-
 /* Pause in a loop rather than exit. */
 #define WOLFSSL_ESPIDF_ERROR_PAUSE
 
-#define WOLFSSL_HW_METRICS
+#define NO_HW_MATH_TEST
 
 /* for test.c */
 /* #define HASH_SIZE_LIMIT */
