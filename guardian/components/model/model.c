@@ -144,11 +144,9 @@ int combine_election_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pub
 
     ESP_LOGI("COMBINE_ELECTION_PUBLIC_KEYS", "Joint Key: ");
     sp_copy(jointkey, joint_key->joint_key);
-    print_sp_int(joint_key->joint_key);
 
     ESP_LOGI("COMBINE_ELECTION_PUBLIC_KEYS", "Commitment: ");
     sp_copy(commitment, joint_key->commitment_hash);
-    print_sp_int(joint_key->commitment_hash);
     FREE_MP_INT_SIZE(jointkey, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(commitment, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;

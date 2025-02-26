@@ -5,45 +5,36 @@ uint8_t mac[6] = {0};
 
 int pubkey_count = 0;
 int backup_count = 0;
-//int verification_count = 0;
 int max_guardians = 0;
 int quorum;
 
 ElectionKeyPair guardian;
-
 ElectionKeyPair *pubkey_map;
 ElectionPartialKeyPairBackup *backup_map;
 
-void verify_backups(esp_mqtt_client_handle_t client);
-void generate_backups(esp_mqtt_client_handle_t client);
-void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int data_len);
-void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_len);
-void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_len);
-void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int data_len);
-void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len);
+static void verify_backups(esp_mqtt_client_handle_t client);
+static void generate_backups(esp_mqtt_client_handle_t client);
+static void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int data_len);
+static void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_len);
+static void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_len);
+static void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int data_len);
+static void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len);
 
-void add_key_pair(ElectionKeyPair *key_pair);
-ElectionKeyPair* find_key_pair(uint8_t *guardian_id);
-void delete_key_pair(uint8_t *guardian_id);
+// Helper functions to manage the pubkey and backup maps
+static void add_key_pair(ElectionKeyPair *key_pair);
+static ElectionKeyPair* find_key_pair(uint8_t *guardian_id);
+static void delete_key_pair(uint8_t *guardian_id);
+static void add_backup(ElectionPartialKeyPairBackup *backup);
+static ElectionPartialKeyPairBackup* find_backup(uint8_t *guardian_id);
+static void delete_backup(uint8_t *guardian_id);
 
-void add_backup(ElectionPartialKeyPairBackup *backup);
-ElectionPartialKeyPairBackup* find_backup(uint8_t *guardian_id);
-void delete_backup(uint8_t *guardian_id);
-
-
-void log_error_if_nonzero(const char *message, int error_code)
+// Log an error message if the error code is non-zero
+static void log_error_if_nonzero(const char *message, int error_code)
 {
     if (error_code != 0)
     {
         ESP_LOGE(TAG, "Last error %s: 0x%x", message, error_code);
     }
-}
-
-void log_heap_info() {
-    ESP_LOGI(TAG, "Heap summary:");
-    ESP_LOGI(TAG, "  Free heap size: %d", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-    ESP_LOGI(TAG, "  Minimum free heap size: %d", heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT));
-    ESP_LOGI(TAG, "  Largest free block: %d", heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
 }
 
 
@@ -153,7 +144,8 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
     }
 }
 
-void verify_backups(esp_mqtt_client_handle_t client) {
+// Verify the received backups. If all backups are verified, combine the public keys and publish the joint key.
+static void verify_backups(esp_mqtt_client_handle_t client) {
     bool all_verified = true;
     ElectionPartialKeyVerification verification;
     void *buffer;
@@ -188,7 +180,8 @@ void verify_backups(esp_mqtt_client_handle_t client) {
 
 }
 
-void generate_backups(esp_mqtt_client_handle_t client) {
+// Generate a backup for each received public key and publish it.
+static void generate_backups(esp_mqtt_client_handle_t client) {
     for (int i = 0; i < max_guardians; i++) {
         ElectionKeyPair *sender = &pubkey_map[i];
         ElectionPartialKeyPairBackup backup;
@@ -202,7 +195,8 @@ void generate_backups(esp_mqtt_client_handle_t client) {
     }
 }
 
-void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int data_len)
+// Generate the guardian's key pair and publish the public key.
+static void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
     void *buffer;
     size_t len;
@@ -213,7 +207,8 @@ void publish_public_key(esp_mqtt_client_handle_t client, const char *data, int d
     free(buffer);
 }
 
-void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_len)
+// Deserialise the received public key and add it to the pubkey map. If all public keys have been received, generate backups.
+static void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
     ElectionKeyPair sender;
     deserialize_election_key_pair((uint8_t*)data, data_len, &sender);
@@ -241,7 +236,8 @@ void handle_pubkeys(esp_mqtt_client_handle_t client, const char *data, int data_
     }
 }
 
-void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_len)
+// Deserialise a received backup. If the backup is intended for this guardian, add it to the backup map. If all backups have been received, verify them.
+static void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
     ElectionPartialKeyPairBackup backup;
     deserialize_election_partial_key_backup((uint8_t*)data, data_len, &backup);
@@ -269,12 +265,16 @@ void handle_backups(esp_mqtt_client_handle_t client, const char *data, int data_
     }
 }
 
-void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int data_len)
+// Unimplemented
+static void handle_challenge(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
+    ESP_LOGI(TAG, "Received challenge");
+    ESP_LOGI(TAG, "unimplemented");
     return;
 }
 
-void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len)
+// Deserialise the ciphertext tally and compute the decryption share. Publish the decryption share.
+static void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, int data_len)
 {
     CiphertextTally tally;
     DecryptionShare share;
@@ -289,8 +289,8 @@ void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char *data, 
     free_DecryptionShare(&share);
 }
 
-// Function to add an entry to the key pair map
-void add_key_pair(ElectionKeyPair *key_pair) {
+// Function to add an entry to the pubkey map
+static void add_key_pair(ElectionKeyPair *key_pair) {
     if (pubkey_count < max_guardians) {
         pubkey_map[pubkey_count++] = *key_pair;
     } else {
@@ -298,8 +298,8 @@ void add_key_pair(ElectionKeyPair *key_pair) {
     }
 }
 
-// Function to find an entry in the key pair map
-ElectionKeyPair* find_key_pair(uint8_t *guardian_id) {
+// Function to find an entry in the pubkey map
+static ElectionKeyPair* find_key_pair(uint8_t *guardian_id) {
     for (int i = 0; i < max_guardians; i++) {
         if (memcmp(pubkey_map[i].guardian_id, guardian_id, 6) == 0) {
             return &pubkey_map[i];
@@ -308,8 +308,8 @@ ElectionKeyPair* find_key_pair(uint8_t *guardian_id) {
     return NULL;
 }
 
-// Function to delete an entry from the key pair map
-void delete_key_pair(uint8_t *guardian_id) {
+// Function to delete an entry from the pubkey map
+static void delete_key_pair(uint8_t *guardian_id) {
     ElectionKeyPair *key_pair = find_key_pair(guardian_id);
     if (key_pair != NULL) {
         int index = key_pair - pubkey_map;
@@ -322,8 +322,8 @@ void delete_key_pair(uint8_t *guardian_id) {
     }
 }
 
-// Function to add an entry to the key pair map
-void add_backup(ElectionPartialKeyPairBackup *backup) {
+// Function to add an entry to the backup map
+static void add_backup(ElectionPartialKeyPairBackup *backup) {
     if (backup_count < max_guardians) {
         backup_map[backup_count++] = *backup;
     } else {
@@ -331,7 +331,8 @@ void add_backup(ElectionPartialKeyPairBackup *backup) {
     }
 }
 
-ElectionPartialKeyPairBackup* find_backup(uint8_t *guardian_id) {
+// Function to find an entry in the backup map
+static ElectionPartialKeyPairBackup* find_backup(uint8_t *guardian_id) {
     for (int i = 0; i < max_guardians; i++) {
         if (memcmp(backup_map[i].sender, guardian_id, 6) == 0) {
             return &backup_map[i];
@@ -340,7 +341,8 @@ ElectionPartialKeyPairBackup* find_backup(uint8_t *guardian_id) {
     return NULL;
 }
 
-void delete_backup(uint8_t *guardian_id) {
+// Function to delete an entry from the backup map
+static void delete_backup(uint8_t *guardian_id) {
     ElectionPartialKeyPairBackup *backup = find_backup(guardian_id);
     if (backup != NULL) {
         int index = backup - backup_map;
@@ -353,19 +355,17 @@ void delete_backup(uint8_t *guardian_id) {
     }
 }
 
+/**
+ * @brief Start the MQTT client
+ * 
+ * This function initializes the MQTT client, registers the event handler and starts the client.
+ */
 void mqtt_app_start(void)
 {
     esp_mqtt_client_config_t mqtt_cfg = {
         .broker.address.uri = "mqtt://192.168.12.1:1883",
-        .session.last_will = {
-            .topic = "guardian_status",
-            .qos = 2,
-            .retain = 1,
-            .msg = "Guardian has disconnected",
-        },
     };
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
-    /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
     esp_mqtt_client_start(client);
 

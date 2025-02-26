@@ -39,5 +39,4 @@ void app_main(void)
 
     // Each guardian connect to broker
     mqtt_app_start();
-    //test_hash();
 }

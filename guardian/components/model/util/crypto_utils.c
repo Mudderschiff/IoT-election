@@ -633,8 +633,8 @@ static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, Sch
     INIT_MP_INT_SIZE(proof->challenge, 256);
 
     proof->response = NULL;
-    NEW_MP_INT_SIZE(proof->response, 4096, NULL, DYNAMIC_TYPE_BIGINT);
-    INIT_MP_INT_SIZE(proof->response, 4096);
+    NEW_MP_INT_SIZE(proof->response, 256, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(proof->response, 256);
 
     g_pow_p(nonce, proof->commitment);
     hash(pubkey, proof->commitment, proof->challenge);
@@ -645,9 +645,14 @@ static int make_schnorr_proof(sp_int *seckey, sp_int *pubkey, sp_int *nonce, Sch
     INIT_MP_INT_SIZE(q, 256);
     sp_read_unsigned_bin(q, q_256, sizeof(q_256));
 
-    sp_mul(seckey,proof->challenge,proof->response);
-    sp_addmod(nonce,proof->response,q,proof->response);
+    DECL_MP_INT_SIZE(res_mul, 512);
+    NEW_MP_INT_SIZE(res_mul, 512, NULL, DYNAMIC_TYPE_BIGINT);
+    INIT_MP_INT_SIZE(res_mul, 512);
 
+    sp_mul(seckey,proof->challenge,res_mul);
+    sp_addmod(nonce,res_mul,q,proof->response);
+
+    FREE_MP_INT_SIZE(res_mul, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(q, NULL, DYNAMIC_TYPE_BIGINT);
     return 0;
 }
@@ -871,20 +876,6 @@ int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* pad, sp_
  * @return 0 on success, -1 on failure
  */
 static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_int* m, sp_int* seed, sp_int* hash_header, ChaumPedersenProof* proof) {
-    ESP_LOGI("CHAUM_PEDERSEN", "Generating Chaum Pedersen Proof");
-    ESP_LOGI("CHAUM_PEDERSEN", "alpha");
-    print_sp_int(alpha);
-    ESP_LOGI("CHAUM_PEDERSEN", "beta");
-    print_sp_int(beta);
-    ESP_LOGI("CHAUM_PEDERSEN", "secret");
-    print_sp_int(secret);
-    ESP_LOGI("CHAUM_PEDERSEN", "m");
-    print_sp_int(m);
-    ESP_LOGI("CHAUM_PEDERSEN", "seed");
-    print_sp_int(seed);
-    ESP_LOGI("CHAUM_PEDERSEN", "hash header");
-    print_sp_int(hash_header);
-    
     proof->pad = NULL;
     NEW_MP_INT_SIZE(proof->pad, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(proof->pad, 3072);
@@ -907,18 +898,10 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
     NEW_MP_INT_SIZE(u, 256, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(u, 256);
     nonces(seed, u);
-    ESP_LOGI("CHAUM_PEDERSEN", "u");
-    print_sp_int(u);
     g_pow_p(u, proof->pad);
-    ESP_LOGI("CHAUM_PEDERSEN", "a");
-    print_sp_int(proof->pad);
     exptmod(alpha, u, large_prime, proof->data);
-    ESP_LOGI("CHAUM_PEDERSEN", "b");
-    print_sp_int(proof->data);
 
     hash_challenge(hash_header, alpha, beta, proof->pad, proof->data, m, proof->challenge);
-    ESP_LOGI("CHAUM_PEDERSEN", "c");
-    print_sp_int(proof->challenge);
 
     DECL_MP_INT_SIZE(small_prime, 256);
     NEW_MP_INT_SIZE(small_prime, 256, NULL, DYNAMIC_TYPE_BIGINT);
@@ -931,19 +914,8 @@ static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_i
 
     // a + bc ^ q = u + c * secret ^ q
     sp_mul(secret, proof->challenge, res_mul);
-    ESP_LOGI("CHAUM_PEDERSEN", "CS MUL");
-    print_sp_int(res_mul);
     sp_addmod(u, res_mul, small_prime, proof->response);
-    ESP_LOGI("CHAUM_PEDERSEN", "response");
-    print_sp_int(proof->response);
 
-   
-    ESP_LOGI("CHAUM_PEDERSEN", "pad");
-    print_sp_int(proof->challenge);
-    ESP_LOGI("CHAUM_PEDERSEN", "pad");
-    print_sp_int(proof->pad);
-    ESP_LOGI("CHAUM_PEDERSEN", "data");
-    print_sp_int(proof->data);
 
     FREE_MP_INT_SIZE(large_prime, NULL, DYNAMIC_TYPE_BIGINT);
     FREE_MP_INT_SIZE(u, NULL, DYNAMIC_TYPE_BIGINT);
