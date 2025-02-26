@@ -38,6 +38,6 @@ void app_main(void)
     //xTaskCreatePinnedToCore(guiTask, "gui", 4096*2, NULL, 0, NULL, 1);
 
     // Each guardian connect to broker
-    //mqtt_app_start();
-    test_hash();
+    mqtt_app_start();
+    //test_hash();
 }
