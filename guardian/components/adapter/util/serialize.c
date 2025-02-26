@@ -1,14 +1,22 @@
 #include "serialize.h"
 
 
-
+/**
+ * @brief Serialize an ElectionKeyPair struct into a byte array
+ * 
+ * This function takes an ElectionKeyPair struct and serializes it into a byte array
+ * using Protocol Buffers. The serialized data includes the guardian ID, public key,
+ * and the election polynomial with its coefficients and Schnorr proofs.
+ *
+ * @param key_pair Pointer to the ElectionKeyPair object to serialize.
+ * @param len Pointer to an unsigned integer that will store the length of the serialized byte array.
+ * @return A pointer to the serialized byte array. The caller is responsible for freeing the allocated memory.
+ */
 uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
     ElectionKeyPairProto proto = ELECTION_KEY_PAIR_PROTO__INIT;
     ElectionPolynomialProto polynomial = ELECTION_POLYNOMIAL_PROTO__INIT;
     CoefficientProto **coeff;
     
-    //CoefficientProto* coeff = (CoefficientProto*)malloc(sizeof(CoefficientProto));
-
     proto.guardian_id.len = sizeof(key_pair->guardian_id);
     proto.guardian_id.data = key_pair->guardian_id;
     proto.public_key.len = sp_unsigned_bin_size(key_pair->public_key);
@@ -51,7 +59,6 @@ uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
     polynomial.num_coefficients = key_pair->polynomial.num_coefficients;
 
     polynomial.coefficients = coeff;
-
     proto.polynomial = &polynomial;
 
     *len = election_key_pair_proto__get_packed_size(&proto);
@@ -60,7 +67,17 @@ uint8_t* serialize_election_key_pair(ElectionKeyPair* key_pair, unsigned* len) {
     return buffer;
 }
 
-
+/**
+ * @brief Deserializes a SchnorrProofProto object into a SchnorrProof struct.
+ *
+ * This function takes a SchnorrProofProto object (protobuf representation) and populates
+ * a SchnorrProof struct with the deserialized data. It allocates memory for the big integer
+ * fields within the SchnorrProof struct.
+ *
+ * @param proto Pointer to the SchnorrProofProto object to deserialize.
+ * @param proof Pointer to the SchnorrProof struct to populate with the deserialized data.
+ * @return 0 on success, or an error code on failure.
+ */
 static int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* proof) {
     int bit_len;
     bit_len = (proto->pubkey.len) * 8;
@@ -101,7 +118,17 @@ static int deserialize_schnorr_proof(SchnorrProofProto* proto, SchnorrProof* pro
     return 0;
 }
 
-
+/**
+ * @brief Deserializes an ElectionPolynomialProto object into an ElectionPolynomial struct.
+ *
+ * This function takes an ElectionPolynomialProto object (protobuf representation) and populates
+ * an ElectionPolynomial struct with the deserialized data. It allocates memory for the coefficients
+ * and their associated data, including Schnorr proofs.
+ *
+ * @param poly Pointer to the ElectionPolynomialProto object to deserialize.
+ * @param polynomial Pointer to the ElectionPolynomial struct to populate with the deserialized data.
+ * @return 0 on success, or an error code on failure.
+ */
 static int deserialize_election_polynomial(ElectionPolynomialProto* poly, ElectionPolynomial* polynomial) {
     polynomial->num_coefficients = poly->num_coefficients;
     int bit_len;
@@ -129,7 +156,18 @@ static int deserialize_election_polynomial(ElectionPolynomialProto* poly, Electi
     }
     return 0;
 }
-
+/**
+ * @brief Deserializes a byte array into an ElectionKeyPair struct.
+ *
+ * This function takes a byte array and its length, and deserializes it into an
+ * ElectionKeyPair struct using Protocol Buffers. It unpacks the data, copies the
+ * guardian ID, deserializes the public key and the election polynomial.
+ *
+ * @param buffer Pointer to the byte array containing the serialized ElectionKeyPair data.
+ * @param len The length of the byte array.
+ * @param key_pair Pointer to the ElectionKeyPair struct to populate with the deserialized data.
+ * @return 0 on success, or 1 on failure.
+ */
 int deserialize_election_key_pair(uint8_t* buffer, unsigned len, ElectionKeyPair* key_pair) {
     ElectionKeyPairProto* proto = election_key_pair_proto__unpack(NULL, len, buffer);
     if(proto == NULL) {
@@ -157,7 +195,17 @@ int deserialize_election_key_pair(uint8_t* buffer, unsigned len, ElectionKeyPair
     return 0;
 }
 
-
+/**
+ * @brief Serializes an ElectionPartialKeyVerification object into a byte array.
+ *
+ * This function serializes an ElectionPartialKeyVerification struct into a byte array
+ * using Protocol Buffers. The serialized data includes the sender, receiver, verifier,
+ * and the verification status.
+ *
+ * @param verification Pointer to the ElectionPartialKeyVerification object to serialize.
+ * @param len Pointer to an unsigned integer that will store the length of the serialized byte array.
+ * @return A pointer to the serialized byte array. The caller is responsible for freeing the allocated memory.
+ */
 uint8_t* serialize_election_partial_key_verification(ElectionPartialKeyVerification* verification, unsigned* len) {
     ElectionPartialKeyVerificationProto proto = ELECTION_PARTIAL_KEY_VERIFICATION_PROTO__INIT;
     proto.sender.len = sizeof(verification->sender);
@@ -172,7 +220,18 @@ uint8_t* serialize_election_partial_key_verification(ElectionPartialKeyVerificat
     election_partial_key_verification_proto__pack(&proto, buffer);
     return buffer;
 }
-
+/**
+ * @brief Deserializes a byte array into an ElectionPartialKeyVerification struct.
+ *
+ * This function takes a byte array and its length, and deserializes it into an
+ * ElectionPartialKeyVerification struct using Protocol Buffers. It unpacks the data and
+ * copies the sender, receiver, verifier, and the verification status.
+ *
+ * @param buffer Pointer to the byte array containing the serialized ElectionPartialKeyVerification data.
+ * @param len The length of the byte array.
+ * @param verification Pointer to the ElectionPartialKeyVerification struct to populate with the deserialized data.
+ * @return 0 on success, or 1 on failure.
+ */
 int deserialize_election_partial_key_verification(uint8_t* buffer, unsigned len, ElectionPartialKeyVerification* verification) {
     ElectionPartialKeyVerificationProto* proto = election_partial_key_verification_proto__unpack(NULL, len, buffer);
     if(proto == NULL) {
@@ -187,7 +246,17 @@ int deserialize_election_partial_key_verification(uint8_t* buffer, unsigned len,
     return 0;
 }
 
-
+/**
+ * @brief Serializes an ElectionPartialKeyPairBackup object into a byte array.
+ *
+ * This function serializes an ElectionPartialKeyPairBackup struct into a byte array
+ * using Protocol Buffers. The serialized data includes the sender, receiver, and the
+ * encrypted coordinate (HashedElGamalCiphertext).
+ *
+ * @param backup Pointer to the ElectionPartialKeyPairBackup object to serialize.
+ * @param len Pointer to an unsigned integer that will store the length of the serialized byte array.
+ * @return A pointer to the serialized byte array. The caller is responsible for freeing the allocated memory.
+ */
 uint8_t* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* backup, unsigned* len) {
     ElectionPartialKeyPairBackupProto proto = ELECTION_PARTIAL_KEY_PAIR_BACKUP_PROTO__INIT;
     proto.sender.len = sizeof(backup->sender);
@@ -213,7 +282,18 @@ uint8_t* serialize_election_partial_key_backup(ElectionPartialKeyPairBackup* bac
     return buffer;
 }
 
-
+/**
+ * @brief Deserializes a byte array into an ElectionPartialKeyPairBackup struct.
+ *
+ * This function takes a byte array and its length, and deserializes it into an
+ * ElectionPartialKeyPairBackup struct using Protocol Buffers. It unpacks the data and
+ * copies the sender, receiver, and the encrypted coordinate (HashedElGamalCiphertext).
+ *
+ * @param buffer Pointer to the byte array containing the serialized ElectionPartialKeyPairBackup data.
+ * @param len The length of the byte array.
+ * @param backup Pointer to the ElectionPartialKeyPairBackup struct to populate with the deserialized data.
+ * @return 0 on success, or 1 on failure.
+ */
 int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, ElectionPartialKeyPairBackup* backup) {
     ElectionPartialKeyPairBackupProto* msg = election_partial_key_pair_backup_proto__unpack(NULL, len, buffer);
     HashedElGamalCiphertextProto* hash = msg->encrypted_coordinate;
@@ -256,7 +336,18 @@ int deserialize_election_partial_key_backup(uint8_t* buffer, unsigned len, Elect
 }
 
 
-
+/**
+ * @brief Deserializes a byte array into a CiphertextTally struct.
+ *
+ * This function takes a byte array and its length, and deserializes it into a
+ * CiphertextTally struct using Protocol Buffers. It unpacks the data and populates
+ * the tally object with contest and selection information.
+ *
+ * @param buffer Pointer to the byte array containing the serialized CiphertextTally data.
+ * @param len The length of the byte array.
+ * @param ciphertally Pointer to the CiphertextTally struct to populate with the deserialized data.
+ * @return 0 on success, or -1 on failure.
+ */
 int deserialize_ciphertext_tally(uint8_t *buffer, unsigned len, CiphertextTally* ciphertally) {
     CiphertextTallyProto* tally = ciphertext_tally_proto__unpack(NULL, len, buffer);
     if (tally == NULL) {
@@ -292,15 +383,21 @@ int deserialize_ciphertext_tally(uint8_t *buffer, unsigned len, CiphertextTally*
         }
     
     }
-    
-
     ciphertext_tally_proto__free_unpacked(tally, NULL);
     return 0;
 }
 
-
-
-
+/**
+ * @brief Serializes a DecryptionShare object into a byte array.
+ *
+ * This function serializes a DecryptionShare struct into a byte array using Protocol Buffers.
+ * It includes information about the guardian, contests, and selections, along with their
+ * corresponding decryption proofs.
+ *
+ * @param share Pointer to the DecryptionShare object to serialize.
+ * @param len Pointer to an unsigned integer that will store the length of the serialized byte array.
+ * @return A pointer to the serialized byte array. The caller is responsible for freeing the allocated memory.
+ */
 uint8_t* serialize_DecryptionShare(DecryptionShare* share, unsigned* len) {
     DecryptionShareProto proto = DECRYPTION_SHARE_PROTO__INIT;
     CiphertextDecryptionContestProto** contests;
@@ -316,7 +413,6 @@ uint8_t* serialize_DecryptionShare(DecryptionShare* share, unsigned* len) {
     proto.n_contests = share->num_contest;
 
     contests = (CiphertextDecryptionContestProto**)malloc(sizeof(CiphertextDecryptionContestProto*) * share->num_contest);
-
     
     for(int i = 0; i < share->num_contest; i++) {
         contests[i] = (CiphertextDecryptionContestProto*)malloc(sizeof(CiphertextDecryptionContestProto));
@@ -364,7 +460,6 @@ uint8_t* serialize_DecryptionShare(DecryptionShare* share, unsigned* len) {
         contests[i]->selections = selections;
     }
     proto.contests = contests;
-
     
     *len = decryption_share_proto__get_packed_size(&proto);
     uint8_t* buffer = (uint8_t *)calloc(*len, sizeof(char));

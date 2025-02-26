@@ -1,6 +1,5 @@
 #include "model.h"
 #include "adapter.h"
-#include "view.h"
 #include "serialize.h"
 #include "freertos/task.h"
 #include "freertos/FreeRTOS.h"
