@@ -1063,7 +1063,7 @@ static int hash_challenge(sp_int* header, sp_int* alpha, sp_int* beta, sp_int* p
  *       It is the caller's responsibility to free this memory when the proof is no longer needed
  *       to prevent memory leaks.  See `ChaumPedersenProof` documentation for details.
  */
-static int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_int* m, sp_int* seed, sp_int* hash_header, ChaumPedersenProof* proof) {
+int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_int* m, sp_int* seed, sp_int* hash_header, ChaumPedersenProof* proof) {
     proof->pad = NULL;
     NEW_MP_INT_SIZE(proof->pad, 3072, NULL, DYNAMIC_TYPE_BIGINT);
     INIT_MP_INT_SIZE(proof->pad, 3072);

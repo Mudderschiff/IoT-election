@@ -38,6 +38,8 @@ static void log_error_if_nonzero(const char *message, int error_code)
 }
 
 
+
+
 /*
  * @brief Event handler registered to receive MQTT events
  *
@@ -279,6 +281,7 @@ static void handle_ciphertext_tally(esp_mqtt_client_handle_t client, const char 
     CiphertextTally tally;
     DecryptionShare share;
     deserialize_ciphertext_tally((uint8_t*)data, data_len, &tally);
+    //perform_measurement(&guardian, &tally);
     compute_decryption_share(&guardian, &tally, &share);
     free_CiphertextTally(&tally);
     void *buffer;

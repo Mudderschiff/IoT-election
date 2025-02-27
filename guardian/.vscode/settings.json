@@ -20,7 +20,8 @@
         "compare": "c",
         "cmath": "c",
         "initializer_list": "c",
-        "chrono": "c"
+        "chrono": "c",
+        "test_performance.h": "c"
     },
     "idf.flashType": "UART",
     "idf.port": "/dev/ttyUSB0"

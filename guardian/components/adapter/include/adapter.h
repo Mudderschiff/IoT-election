@@ -26,6 +26,7 @@
 #include "mqtt_client.h"
 #include "esp_mac.h"
 #include "serialize.h"
+#include "test_decrypt.h"
 
 
 void mqtt_app_start(void);

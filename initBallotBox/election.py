@@ -321,6 +321,7 @@ def decrypt_tally()	-> None:
 	for selection in result.selections.values():
 		tally[selection.object_id] = selection.tally
 	print("Tally Result: ", tally)
+	mqttc.publish("finished", "", 0, False)
 
 
 

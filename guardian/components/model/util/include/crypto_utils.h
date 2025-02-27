@@ -130,6 +130,7 @@ int generate_polynomial(ElectionPolynomial *polynomial);
 int hash(sp_int *a, sp_int *b, sp_int *result);
 int hash_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *commitment);
 int rand_q(sp_int *result);
+int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_int* m, sp_int* seed, sp_int* hash_header, ChaumPedersenProof* proof);
 
 void print_sp_int(sp_int *num);
 void print_byte_array(const byte *array, int size);
