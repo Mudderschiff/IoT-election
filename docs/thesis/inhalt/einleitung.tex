@@ -1,21 +1,62 @@
 \chapter{Introduction}
-The \ac{IoT} refers to a network of interconnected devices, objects, and systems embedded with sensors, software, and other technologies to collect and exchange data. These devices, ranging from smart appliances to industrial machines, enable communication and automation across various sectors \cite[1]{combinatorial}. However, the sharing of sensitive data raises significant concerns about the confidentiality and integrity of information in \ac{IoT} security. Additionally, the \ac{IoT} environment is characterized by limited resources, diverse standards, and network vulnerabilities, posing challenges for privacy during data aggregation and transport encryption \cite[1]{smpc}.
+The \ac{IoT} refers to a network of interconnected devices, objects, and systems embedded with sensors, software, and other technologies to collect and exchange data. These devices, ranging from smart appliances to industrial machines, enable communication and automation across various sectors \cite[1]{combinatorial}. However, the sharing of sensitive data in \ac{IoT} systems raises critical concerns about confidentiality and integrity, particularly due to limited computational resources, diverse standards, and network vulnerabilities \cite[1]{smpc}.
 
-Data aggregation involves gathering data from multiple sources and presenting it in a summarized format. This process is crucial, for example, during data analysis but raises privacy concerns, as many systems handle sensitive data. Ensuring the privacy of aggregated data is therefore a primary concern \cite[2]{ppda-fog}. In smart metering systems, \ac{PPDA} is a leading solution for securing consumer data by aggregating smart meter data at the gateway, preventing attackers from identifying individual users information. While various security techniques have been developed, \ac{PPDA} is considered more convenient. Many data aggregation schemes use cryptographic techniques, such as homomorphic encryption and digital signatures, to encrypt consumers energy consumption data and send the ciphertext through a trusted gateway to the central distribution system \cite[113-114]{smart-meter}. Most \ac{PPDA} solutions rely on computationally intensive homomorphic encryption, making them unsuitable for resource constrained \ac{IoT} systems.
+Data aggregation-the process of gathering and summarizing information from multiple sources-is crucial for \ac{IoT} data analysis but introduces privacy risks. For instance, in smart metering systems, \ac{PPDA} is a leading solution for securing consumer data by securely aggregating meter readings at the gateways, preventing attackers from identifying individual user profiles \cite[2]{ppda-fog}. While various security techniques have been developed, \ac{PPDA} is considered more convenient. Many data aggregation schemes use cryptographic techniques, such as homomorphic encryption, to encrypt energy consumption data, their computationally intensive often renders them impractical for resource-constrained \ac{IoT} devices \cite[113-114]{smart-meter}. \ac{PPDA} techniques also apply to other domains like electronic voting. Verifiable voting systems, for example, use homomorphic encryption to tally ballots while preserving voter anonymity. This method breaks the link between individual voters and their votes, keeping them secret \cite[53]{stuve-study}. However, centralised decryption by a single tallier risk exposing individual votes. The tallier who owns the decryption key can decrypt all individual votes and learn how each voter has voted. To mitigate this, threshold cryptographic-a subfield of \ac{MPC}-distributes decryption keys among multiple talliers, requiring collaboration among the parties in order to decrypt the results \cite[40]{stuve-study}. While threshold schemes enhance security, their reliance on synchronized interactions introduce communication bottlenecks \cite[45]{stuve-study}. Verifiability and accountability are equilly critical in \ac{PPDA} systems. Verifiability ensures the correctness of aggregated results (e.g., election outcomes) \cite[4]{stuve-study}, while accountability enables precise identification of error sources \cite[10, 27]{stuve-study}. \ac{ZK} proofs-a foundational cryptographic tool- allow parties to validate computational steps without revealing sensitive data \cite[13]{stuve-study}, though they incur additional overhead. 
 
-\ac{PPDA} techniques can also be found in voting systems. For example, many verifiable voting sytems use homomorphic encryption to tally ballots in a privacy-preserving manner. This method breaks the link between individual voters and their votes, keeping them secret \cite[53]{stuve-study}. However, the tallier who owns the secret key can decrypt all individual votes and thus learns how each individual voter has voted. To prevent, this Threshold secret sharing can be used to distribute the decryption key among multiple talliers, requiring a certain number of them to collaborate to decrypt a ciphertext \cite[40]{stuve-study}. Threshold cryptographic is an area of \ac{MPC}. \ac{MPC} enables a group of parties who do not necessarily trust each other to perform operations on their private data without revealing any information about their data \cite[2]{mpc-ing}. With threshold secret sharing the talliers setup and tallying phase includes more involved interactions and these interactions include blocking steps impacting the communication efficiency \cite[45]{stuve-study}.
+\section{Research questions}
+The cryptographic building blocks of \ac{E2E} voting systems, such as homomorphic encryption and \ac{ZK} proofs, threshold schemes enhance security but introduce communication and computation overhead. This thesis evaluates the implementation challenges and performance characteristics of \ac{E2E} verifiable voting systems in resource-constrained \ac{IoT} environments, focusing on the ElectionGuard 1.0 specification deployed on ESP32 microcontrollers:
 
-In order to ensure the voters that the final election result is correct after the \ac{PPDA}. The election result must be verifiable \cite[4]{stuve-study}. A stronger form of verifiability is accountability, which enables one to identify the responsible component (or at least limit the possible sources of error) in the event of a detected error \cite[10. 27]{stuve-study}. A important cryptographic building block are Zero-knowledge proofs which allow a party to prove that it performed a certain computational step correctly, without having to reveal any further information \cite[13]{stuve-study}. Zero-knowlege proofs add additional computation and communication overhead to the system.
+\begin{enumerate}
+    \item \textbf{Implementability:} Can the ElectionGuard 1.0 specification be adapted to operate reliably on IoT devices with:
+    \begin{itemize}
+        \item 520 KB RAM (ESP32-WROOM-32 constraints)
+        \item Limited cryptographic acceleration
+        \item Intermittent network connectivity
+    \end{itemize}
+    \item \textbf{Protocol Suitability:} Which communication protocol optimizes the trade-off between:
+    \begin{itemize}
+        \item Feasibility
+        \item Latency
+        \item Functionality
+        \item Bandwidth
+    \end{itemize}
+    in multi-device workflows?
+\end{enumerate}
 
+\section{Outline}
+The thesis is structured as follows:
+\begin{itemize}
+    \item \textbf{Chapter 2: Background} - Presents cryptographic building blocks, ElectionGuard, and the ESP32 microcontroller.
+    
+    \item \textbf{Chapter 3: IoT Voting System Implementation} - Details the ESP32-based experimental setup, including:
+    \begin{itemize}
+        \item Hardware/software Design
+        \item Computation
+        \item Communication
+    \end{itemize}
+    Empirical results for network latency and computation performance are analyzed.
+
+    \item \textbf{Chapter 4: Evaluation \& Discussion} - Compares the results and discusses:
+    \begin{itemize}
+        \item Recommendations
+    \end{itemize}
+\end{itemize}
 
 
 \begin{comment}
+Implementability (Section 3.5.1) captures the effort required to implement a mechanism. 
+There are various constraints (e.g., required skills, limited resources, and the complexity of 
 
-Traditional cryptographic algorithms encounter challenges
-when applied to IoT scenarios due to inherent resource limitations
-such as power constraints, limited battery capacity, and the need for
-real-time execution \cite[1]{smpc}.
 
+Requires person or group implementing the voting system to have skills in addition to a "standard" background of software engineer, that are required to understand the particular algorithm or to implement it corretly.
+Example skills include cryptography, parallelism, secure hardware
+
+
+while efficiency reflects the computational and communication
+costs of running a voting system using that mechanism
+\cite[31]{stuve-study}
+
+The practicality of a voting system ensures that it can be implemented correctly in practive and that the resultin implementation is efficient enough for the intended election. 
 
 dentification of key methods: Based on an extensive market and literature analysis, we have
 selected eight key methods for end-to-end verifiable online voting that we will study in more
@@ -32,9 +73,7 @@ separate audit devices or applications, while others use human-readable codes.
 \cite[11]{stuve-study}
 
 
-while efficiency reflects the computational and communication
-costs of running a voting system using that mechanism
-\cite[31]{stuve-study}
+
 
 
 \end{comment}
@@ -43,39 +82,9 @@ costs of running a voting system using that mechanism
 
 
 
-
-\section{Research questions}
-This research aims to contribute to the literature by gaining insight into the practical application of \ac{E2E} verifiable voting system using threshold secret sharing within the \ac{IoT} environment.
-\begin{enumerate}
-    \item What communication protocols are most suitable for inter-guardian communication in the ElectionGuard implementation on ESP32, considering factors like range, bandwidth, and security?
-    \item Can communication efficiency be improved by optimizing message formats?
-\end{enumerate}
-
 \begin{comment}
 
 
-The field of SMPC has flourished with the rise of cloud computing
-and data-sharing in IoT environments. However, the literature on
-the practical application of SMPC protocols on resource-constrained
-devices is lacking. Prior research has mostly been focused on devel-
-oping secure protocols and testing them in virtual environments,
-rather than on devices like an Arduino. Therefore, this research aims
-to contribute to the literature by gaining insights into the practical
-\end{comment}
-
-
-\section{Überblick}
-Der Autor führt einen potentiellen Leser durch die Arbeit und beschreibt kurz, was den Leser in den folgenden Kapiteln erwartet.
-
-
-
-\begin{comment}
-
-    Our study is organized as follows. In Chapter 2, we present the necessary background in
-online voting and cryptography to follow our study. In Chapter 3, we introduce our four evaluation
-criteria. In Chapter 4, the main work of our study, we describe and evaluate the eight different
-methods we selected. In Chapter 5, we summarize and discuss our results.
-    
 Voter-perceived latency certainly needs to be considered, particularly if the voting device has a
 slow CPU. Luckily, beyond the optimizations discussed above, there are a variety of other options
 to hide this latency. For example, we also enable a precomputation approach since most of the
@@ -83,7 +92,7 @@ computation for encrypting selections and generating the ZK proofs is independen
 selections.  \cite[23]{eg-paper}
 
 
-The practicality of a voting system ensures that it can be implemented correctly in practive and that the resultin implementation is efficient enough for the intended election. 
+
 
 
 \subsection{Usability}
@@ -109,8 +118,7 @@ serialization
 \cite[10-11]{onlinee-2e-study}:
 
 
-Requires person or group implementing the voting system to have skills in addition to a "standard" background of software engineer, that are required to understand the particular algorithm or to implement it corretly.
-Example skills include cryptography, parallelism, secure hardware
+
 
 Sources of randomness in a constrained environment
 multiple interacting devices
@@ -121,8 +129,7 @@ The number of agents involved in the mechanism, as well as the pattern of commun
 
 
 
-Implementability (Section 3.5.1) captures the effort required to implement a mechanism. 
-There are various constraints (e.g., required skills, limited resources, and the complexity of 
+
 
 Implementability
 

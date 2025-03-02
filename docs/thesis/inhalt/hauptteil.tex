@@ -1,222 +1,152 @@
-\chapter{Implementation of an IoT based Electronic Voting Machine}
+\chapter{IoT Voting System Implementation}
+\section{Hardware Setup}
+The experimental setup comprises the following components:
+\begin{itemize}
+    \item \textbf{Tallier Node:} Sony Vaio E Series laptop (Intel Core i5-2450M, 8 GB DDR3 RAM) running Antix Linux 23.1, serving three critical roles:
+    \begin{itemize}
+        \item Wi-Fi Access Point (using hostapd v2.9)
+        \item MQTT Broker (using Eclipse Mosquitto v2.0.20)
+        \item Election Tallier
+    \end{itemize}
+    
+    \item \textbf{Guardian Nodes:} 2× NodeMCU ESP32 boards (ESP32-WROOM-32 modules) with:
+    \begin{itemize}
+        \item 240 MHz dual-core Xtensa LX6 CPU
+        \item 520 KB SRAM, 4 MB flash
+        \item Integrated 802.11 b/g/n Wi-Fi
+    \end{itemize}
+\end{itemize}
 
-\section{Hardware and software setup}
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{|l|c|p{5cm}|}
-        \hline
-        \textbf{Device} & \textbf{Number} & \textbf{Notes} \\
-        \hline
-        ESP32 & 2 & NodeMCU Dev. Board \\
-        \hline
-        Laptop & 1 & Sony Vaio VPCEH3G1E \\
-        \hline
-    \end{tabular}
-    \caption{Hardware devices}\label{tab:hardware-components}
-\end{table}
+\section{Election Setup}
+The Guardian nodes are responsible for distributing trust in the encryption and decryption processess managed by the Tallier. Their responsibilities are divided into two main phases: the key generation ceremony, and the decryption process.
 
-\begin{figure}
-	\centering
-	\includegraphics[scale=.5]{abbildungen/Diagramme/components.png}
-	\caption{Software components for the Guardian Prototype}\label{Fig:software-components} 
-\end{figure}
-
-The hardware configuration is presented in Table \ref{tab:hardware-components}, providing a detailed account of the devices involved in the experimental setup. The laptop and the ESP32 devices are connected via wi-fi 
-
-
-The NodeMCU ESP32 development board serves as the main controller, while the LCD display module is used to present information to the user. The button module allows user interaction, and the jumper wires are used to connect the components. The breadboard is used to build the circuits. 
-
-Figure \ref{Fig:software-components} depicts the software components used in the Guardian Prototype. The software components model contains the business logic, the adapter component includes the communication logic, and the view component is responsible for the user interface.
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=.7]{abbildungen/Diagramme/python-classes.png}
-	\caption{Python Classes}\label{Fig:python-class} 
-\end{figure}
-
-The model component implements the ElectionKeyPair and ElectionPartialKeyBackup classes from the python reference implementation as seen in figure as c structs \ref{Fig:python-class} the c structs can be found in Appendix \ref{lst:structs} 
-
-. These classes are based from the python classes as seen in Figure \ref{Fig:python-class}. 
-
-
-
-
-The hardware configuration is presented in Table \ref{tab:basic-component-list}, providing a detailed account of the devices involved in the experimental setup. Table \ref{tab:software} contains the specific software tools and applications pivotal to this research.
-
-
-
-\subsection{Algorithms}
-
-
-\begin{comment}
-For considering the communication scope, we reviewed
-the current state-of-art literature to identify the IoT
-communication types based on environments running IoT
-applications.
-Device-to-Device (D2D) where communication is
-provided between two nodes or devices directly.
-Device-to-Device (D2D) where communication is
-provided between two nodes or devices directly.
-Device-to-Gateway (D2G) where communication is
-provided through a gateway that resides in close
-proximity to the edge of the network while interacting
-with IoT devices. \cite[6]{protocols}
-
-    There are a number of MQTT model implementations
-including Mosquitto, eMQTT, HiveMQ, Moquette, among
-many others. \cite[10]{protocols}
-
-
-
-As shown in Table \ref{tab:basic-component-list}, the hardware components used in our prototype include a ESP32 development board, an LCD display module, jumper wires, breadboard and a module with 2 Buttons. The connectivity of these components are shown in the schematic in Figure \ref{Fig:schematic}. The NodeMCU ESP32 development board is used as the Main Controller. The LCD display module is used to display information to the user. The button module is used to interact with the user. The jumper wires are used to connect the components. The breadboard is used to build the circuits.
-
-\subsection{NodeMCU ESP32 Development Board}
-The NodeMCU ESP32 development board is equipped with the ESP32-WROOM-32 module. 
-
-\subsection{1,8" LCD Display Module}
-The 1,8" LCD Display Module has a resolution of 128x160 Pixels and is equipped with a ST7735R Display Driver.  The module also contains a microSD Slot which won't be used in this project \cite[2]{lcd}.
-
-\subsection{Button Module}
-The Button Module is an integrated circuit that features 2 buttons and integrated pull-up resistors. \cite[1]{button-ds}
-
-\section{Python Client}
-Our python client imports the python package ElectionGuard \cite{python-reference}. The ElectionGuard Python package is a reference implementation of the ElectionGuard 1.0 specification. It covers the entire suite of functionality required to implement an end-to-end verifiable election as part of a voting system \cite{eg-docs}. 
-
-
-
-In the proposed voting system the python client will act as the administrator, the ballot box and the encryption device of the election. Administrating the election requires loading and semantically verifiying the Election manifest before the election.
-
-
-
-
-
-Before the election the python client load the Election Manifest for our election and semantically checks the data format required to conduct an ElectionGuard Election. 
-
-
-
-
-The python client loads the manifest file used for our election. In ElectionGuard an election manifest has to be semantically checked against the data format required to conduct an ElectionGuard Election. 
-
-
-The python client then generates the election keys and the election context. The election keys are used to encrypt the ballots and the election context is used to verify the election. The python client then encrypts the ballots and generates the proofs of the encryption. The encrypted ballots and the proofs are then sent to the ESP32. The ESP32 decrypts the ballots and verifies the proofs. The ESP32 then generates the proofs of the decryption and sends them back to the python client. The python client then verifies the proofs of the decryption and generates the proofs of the election. The proofs of the election are then sent to the ESP32. The ESP32 verifies the proofs of the election and sends the results back to the python client. The python client then verifies the results and outputs the final results of the election.
-
-The tasks of the python client can be divided into three stages pre-election, intra-election and post-election.
-
-
-
-
-
-
-
-The python client loads the manifest file used for our election. In ElectionGuard an election manifest has to be semantically checked against the data fromat required to conduct an ElectionGuard Election.
-
-
-
-Espressif IoT Development Framework (ESP-IDF) is a software development framework intended for the development of Internet-of-Things (IoT) applications for the ESP32 board \cite{esp-prog}. ESP-IDF consists of components written specifically for ESP-IDF as well as third-party libraries.\cite{esp-prog} For example, the real-time operating system kernel used for ESP-IDF applications is the third-party component called FreeRTOS \cite{esp-prog}. ESP-IDF projects use the same componment based approach and can be seen as an amalgamation of a number of components \cite{esp-prog}.
-
-\begin{figure}
-	\centering
-	\includegraphics[width=1\textwidth]{abbildungen/Diagramme/components.png}
-	\caption{}
-	\label{Fig:uml-classes-python}
-\end{figure}
-
-\end{comment}
-
-
-
-
-\section{Computation}
-ElectionGuard uses integer ElGamal cryptography within its specific cryptographic operations. The system performs four key operations on very large integer values: \textbf{modular exponentiation}, \textbf{modular multiplication}, \textbf{modular addition}, and \textbf{SHA-256} hash computation. To handle the large integer values involved in these operations, specialized libraries for large integers may be employed, or the operations can be developed from scratch \cite[21, 25-26]{eg-spec}. When developing these modular operations from the ground up, it is common for intermediate values to become excessively large. Techniques such as modular reduction are often necessary to ensure that values remain manageable \cite[21, 25-26]{eg-spec}.Consequently, employing optimized libraries for modular arithmetic becomes crucial for achieving good performance \cite[22]{eg-paper}.
-
-\subsection{Cryptographic constants}
-Among all computations in ElectionGuard, modular exponentiation presents the highest computational cost, serving as the primary limiting factor in performance analysis \cite[22]{eg-spec}. Within ElectionGuard, most modular exponentiation operations utilize a fixed base, which may be either the generator (g) or a public key \cite[22]{eg-paper}. The generator G is a mathematical constant specified in the ElectionGuard specification.
-
-The standard baseline parameters include:
+\subsection{Cryptographic constants} \label{sec:constants}
+Before implementing the ElectionGuard specification, it is essential to establish the mathematical constants for the cryptographic operations. ElectionGuard specifies standard values for the primes (p) and (q) and a generator (g) \cite[21]{eg-spec}. The standard baseline parameters include:
 \begin{itemize}
     \item A 4096-bit prime (p) \cite[22]{eg-spec}
     \item A 4096-bit generator (g) \cite[23]{eg-spec}
     \item A 256-bit prime (q) \cite[21]{eg-spec}
 \end{itemize}
 
-Alternatively, the system can also utilize reduced baseline parameters, which consist of:
+For this experiment, we will use reduced parameters that offer better performance at a lower security level \cite[23]{eg-spec}. The reduced parameters are defined as  
 \begin{itemize}
     \item A 3072-bit prime (p) \cite[36]{eg-spec}
     \item A 3072-bit generator (g) \cite[36-37]{eg-spec}
     \item A 256-bit prime (q) \cite[36]{eg-spec}
 \end{itemize}
 
-For this application, we opt for the reduced parameters, as they offer enhanced performance, albeit at the expense of lower security \cite[36-37]{eg-spec}. The cryptographic constants used in the implementation can be found in Appendix \ref{lst:constants}.
+\subsection{Pre-Election Key Generation}
+The pre-election phase involves administrative tasks necessary to configure the election, including the key generation ceremony.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{abbildungen/Diagramme/manifest.png}
+    \caption{Visualisation of the JSON Election Manifest}
+    \label{Fig:manifest}
+\end{figure}
 
+The tallier node defines the election manifest, sets the cryptographic constants according to the reduced baseline parameters (as discussed in \ref{sec:constants}), and sets the quorum size. Given that only two Guardian nodes are available for this experiment the quorum size is set to two. Figure \ref{Fig:manifest} shows a visualisation of the election manifest used in this election. The election is limited to a simple YES/NO/ABSTAIN referendum. The Tallier collaborates with the Guardians to generate a joint key used to encrypt the ballots in the next election phase.
 
-\subsection{Comparison of ElectionGuard Implementations}
-The Python reference implementation of ElectionGuard utilizes the C-coded Gmpy2 library for large integer arithmetic. In contrast the C++ and Kotlin implementations rely on the HACL* C library for similar purposes \cite{eg-docs}. Interestingly, both implementation use C-coded libraries for handling large integer arithmetic. Moreover, the C++ implementation incorporates pre-computed tables to speed up certain modular exponentiations \cite{eg-docs}. This optimization is possible because many of the exponentiations are performed with a fixed base, either the constant generator (g) or a public key. The pre-computed tables contain specific powers of these bases \cite{eg-docs}.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{abbildungen/Diagramme/communication-seq0.png}
+    \caption{Communication Sequence in the Pre-election phase}
+    \label{Fig:comm-pre}
+\end{figure}
 
-\subsubsection{Feasability of the Python reference on ESP32}
-The Python reference implementation encompasses the entire ElectionGuard specification \cite{python-reference}. Running the Python reference implementation on the ESP32 may be achievable through \textbf{MicroPython}, an implementation of Python 3.x targeted for microcontrollers and embedded systems. MicroPython mirrors and adapts the functionalities of the standard Python library to accommodate the limitations inherent to to microcontrollers, such as restricted memory and processing speed \cite{micropython} \cite[234]{micropython-performance}. There are drawbacks to this approach, as certain essential modules, functions, and classes may be absent in MicroPython \cite{micropython}. Additionally, applications developed in MicroPython are prone to memory fragmentation and may experience issues with objective expending in size. \cite[234]{micropython-performance}. Depending on the complexity of the task and memory allocation, the performance of MicroPython might be inferior to that of a C implementation \cite[237]{micropython-performance}. For instance, in a comparative study of software-based SHA-256 computation for the ESP32, the C implementation outperformed the MicroPython implementation by 45\% \cite[237]{micropython-performance}.
+Figure \ref{Fig:comm-pre} illustrates the communication sequence involved in this phase. The Tallier sends the ceremony details required for the key generation ceremony to the Guardians. The quorum size influences how each Guardian generates their ElectionKeyPair. After generating their ElectionKeyPair and stripping the secret key for transmission, the Guardians exchange their ElectionKeyPairs. Each Guardian generates a designatted backup for each ElectionKeyPair received, which is then sent back to the sending Guardian. Each backup contains a proof that must be verified by the receiver. The challenge mechanism and eviction mechanism for failed verifications are not implemented in this experiment. This verification process for a challenge or a backup is identical. Once all backups successfully verify, the ElectionKeyPairs are combined into a joint key.
 
-\subsubsection{Feasability of the C++ reference on ESP32}
-The ElectionGuard C++ reference implements only a subset of the ElectionGuard specification, focusing on the encryption library and thus addressing only intra-election functionalities cite{cpp-reference}. ESP-IDF supports the development of applications in C++. Certain C++ features, such as exception handling, must be enabled in the project configuration. This results in a slight increase in the application binary size \cite{esp-prog}. The Runtime Type Information (RTTI) feature can remain disabled since dynamic cast conversions and the typeid operator are not utilized in the ElectionGuard C++ implementation. C++ Threads are supported, these are implemented as wrappers around C pthreads, which in turn wrap around FreeRTOS tasks \cite{esp-prog}.
+\subsection{Intra-Election Ballot Encryption}
+During this election, the Tallier simulates the voting process by generating random ballots and encrypting them using the joint key established in the previous phase. The ballots are cast and processed as detailed in Appendix \ref{lst:intra-election}.
 
-Upon porting the C++ implementation to an ESP32 component, we conducted tests using the provided C Unit Tests, particularly focusing on the ElGamal encryption test. However, the test failed upon invoking the \textbf{pow\_mod\_p()} function, which is intended to optimize modular exponentiation by utilizing pre-computed tables.
+\subsection{Post-Election Decryption of Tallies}
+In the post-election phase, all encrypted ballots from the previous phase are homomorphically aggregated to produce an encrypted tally. This encrypted tally is send to the Guardians for decryption. Each guardian uses their private key to generate a decryption share, which is essentialy a partial decryption. The Tallier then combines all decryption shares into a decrypted tally. Figure \ref{Fig:comm-post} illustrates the communication involved in this phase. The decryption of spoiled ballots is optional and not implemented in this experiment. The decryption process of the spoiled ballots mirrors that of the encrypted tallly. The case of missing Guardians is also not addressed in this experiment. Compensating for missing decryptions functions similarly to the generation of the decryption share. The publication of the election artifacts is also not implemented. Publishing the election artifacts is not implemented,  the interaction between the Guardians and the Tallier requires inherent verification due to the proofs involved.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{abbildungen/Diagramme/communication-seq2.png}
+    \caption{Communication Sequence in the Post-election phase}
+    \label{Fig:comm-post}
+\end{figure}
+
+\section{Comparison of ElectionGuard Implementations}
+Due to the open-source nature of ElectionGuard, various community ports exist, such as a Java port \cite{eg-docs}. However, this discussion focuses solely on the official ports from Microsoft. There are 2 ElectionGuard libraries implementing the ElectionGuard 1.0 specification: a Python reference implementation and a C++ reference implementation. The Python implementation encompasses the entire suite of functionality and processes necessary to implement \ac{E2E} verifiable election as part of a voting system \cite{python-reference}. It is designed to be universal and portable, albeit less performant \cite{eg-docs}. In contrast, the C++ reference implementation focuses solely on the encryption components and is optimized for execution on low-powered devices \cite{cpp-reference}. 
+
+\subsection{Python Reference}
+Running the Python reference implementation on the ESP32 may be feasible through \textbf{MicroPython}, an implementation of Python 3.x targeted for microcontrollers and embedded systems. MicroPython adapts standard Python library functionalities to accommodate the limitations inherent of microcontrollers, such as restricted memory and processing speed \cite{micropython} \cite[234]{micropython-performance}. There are drawbacks to this approach, as essential modules, functions, and classes may be absent in MicroPython \cite{micropython}. Additionally, applications developed in MicroPython are prone to memory fragmentation and may experience issues with objects expending in size. \cite[234]{micropython-performance}. A comparative study of software-based SHA-256 computation for the ESP32 revealed that the performance of MicroPython was inferior to that of a C implementation \cite[237]{micropython-performance}. For instance, the C implementation outperformed the MicroPython implementation by 45\% \cite[237]{micropython-performance}.
+
+The Electionguard Python is not designed to be performant, and compatibility issues may arise when using MicroPython, along with potential memory fragmentation problems. Due to these limitations, the Python reference implementation may not be the most suitable choice for the ESP32. However, it remains a valuable resource for understanding the ElectionGuard specification and can serve as a reference for developing a possible port. Our Tallier node, which has more computational resource compared to our Guardians, will run the Python reference implementation as a Python package for convenience.
+
+\subsection{C++ Reference}
+The ElectionGuard C++ reference implements focuses solely on the encryption library, omitting abstractions such as Guardians. This implementation is designed for execution on low-powered devices with Intel Atom-level processor performance in mind \cite{cpp-reference} \cite{eg-docs}. Porting the C++ library to an ESP32 should be feasible, as ESP-IDF supports C++ application development. Certain C++ features, such as exception handling, must be enabled in the project configuration beforehand. The ESP32 also supports C++ threads, which are implemented as wrappers around C pthreads, which in turn wrap around FreeRTOS tasks \cite{esp-prog}. 
+
+Compared to the Python implementation, the C++ implementation incorporates optimisations to accelerate computations of certain modular exponentiations \cite{cpp-reference}. These optimisations come at a memory cost. The optimisation for modular exponentiation uses pre-computed tables to speed up calculations for certain exponentiations \cite{cpp-reference}. A modular exponentiation computes \(X^Y \mod P\). This optimization is possible because many of the exponentiations in ElectionGuard are performed with a fixed base, such as the generator (g). The pre-computed table contains certain powers of these bases, allowing the computation \(G^Y\) to be turned into a series of table lookups \cite[22-23]{eg-paper}.
+
+To store the table, we must consider the capabilities of the ESP32. The ESP32 has 520 KB of volatile memory (SRAM) and 4 MB of non-volatile memory (in-package flash). The SRAM is divided into 320 KB of DRAM and 200 KB of IRAM. IRAM is used for instruction memory, while DRAM is used for data memory. The maximum statically allocated DRAM usage is 160 KB, the remaining 160 KB can only be allocated as heap memory \cite{esp32-ref}. 
 
 \begin{lstlisting}[language=C++, caption={FixedBaseTable Definition}]
     typedef std::array<std::array<uint64_t[MAX_P_LEN], OrderBits>, TableLength> FixedBaseTable;
 \end{lstlisting}
 
-The \textbf{FixedBaseTable} is defined as a 2D array. Here, \textbf{MAX\_P\_LEN} denotes the lenght of each \textbf{uint64\_t} array, \textbf{OrderBits} indicates the number of \textbf{uint64\_t} arrays in each inner array, and \textbf{TableLength} represents the number of inner arrays in the outer array.
+The lookup table (FixedBaseTable) is implemented and tuned to the following values. Any modifications to these parameters could affect the function's internal operations.
+\begin{itemize}
+    \item b= 256 (OrderBits)
+    \item k = 8 (WindowSize)
+    \item m = 32 (TableLength)
+\end{itemize}
 
-The \textbf{pow\_mod\_p()} function is optimized for specific parameters: ( order\_bits = 256 ), ( window\_size = 8 ), and ( table\_length = 32 ). Any modifications to these parameters could affect the function's internal operations. The window\_size determines into how many groups of (k) bits the exponent is parsed, while the order\_bits reflect the number of possible values within each group. With an 8-bit window\_size, the order\_bits would amount to 256 \(2^8\) \cite[22]{eg-spec}.
-
-To estimate the memory requirements of the \textbf{FixedBaseTable}, we can calculate the total size in bytes as follows:	
-
+To estimate the memory requirements of the \textbf{FixedBaseTable}, we can calculate the total size in bytes as follows:
 \begin{equation}
     \mathrm{FixedBaseTable Size} = \mathrm{sizeof(uint64\_t)} \times \mathrm{MAX\_P\_LEN} \times \mathrm{OrderBits} \times \mathrm{TableLength}
 \end{equation}
-
-Given that \textbf{MAX\_P\_LEN} is defined as 64, substituting into the equation yields a total size of 4MB:
-
-\begin{equation}
-    \mathrm{FixedBaseTable Size} = 8 \times 64 \times 256 \times 32 = 4194304 \mathrm{ bytes} = 4 \mathrm{ MB}
-\end{equation}
-
-If we calculate the size of the \textbf{FixedBaseTable} with our reduced baseline parameters, we find:
-
+Given that MAX\_P\_LEN is defined as 64 (4096-bit), we will calulate with 48 (3072-bit) since we are using the reduced baseline parameters. Substituting the values into the equation gives:
 \begin{equation}
     \mathrm{FixedBaseTable Size} = 8 \times 48 \times 256 \times 32 =  3145728 \mathrm{ bytes} = 3 \mathrm{ MB}
 \end{equation}
 
-The ESP32 features (320 KB) of DRAM. Due to a technical limitation, a maximum of (160 KB) is available for dynamic allocation \cite{esp32-ref}. Consequently, the \textbf{FixedBaseTable} exceeds the memory capacity of the ESP32. While reducing the \textbf{window\_size} results in smaller tables and reduced memory usage, it simultaneously increases the number of multiplications \cite[22]{eg-spec}. Considering these resource limitations and the fact that the ElectionGuard C++ implementation is designed with Intel Atom-level processor performance in mind, alongside the memory requirements of the \textbf{FixedBaseTable} optimization, it becomes evident that the C++ implementation is not feasible on the ESP32 \cite{eg-docs}.
+Consequently, the \textbf{FixedBaseTable} exceeds the volatile memory capacity of the ESP32. Although storing the table in the non-volatile memory might be feasible, it may require further optimizations because it must accommodate the bootloader and the application binary. Reducing the \textbf{WindowSize} would result in smaller tables and reduced memory usage, but it simultaneously increases the number of multiplications \cite[22]{eg-spec}. Given these memory requirements, it is evident that the C++ implementation would require further optimizations to be feasible on the ESP32. Therefore, we opt to implement a native C implementation based on the Python reference implementation.
 
 \subsection{Implementation Strategy for ESP32}
-As previously discussed, both the Python and C++ reference implementations prove impractical for porting to the ESP32. While the Python implementation may be feasible with MicroPython, the performance may be suboptimal due to possible memory fragmentation. The C++ implementation, on the other hand, is not viable due to memory and processor constraints. Ultimatelty, a pure C implementation stands out as the most feasible approach for the ESP32. To achieve optimal performance on the ESP32, we must consider the dedicated hardware accelerators available. The ESP32 supports several cryptographic hardware acceleration capabilities including AES, SHA, RSA, and RNG as illustrated in the functional block diagram \ref{Fig:esp32-crypto}. These hardware accelerators significantly enhance operational speed and reduce software complexity for the aforementioned cryptographic primitives \cite[32]{esp32-series}. 
+ElectionGuard uses integer ElGamal cryptography within its specific cryptographic operations. The system performs four key operations on very large integer values: \textbf{modular exponentiation}, \textbf{modular multiplication}, \textbf{modular addition}, and \textbf{SHA-256} hash computation. 
 
-In ESP32 the cryptographic primitives are implemented in a fork of the mbedTLS library. The fork includes patches related to hardware routines for on-board cryptographic hardware acceleration \cite{esp32-ref}. Optionally, a port of the WolfSSL library is also available, which also includes ESP32-specific hardware routines \cite[114]{wolfSSL-manual}. To sucessfully run WolfSSL on the memory-restricted ESP32, it is essential to configure the component to use less memory, albeit at a potential performance cost. An excerpt from the Component configurations for WolfSSL can be found in Appendix \ref{lst:user_settings}
+To handle the large integer values involved in these operations, specialized libraries for large integers may be employed, or the operations can be developed from scratch \cite[21, 25-26]{eg-spec}. When developing these modular operations from the ground up, it is common for intermediate values to become excessively large. Techniques such as modular reduction are often necessary to ensure that values remain manageable \cite[21, 25-26]{eg-spec}. Consequently, employing fast libraries for modular arithmetic becomes crucial for achieving good performance \cite[22]{eg-paper}. The Python implementation uses the C-coded GnuMP library for large integer arithmetic, the C++ implementation uses HACL* a performant C implementation of a wide variety of cryptographic primitives \cite[22]{eg-paper} \cite{cpp-reference}. In ESP32 cryptographic primitives are implemented through a fork of the mbedTLS library. Optionally, a port of the WolfSSL library is also available \cite{esp32-ref}. The benefit of these two libraries over the other mentioned libraries is that these libraries include patches related to hardware routines for on-board cryptographic hardware acceleration \cite{esp32-ref} \cite[114]{wolfSSL-manual}. The ESP32 supports supports several cryptographic hardware acceleration capabilities including AES, SHA, RSA, and RNG as illustrated in the functional block diagram \ref{Fig:esp32-crypto}. These hardware accelerators significantly enhance operational speed and reduce software complexity for the aforementioned cryptographic primitives \cite[32]{esp32-series}. More details on the hardware acceleration capabilities of the ESP32 are provided in Section \ref{sec:hardware-acceleration}.
+
+Figure \ref{Fig:software-components} detauls the ESP32 software stack
+\begin{figure}
+	\centering
+	\includegraphics[scale=.5]{abbildungen/Diagramme/components.png}
+	\caption{Software components for the Guardian Prototype}\label{Fig:software-components} 
+\end{figure}
+
+Figure \ref{Fig:software-components} depicts the software components used in the Guardian ESP32 port. The model component includes the business logic for the guardians operations. The adapter component implements the communication aspects. The adapter component calls the model component to perform guardian specific operations. The model component uses the wolfSSL library for cryptographic primitives. The wolfSSL component is overwritten using c pre-processor macros to reduce the binary size by removing unused features. Furthermore, the library is configured to run on the memory-restricted ESP32 by configuring the library to use less memory, albait at a performance cost \cite[56-58]{doxygen}. The adapter component implements a MQTT client. It is used in order to communicate with the Tallier and other Guardians through an intermediary the MQTT broker.The adapter component implements an event handler which response to events such as establishing a connection to the MQTT broker or receiving a message via the MQTT broker. Further information on the implementation of the adapter component and the communication can be found in \ref{sec:communication}. 
+
+
+\section{Hardware Acceleration}
+Fundamentally, ElectionGuard encryption is a CPU-bound operation \cite[24]{eg-paper}. The ESP32 microcontroller features hardware acceleration for several cryptographic primitives, including AES, SHA, RSA, and RNG \cite{esp32-ref}. These hardware accelerators significantly enhance the performance of cryptographic operations compared to software implementations \cite[32]{esp32-series}. The hardware accelerators are designed to offload the CPU from cryptographic operations, thereby reducing the computational load on the CPU and improving overall system performance \cite[32]{esp32-series}. The hardware accelerators are particularly beneficial for computationally intensive operations, such as modular exponentiation and modular multiplication, which are central to the ElectionGuard encryption process \cite[24]{eg-paper}. In the following sections we will look into how each of the hardware accelerators can be utilized in the ElectionGuard implementation.
 
 \subsection{\ac{RNG}}
 In the context of ElectionGuard, generating random values is crucial for various operations, including the generation of private keys and the use of nonces in various proofs \cite[9, 13]{eg-spec}. The ESP32 features a True Random Number Generator \ac{TRNG} that can produce 32-bit random numbers that are suitable for cryptographic purposes. Unlike Deterministic Random Bit Generators \ac{DRBG}, which rely on algorithms to produce random numbers, the ESP32's \ac{TRNG} generates randomness from physical processes. This includes leveraging thermal noise and asynchronous clock mismatches, ensuring a high level of unpredictability, essential for cryptographic operations \cite[604]{esp32-ref}.
 
 To utilize the \ac{TRNG} effectively, it is necessary to enable a source for thermal noise; otherwise, the \ac{TRNG} will return pseudo-random number \cite[609]{esp32-ref}. The High-speed ADC is enabled automatically when the Wi-Fi or Bluetooth module is enabled, which is the case in our design \cite[610]{esp32-ref}. When the noise is sourced from the high-speed ADC, it is advisable to read the \textbf{RNG\_DATA\_REG} register at a maximum rate of 5 MHz \cite[609]{esp32-ref}. However, the values from the high-speed ADC can be saturated in extreme cases, leading to lower entropy. It is advisable to enable the SAR\_ADC as a secondary noise source. The \textbf{RNG\_DATA\_REG} register should then be read at a maximum rate of 500 kHz to obtain the maximum entropy \cite[609]{esp32-ref}.
 
-In our ESP32 implementation, as outlined in Appendix \ref{lst:rng}, we aim to generate random values below a specific mathematical constant (q), which is a 256-bit prime number. To achieve this objective, we fill a buffer with 256-bits of randomness utilizing the system API function esp\_fill\_random(). To ensure that the generated 256-bit number does not exceed (q), we perform a modulo operation with the value of (q). To obtain a 256-bit number, esp\_fill\_random() reads the 32-bit RNG\_DATA\_REG register eight times. The function will busy-wait if the reading frequency exceeds acceptable limits \cite{esp32-ref}.This limitation arises because the function must ensure that sufficient external entropy has been introduced into the hardware RNG state. For our use case the function should not delay. If the function delays, we should consider using a strong software \ac{DRBG} such as mbedTLS CTR-DRBG, mbedTLS HMAC-DRBG, or WolfSSL DRBG, which can be initialized with the TRNG values as a seed \cite{esp32-ref} \cite[588]{wolfSSL-manual}.
-
+In our ESP32 implementation , the rand\_q function generates a random number below the constant 256 bit constant (q). To achieve this objective, we fill a buffer with 256-bits of randomness utilizing the system API function esp\_fill\_random(). To ensure that the generated 256-bit number does not exceed (q), we perform a modulo operation with the value of (q). To obtain a 256-bit number, esp\_fill\_random() reads the 32-bit RNG\_DATA\_REG register eight times. The function will busy-wait if the reading frequency exceeds acceptable limits \cite{esp32-ref}. This limitation arises because the function must ensure that sufficient external entropy has been introduced into the hardware RNG state. For our use case the function should not delay. If the function delays, we should consider using a strong software \ac{DRBG} such as mbedTLS CTR-DRBG, mbedTLS HMAC-DRBG, or WolfSSL DRBG, which can be initialized with the TRNG values as a seed \cite{esp32-ref} \cite[588]{wolfSSL-manual}. The \ac{RNG} accelerater does not give a performance benefit for our use case, it is used to ensure that the random numbers are cryptographically secure.
 
 
 \subsection{\ac{SHA} Accelerator}
-ElectionGuard encrypts non-vote data, such as cryptographic shares of a guardian’s private key, using hashed ElGamal encryption. This method employs a key derivation function \ac{KDF} to generate a key stream that is XORed with the data. The Keyed-Hash Message Authentication Code \ac{HMAC} is used for message authentication and is integral to the implementation of the \ac{KDF}. In ElectionGuard, HMAC is instantiated as HMAC-SHA-256, which uses the SHA-256 function \cite[7]{eg-spec}. An implementation of the HMAC-SHA-256 function can be found in Appendix \ref{lst.get_hmac}. 
+ElectionGuard encrypts non-vote data, such as cryptographic shares of a guardian’s private key (e.g. backups), using hashed ElGamal encryption. This method employs a key derivation function \ac{KDF} to generate a key stream that is XORed with the data. The Keyed-Hash Message Authentication Code \ac{HMAC} is used for message authentication and is integral to the implementation of the \ac{KDF}. In ElectionGuard, HMAC is instantiated as HMAC-SHA-256, which uses the SHA-256 function \cite[7]{eg-spec}.
 
 The SHA-256 hash function is frequently applied in various cryptographic operations within ElectionGuard, with implementation details provided in Appendix \ref{lst:hash}. The ESP32 microcontroller is equipeed with a \ac{SHA} Accelerator that significantly enhances the performance of\ac{SHA} operations compared to purely software implementations \cite[589]{esp32-ref}. Notably, this accelerator supports the SHA-256 algorithm used in ElectionGuard. However, it processes only one message block at a time and does not handle padding operations. Therefore, software must manage the division of longer messages into 512-bit blocks, along with any required padding \cite[2]{esp32-series}. 
 
 In multi-core environments, libraries like mbedTLS and WolfSSL implement fallback mechanisms to software implementations when multiple concurrent hashing operations are initiated. As a result, simultaneous computations revert to software calculations \cite{mbedTLS-fork} \cite{wolfSSL-port}. Benchmarks uzilizing mbedTLS at processor speeds of 240 MHz reveal that hardware acceleration achieves performance nearly three times faster than software couterparts \cite[41-42]{eval-crypto}. When using the WolfSSL library with the fastmath library, benchmarks indicate that the \ac{SHA} Accelerator operates more than eight times faster than its software counterpart. Thus, the \ac{SHA} Accelerator is an effective solution for speeding up SHA-256 hashing operations on the ESP32.
 
-\begin{comment}
-    The 1.0 specification of ElectionGuard has under-specification on how inputs to the cryptographic hash function should be serialized. This leads to compability issues between different implementations \cite[23-24]{eg-paper}.
-\end{comment}
+The data format of hashes is ambiuous
+
+The 1.0 specification under-spoecifies on how inputs the the cryptographic hash function should be serialized. This leads to compability issues between different implementations \cite[23-24]{eg-paper}. The Python implementation uses utf-8 hexadecimal encoding. Thus in order to ensure compability with the Python implementation, the C implementation should also use hexadecimal encoding. All big integer values need to be converted to hexadecimal strings before being hashed. This leads to a less efficient implementation.
+
 
 \subsection{\ac{RSA} Accelerator}
 \begin{comment}
-        Fundamentally, ElectionGuard encryption is a CPU-bound operation \cite[24]{eg-paper}
+        
 \end{comment}
 
 ElectionGuard's decision to use integer ElGamal instead of elliptic-curve ElGamal was driven by its conceptual simplicity and lower implementation barrier \cite[7]{eg-paper}. While elliptic-curve cryptographic \ac{ECC} techniques offer computational advantages, such as reduced computing requirements and smaller key sizes for the same security level \cite[1, 6]{ecc-eval}, the integer ElGamal approach aligns well with the ESP32 hardware. This is because the RSA algorithm, like integer ElGamal, relies on large integer arithmetic. Specifically, the ESP32 chip supports independent arithmetic operations, including large-number multiplication, large-number modular multiplication, and large-number modular exponentiation \cite[32]{esp32-series} \cite[603]{esp32-ref}. Consequently, the RSA Accelerator can accelerate two key operations: modular multiplication and the computationally intensive modular exponentiation. However, modular addition cannot be accelerated using dedicated hardware and must rely on a software implementation.
@@ -232,50 +162,68 @@ In summary, the RSA Accelerator effectively accelerates modular exponentiation a
 \subsection{Performance Analysis}
 \begin{table}[h!]
     \centering
-    \begin{tabular}{|c|c|c|c|c|}
-        \hline
-        \textbf{Function} & \textbf{Metric} & \textbf{Accelerated} & \textbf{Non Accelerated} \\
-        \hline
-        Key generation & Average Time (\(\mu\)s) & 1531095.75 & 10800822.00\\
-        \hline
-         & Standard Deviation (\(\mu\)s) & 221.07 & 23598.24 \\
-        \hline
-        Verification & Average Time (\(\mu\)s) & 832673.31 &  2437181.75\\
-        \hline
-         & Standard Deviation (\(\mu\)s) & 125.65 &  171.50\\
-        \hline
-        Backup & Average Time (\(\mu\)s) & 513578.91 & 3599221.75 \\
-        \hline
-        & Standard Deviation (\(\mu\)s) & 125.65 & 22529.10 \\
-        \hline
-    \end{tabular}
-    \caption{Comparison accelerated and non accelerated Key Ceremony operations}
-    \label{tab:perfromance}
-\end{table}
-\begin{table}[h!]
-    \centering
     \begin{tabular}{|c|c|c|c|}
         \hline
-        \textbf{Function} & \textbf{Quorum 3} & \textbf{Quorum 4} & \textbf{Quorum 5} \\
+        \textbf{Quorum} & \textbf{Type} & \textbf{Average Time (s)} & \textbf{Standard Deviation (ms)} \\
         \hline
-        Average Time (\(\mu\)s) & 1531095.75 & 2041469.88 & 2551797.75\\
+        Quorum 2 & HW & 1.02 & 0.24 \\
+        & SW & 4.41 & 13.24 \\
         \hline
-        Standard Deviation (\(\mu\)s) & 221.07 & 252.68 & 291.58 \\
+        Quorum 3 & HW & 1.53 & 0.23 \\
+        & SW & 6.62 & 15.87 \\
+        \hline
+        Quorum 4 & HW & 2.03 & 0.24 \\
+        & SW & 8.81 & 15.68 \\
+        \hline
+        Quorum 5 & HW & 2.54 & 0.26 \\
+        & SW & 11.02 & 19.15 \\
+        \hline
+        Quorum 6 & HW & 3.05 & 0.31 \\
+        & SW & 13.22 & 22.04 \\
         \hline
     \end{tabular}
-    \caption{Comparison accelerated Key generation with different quorums}
-    \label{tab:perfromance-quorum}
+    \caption{Comparison accelerated and non accelerated Key Generation with different Quorums, 30 measurements}
+    \label{tab:perfromance-keygen}
 \end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{Function} & \textbf{Type} & \textbf{Average Time (s)} & \textbf{Standard Deviation (ms)} \\
+        \hline
+        Backup & HW & 0.53 & 0.15 \\
+        & SW & 2.21 & 8.52 \\
+        \hline
+        Verification & HW & 1.06 & 0.1 \\
+        & SW & 2.58 & 0.04 \\
+        \hline
+        Decryption & HW & 2.29 & 1.61 \\
+        & SW & 9.95 & 19.4 \\
+        \hline
+    \end{tabular}
+    \caption{Comparison of operations with and without hardware acceleration, 30 measurements}
+    \label{tab:perfromance}
+\end{table}
+
+Table \ref{tab:perfromance-quorum} compares the performance of key generation with and without hardware acceleration across different quorums  . HW acceleration is more then 4 times faster than the SW implementation across all quorum sizes (e.g., 1.02s vs. 4.41s for Quorum 2). HW shows remarkably low standard deviations (0.24-0.31ms)  compared to SW (13.24-22.04ms). This indicates that HW accelerated indicating a more stalbe, deterministic performance. The average time increase by ~0.5s per additional quorum member (1.02s → 3.05s from Q2→Q6). The SW implementation shows a similar trend, but with a steeper increase by ~2.2s per additional member (4.41s → 13.22s from Q2→Q6). This suggest O(n) complexity for both implementations. 
+
+Large quorums provide better security but at the cost of increased computational time. HW acceleration mitigates this penality. HW acceleration brings key generation times down to 1-3 seconds even for Q6.
+
+Table \ref{tab:perfromance} indicates that HW acceleration backup operation (1.06s vs. 2.58s) and the decryption  (2.29s vs. 9.95s) is more than 4 times faster. The Verification is more than two times faster compared to the SW only implementation. The HW operations have much lower variability
+(Backup (HW): 0.15 ms vs. SW: 8.52 ms) (Decryption (HW): 1.61 ms vs. SW: 19.4 ms). The SW implementation show a higher standard deviation, indicating a more variable performance. The HW acceleration is again more stable and deterministic. In this test the speed up of the verification is less pronounced due to initial computation steps using lower values and thus executing in SW.
+
+
+
+The results indicate that hardware-accelerated key generation is significantly faster than non-accelerated key generation. For instance, with a quorum of 3 guardians, the average time for key generation with hardware acceleration is 1.53 seconds, compared to 6.62 seconds without acceleration. The standard deviation for hardware-accelerated key generation is also lower than for non-accelerated key generation, suggesting greater consistency in performance. As the quorum size increases, the time required for key generation also increases, with hardware-accelerated key generation consistently outperforming non-accelerated key generation.
+
+
+The decryption is performend with 1 contest and 3 selections (3 Proofs) and the performance results are as follows:
 
 Table \ref{tab:performance} summarizes the performance of hardware-accelerated versus software-based cryptographic operations across three tasks: key generation, verification, and backup. 30 Measurements were taken for each operation. Results include mean execution times and standard deviations (SD) for a quorum of 3 guardians. Hardware-accelerated operations employed dedicated RSA and SHA accelerators, whereas non-accelerated operations relied on the wolfSSL software library. Across all operations, hardware-accelerated tasks exhibited significantly lower mean execution times than software-based implementations. Key generation, for instance, required 1.53 seconds with hardware acceleration compared to 10.8 seconds without—a 7× improvement. Similarly, backup operations completed in 0.51 seconds (accelerated) versus 3.59 seconds (non-accelerated), also reflecting a 7× speed increase. Verification saw a 3× enhancement (0.83 s vs. 2.43 s). Notably, hardware acceleration also improved temporal consistency: standard deviations for key generation and backup were orders of magnitude lower in accelerated runs, suggesting reduced performance variability. These results underscore the efficacy of hardware accelerators in optimizing both the speed and reliability of cryptographic workflows.  Table \ref{tab:perfromance-quorum} compares the performance of accelerated key generation across different quorums. As the quorum size increased from 3 to 5 guardians, mean execution times also increases significantly. The larger the quorum, the longer the operation takes.
 
 
 \begin{comment}
-    Single Factroy App (large) no OTA
-    Remalloc/CMALLOC
-    MQTT5 NoLocal not supported
-    MQTT Buffer size changed
-
 ----------------------------------------
 HW
 
@@ -436,35 +384,8 @@ Variance: 376269664.00 μs²
 
 \end{comment}
 
-
-\section{Communication}
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{abbildungen/Diagramme/communication-seq0.png}
-    \caption{Communication Sequence in the Pre-election phase}
-    \label{Fig:comm-pre}
-\end{figure}
-
-A sequence diagram of the pre-election steps are seen in \ref{Fig:comm-pre}. In it we see that the Election administrator sends ceremony details to the Guardians and receives a joint key in return. The joint key is then loaded into the encryption devices. In order to generate a joint key each guardian send their public key to a receiving guardians. The receiving guardian generates a designated backup for each guardian. If a guardian receives a designated backup the included proofs are verified. If a proof failed the guardian send the unverified backup to other guardians as a challenge. If the proof fails again this guardian that generated the backup is evicted and the ceremony has to be restarted. 
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{abbildungen/Diagramme/communication-seq1.png}
-    \caption{Communication Sequence in the Intra-election phase}
-    \label{Fig:comm-intra}
-\end{figure}
-
-
-A sequence diagram of the intra-election steps is seen in \ref{Fig:comm-intra}. The election administrator would need an empty ballot to the voter. A voter then sends their filled ballot to the encryption device. The encryption devices sends back a verification code. The voter can then decide to either cast or spoil the ballot associated with the verification code. If the voter decides to spoil the ballot the encryption devices needs to mark the encrypted ballot as spoiled and the process starts a new. The loop is broken if the voter decides to cast a ballot.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{abbildungen/Diagramme/communication-seq2.png}
-    \caption{Communication Sequence in the Post-election phase}
-    \label{Fig:comm-post}
-\end{figure}
-
-In the post-election steps the encryption device generates a decrypted tally from all cast encrypted ballots and send the encrypted tally to the guardians. If all guardians are present each guardian generates a decryption share which is combined to a decrypted tally. This decrypted tally is then send back to the administrator. If guardians are missing the guardians in addition to generating their decryption share have to compensate for the missing guardians. Missing decryption shares are reconstructed from the backups generated in the pre-election phase. Finally all decryption shares including the reconstructed shares are combined into a decrypted tally. The decrypted tally is then send back to the administrator. Optionally the spoiled ballots can be decrypted through the same mechanisms as the encrypted tally. At the end of the election the administratir publishes all election artifacts to the public for scrutiny.
+\section{Communication}\label{sec:communication}
+The laptop is configured as an Access Point, enabling its wireless interface to create a local Wi-Fi network. This communication range is limited by the Wi-Fi signal strength of the laptop's access point. However, the entire system portable as long as the laptop and the connected \ac{IoT} devices are powered. Our \ac{IoT} devices-The NodeMCU ESP32 development boards-are connected to the Access Point. To facilitate Device-to-Device communication the laptop is configured as an MQTT broker using Eclipse Mosquitto version 2.0.20. It is important to note that this setup is not purely Device-to-Device communication, as it relies on the MQTT broker as an intermediary. Chapter \ref{sec:communication} describes the communication aspects in more detail.
 
 
 IoT systems rely primarily on using messaging protocols for exchanging
@@ -561,6 +482,20 @@ Our implementation, therefore, chooses Protocol Buffers as the serialization for
 \subsection{Networ Traffic Analysis}
 Network traffice between the Laptop and the ESP32 was captured using Wireshark (4.4.3) by listening to the access point interface of the laptop. The traffic was narrowed down by applying a display filter to filter out all non mqtt traffic. The precision of the timestamps is in milliseconds. The capture focused on the communication related to the key ceremony and the decryption phase. \ac{RTT} was calculated based on the time difference between request and acknowlegement packets for specific message exchanges. A display filter 
 
+\begin{comment}
+    This capture shows a secure multi-party communication process between two IoT devices (“Guardian#1” and “Guardian#2”) and a central coordinator (“Tallier”) using the MQTT protocol
+    Seperate topic for each phase (ppub_keys, backups, challenge, etc) to compartmentalize data
+    
+    Network Behaviour: TCP Reassembly: Large payloads (e.g. keys/backups) split into 1440-byte segments (Frames 29-32, 82-84). MTU size
+    Guardian perform identical steps in parallel 
+
+    Automated workflow. no human interaction
+    
+
+\end{comment}
+
+
+
 \section{Security}
 Furthermore,
 IoT devices are generally used by humans which makes them
@@ -601,6 +536,9 @@ The case can become worse if the broker’s resources are maximized
 and hence a broker can be a Single Point of Failure (SPoF) \cite[19]{protocols}.
 
 \begin{comment}
+    MQTT Buffer size changed
+
+
     Abkürzungen müssen im Abkürzungsverzeichnis angelegt werden.
 Erste Verwendung einer \ac{ABK} jede weitere Verwendung der \ac{ABK}.
 [5546:2025-02-24 10:38:36,150]:WARNING:chaum_pedersen.py.is_valid:#L233: found an invalid Chaum-Pedersen proof: {'in_bounds_alpha': True, 'in_bounds_beta': True, 'in_bounds_k': True, 'in_bounds_m': True, 'in_bounds_a': True, 'in_bounds_b': True, 'in_bounds_c': True, 'in_bounds_v': True, 'in_bounds_q': True, 'same_c': True, 'consistent_gv': False, 'consistent_av': False, 'k': 'D32530DA334FA7F131BB39D8D69D8AB75CE2ACB5865FF710F583A489C0DC639237A98E5E68DF6B2A7499AB1F1DDB5B88575C2A296DC223997D404B4B6E73237CD9FF9EBB26D9FCD08E040F2DC81E8667FAA31B91B235AEB49FE1529BEE2107D864004C533E52962F5CDD6CBC240F4C7DBEAAD6E4F374C23730D63657F3F9333A51C2C6911951F5B7C2EF7FA04D8EAB27C7B34E7083FD9F96DCC67DF0B0990B4363615EB3173EBBC2F261F30DE98D51696F927BB208A837CC0311395CFC268DFCE2EE4C90E86F8AE0650EB7B842E39D707154E60E46D48CD47954BC401F0A12F36798772EE148BFF1873C445FD59D0D96825A637D64942B06CE5497E56B9F7DDA9C5263506BE999638A76412EF57432AF45310831C4996307BF52FF07FB6FFC401F514C239E273734F3B553C7A2B4555DD0025BCC022DEA511A9AF7A779FDBE66BD2E81695541B2F9DF225FDAD26C18A9C822C23463E210ADA1FF369A49AA4BC94C0778D3810380573B9E8EF815A2F1DE85C14527B714AA97C78423E3634AA662', 'q': '942C2F7FA0926674D1F18D0B4C3AA7F330A5AE0EB23C3F433884C5C06CB5A8FF', 'proof': ChaumPedersenProof(pad='2C14DDC7B799642BF06DB8D96B1B5CA7C8E836804DD74B440CB29A016C58C93B0ED5EDD3BE6B8242493C9723D5F60192DC3B0022FC4A0030932440D1375546D9A4CC41E642DDB1FDC9758ADEC5208DCFDF72A7AB0E70C50AFB3F858DA3FC2F8D3ED372E630A3E344CEA3BA7932845024476D9DFE4FF2CC4AA42FB682911809DCC9A1B9A3DBEF00261F479ED606B001180374A2542ADE378E6D533F76A80D088AF5965D1D6526C4E5FDB6086261130F4577DFDC894E7466E60C3295F83750DEBACE1C3C6FC147524BC5A0EE0E197A4F3A89BFDBAC1DBA7B4CADE7DD0429AA140589437C84424303E637E653EDB3B41105DE6B2D4527E75E2021527D379BEFD2E63F5221558D440DE035E893CB7FC5700BA7831C2B93924B1047E1CEC646917515CB8BBBC67DC4A95A87E288B4EE623EE7CF7BF8545E596467A4F85740BB3B2DBA97F69936379E9A0DA2DA9535ACB3447A755E167FCAE840EB97F3C0BCB9C92380846C279CFA2C6193AD94FA9AEBB1DCA851D1233D4247CAFD09DC227197EF26F8', data='9C37A4AAB9C2FE1839F332EF792CE36DBED2AB532422C66F265BCFEAF3BA76DDEA31C28A0301E34B42B4893CDB5E46C6ED90B859A060893B573A46C8CF4010F178A54436D2EC3DA589B47AF80C6516C7F4BD910C5798919F13ECD45A0209D51F93F326D63C1F82A01910CA6C61086A31AB67ED1E968DDE754E4799163823E48CC44093739312EC8204B804435D66F8EA698D9979FCAB3403DAAB19D12C438576B3A34847E0C06ED91A268491C117DA4CF1892952BD4278AF6B05681D0189E636BB9391B5253584949F7B4749D3BACA8D7F5FA2E224D50940E7590413C099CB36A076B1BE4A3A1AF52E428176479B2EA8C0B15D5CCAA0D33737711BD24DA626AD91B9DFEB34B4B1F5E053CE7C418F1DF601028E2AF1479EE725F109F05E5BF53ECDB8C1C362C957C1AC6E5E95A72DAC4120B84D0A149A6A4BE641D0BA4C7D515FB181CEF22C05DE344E7A124BB48F23644FF70A667A57BA0BA9E0C69479D3FA01CC089397F74B413E2DA69A5AAA1B3DD08E1B9A83F8911D3C9811EF12F5148F07', challenge='42D5BED6EDF3B7299974309A842A9831799F8204AA4BDDE73C1E95B7C250E7DC', response='0EFDF49FAC6B36D6817132E6AA2723A76CAAC7905D6489325FECC0A0DC817211', usage=<ProofUsage.SecretValue: 'Prove knowledge of secret value'>)}

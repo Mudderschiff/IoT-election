@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['verify_5felection_5fpartial_5fkey_5fbackup_0',['verify_election_partial_key_backup',['../model_8h.html#a8fd15aff2949ac5a5fc1e740fc56d86f',1,'verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPair *sender, ElectionPartialKeyPairBackup *backup, ElectionPartialKeyVerification *verification):&#160;model.c'],['../model_8c.html#a8fd15aff2949ac5a5fc1e740fc56d86f',1,'verify_election_partial_key_backup(ElectionKeyPair *receiver, ElectionKeyPair *sender, ElectionPartialKeyPairBackup *backup, ElectionPartialKeyVerification *verification):&#160;model.c']]],
-  ['verify_5fpolynomial_5fcoordinate_1',['verify_polynomial_coordinate',['../crypto__utils_8c.html#a18fa85661e1754a2b5acc63843de9c49',1,'verify_polynomial_coordinate(uint8_t *exponent_modifier, ElectionPolynomial *polynomial, sp_int *coordinate):&#160;crypto_utils.c'],['../crypto__utils_8h.html#a18fa85661e1754a2b5acc63843de9c49',1,'verify_polynomial_coordinate(uint8_t *exponent_modifier, ElectionPolynomial *polynomial, sp_int *coordinate):&#160;crypto_utils.c']]]
-];

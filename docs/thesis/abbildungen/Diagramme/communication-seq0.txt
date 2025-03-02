@@ -1,12 +1,9 @@
 @startuml
 hide unlinked
-actor Admin as A
-actor EncryptionDevice as E
+actor Tallier as T
 collections Guardians as G
-actor Voter as V
-actor ThirdParties as T
 title Pre-election
-A -> G : Ceremony Details
+T -> G : Ceremony Details
 note right: (Quorum, Max number of Guardians)
 G <-> G : ElectionKeyPair
 note right: Exchange of public keys
@@ -24,7 +21,6 @@ note right: Evict original sender and restart phase
 end
 G -> G : 
 note right: Combine public keys to joint key
-G -> A : ElectionJointKey
-A -> E : ElectionJointKey
+G -> T : ElectionJointKey
 note right: Load encryption device with joint key
 @enduml

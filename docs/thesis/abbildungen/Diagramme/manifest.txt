@@ -1,0 +1,69 @@
+@startjson
+#highlight "contests" / "0" / "contest_id"
+#highlight "contests" / "0" / "ballot_selections" / "0" / "candidate_id"
+#highlight "contests" / "0" / "ballot_selections" / "1" / "candidate_id"
+#highlight "contests" / "0" / "ballot_selections" / "2" / "candidate_id"
+{
+  "spec_version": "electionguard-spec-v1.0",
+  "election_scope_id": "esn-manifest",
+  "type": "general",
+  "start_date": "2025-02-28T10:00:00",
+  "end_date": "2025-02-28T11:00:00",
+  "geopolitical_units": [
+    {
+      "geopolitical_unit_id": "single-vote",
+      "name": "Single Vote",
+      "type": "ballot_batch"
+    }
+  ],
+  "parties": [
+    {
+      "party_id": "N/A"
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "YES"
+    },
+    {
+      "candidate_id": "NO"
+    },
+    {
+      "candidate_id": "ABSTAIN"
+    }
+  ],
+  "contests": [
+    {
+      "contest_id": "referendum-single-vote",
+      "sequence_order": 0,
+      "geopolitical_unit_id": "single-vote",
+      "vote_variation": "one_of_m",
+      "number_elected": 1,
+      "votes_allowed": 1,
+      "name": "Referendum Single Vote",
+      "ballot_selections": [
+        {
+          "selection_id": "yes-selection",
+          "candidate_id": "YES"
+        },
+        {
+          "selection_id": "no-selection",
+          "candidate_id": "NO"
+        },
+        {
+          "selection_id": "abstain-selection",
+          "candidate_id": "ABSTAIN"
+        }
+      ]
+    }
+  ],
+  "ballot_styles": [
+    {
+      "ballot_style_id": "ballot-style-single-vote",
+      "geopolitical_unit_ids": [
+        "single-vote"
+      ]
+    }
+  ]
+}
+@endjson
