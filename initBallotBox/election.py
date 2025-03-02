@@ -272,12 +272,12 @@ def _buildElection(message):
 	election_builder.set_commitment_hash(hex_to_q(commitment))
 
 	internal_manifest, context = get_optional(election_builder.build())
-	
+
 	device = ElectionFactory.get_encryption_device()
 	encrypter = EncryptionMediator(internal_manifest, context, device)
 	 	
 	print("Generating Random Ballots")	
-	plaintext_ballots = BallotFactory().generate_fake_plaintext_ballots_for_election(internal_manifest, 10, None, False, False)
+	plaintext_ballots = BallotFactory().generate_fake_plaintext_ballots_for_election(internal_manifest, 1000, None, False, False)
 	for plain in plaintext_ballots:
 		for contest in plain.contests:
 			for selection in contest.ballot_selections:
@@ -304,7 +304,7 @@ def _buildElection(message):
 	parsed_data = parse_ciphertext_tally(ciphertext_tally, context.crypto_extended_base_hash)
 	serialized_message = parsed_data.SerializeToString()
 	mqttc.publish("ciphertally", serialized_message, 2, False)
-	mqttc.subscribe("decryption_share", 2)
+	
 	
 	
 ## @brief Decrypts the tally using the decryption mediator and prints the results.
@@ -357,7 +357,9 @@ def process_share(client, userdata, message):
 #  @param userdata User-defined data passed to the callback.
 #  @param message The MQTT message containing the joint key
 def on_build_election(client, userdata, message):
-    build_election_handler.execute_once(_buildElection, message)
+	election_thread = threading.Thread(target=_buildElection, args=(message,))
+	election_thread.start()
+    #build_election_handler.execute_once(_buildElection, message)
 
 	
 manifest = createManifest()
@@ -379,6 +381,7 @@ mqttc.message_callback_add("decryption_share", process_share)
 message = f"{QUORUM},{NUMBER_OF_GUARDIANS}"
 mqttc.publish("ceremony_details", message, 2, False)
 mqttc.subscribe("joint_key", 2)
+mqttc.subscribe("decryption_share", 1)
 
 try:
     mqttc.loop_forever()
