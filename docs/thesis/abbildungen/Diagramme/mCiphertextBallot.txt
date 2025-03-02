@@ -1,8 +1,0 @@
-@startjson
-{
-  "CiphertextBallot": {
-    "style_id": "",
-    "code": ""
-  }
-}
-@endjson

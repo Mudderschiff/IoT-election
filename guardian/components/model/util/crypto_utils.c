@@ -249,7 +249,7 @@ static int mulmod(sp_int *a, sp_int *b, sp_int *c, sp_int *result) {
 }
 
 /**
- * @brief Compute Large number Modular Exponetiation with known G (generator also known as base) and P (large prime also known as modulus). Y = (G ^ X) mod P
+ * @brief Compute Large number Modular Exponetiation with known G (generator also known as base) and P (large prime also known as modulus). 
  * @param seckey: Exponent (X)
  * @param pubkey: Result
  * @return 0 on success, -1 on failure
@@ -519,11 +519,11 @@ int verify_polynomial_coordinate(uint8_t* exponent_modifier, ElectionPolynomial*
  * This function encrypts a given message using the Hashed ElGamal encryption scheme. It generates a ciphertext consisting
  * of a pad, data, and MAC (Message Authentication Code).
  *
- * @param message The message (`sp_int`) to be encrypted.
- * @param nonce A random nonce (`sp_int`) used for encryption.
- * @param public_key The recipient's public key (`sp_int`).
- * @param encryption_seed An encryption seed (`sp_int`) used in the key derivation function.
- * @param encrypted_message A pointer to the `HashedElGamalCiphertext` structure where the resulting ciphertext will be stored.
+ * @param message The message (sp_int) to be encrypted.
+ * @param nonce A random nonce (sp_int) used for encryption.
+ * @param public_key The recipient's public key (sp_int).
+ * @param encryption_seed An encryption seed (sp_int) used in the key derivation function.
+ * @param encrypted_message A pointer to the HashedElGamalCiphertext structure where the resulting ciphertext will be stored.
  *
  * @return 0 on success, 1 on memory allocation failure.
  */
@@ -678,17 +678,17 @@ int hashed_elgamal_decrypt(HashedElGamalCiphertext *encrypted_message, sp_int *s
  * The Schnorr proof is generated using the provided secret key, public key, and a nonce (a random number).
  * The proof consists of a commitment, a challenge, and a response.
  *
- * @param seckey A pointer to the secret key (\(x\)), which is a large integer.
- * @param pubkey A pointer to the public key (\(g^x \mod p\)), which is a large integer.
- * @param nonce A pointer to the nonce (\(k\)), a random element in the range \([0, Q)\).
- * @param proof A pointer to the `SchnorrProof` struct where the generated proof will be stored.
- *              The caller is responsible for allocating memory for the `SchnorrProof` struct.
- *              The function will allocate memory for the `pubkey`, `commitment`, `challenge`, and `response` fields within the `SchnorrProof` struct.
+ * @param seckey A pointer to the secret key, which is a large integer.
+ * @param pubkey A pointer to the public key, which is a large integer.
+ * @param nonce A pointer to the nonce, a random element in the range [0, Q].
+ * @param proof A pointer to the SchnorrProof struct where the generated proof will be stored.
+ *              The caller is responsible for allocating memory for the SchnorrProof struct.
+ *              The function will allocate memory for the pubkey, commitment, challenge, and response fields within the SchnorrProof struct.
  *
  * @return 0 on success.
  * @return -1 on failure (e.g., memory allocation error).
  *
- * @note The function allocates memory for the fields within the `proof` structure.
+ * @note The function allocates memory for the fields within the proof structure.
  *       It is the caller's responsibility to free this memory when the proof is no longer needed
  *       to prevent memory leaks.  See `SchnorrProof` documentation for details.
  *
@@ -795,7 +795,7 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
  *
  * This function combines the public keys of a guardian and a set of other guardians
  * into a single aggregate public key. The aggregate key is computed by
- * multiplying all the individual public keys together modulo a large prime \(p\).
+ * multiplying all the individual public keys together modulo a large prime.
  *
  * @param guardian A pointer to the `ElectionKeyPair` struct of the primary guardian.
  *                 Its public key will be included in the combination.
@@ -809,7 +809,7 @@ int generate_polynomial(ElectionPolynomial *polynomial) {
  * @return -1 on failure (e.g., if any of the multiplication operations fail).
  *
  * @note The function assumes that all public keys are valid ElGamal public keys
- *       with respect to the same large prime \(p\).
+ *       with respect to the same large prime p.
  */
 int elgamal_combine_public_keys(ElectionKeyPair *guardian, ElectionKeyPair *pubkey_map, size_t count, sp_int *key) {
     DECL_MP_INT_SIZE(large_prime, 3072);
@@ -1121,8 +1121,8 @@ int make_chaum_pedersen(sp_int* alpha, sp_int* beta, sp_int* secret, sp_int* m, 
  * to demonstrate that the decryption share is computed correctly.
  *
  * @param privatekey A pointer to the secret key used to decrypt the ciphertext.
- * @param pad A pointer to the pad (\(g^r \mod p\)) of the ElGamal ciphertext.
- * @param data A pointer to the data (\(m \cdot y^r \mod p\)) of the ElGamal ciphertext.
+ * @param pad A pointer to the pad of the ElGamal ciphertext.
+ * @param data A pointer to the data of the ElGamal ciphertext.
  * @param base_hash A pointer to the base hash of the election.
  * @param dec_selection A pointer to the `CiphertextDecryptionSelection` struct where the
  *                      decryption share and proof will be stored.  The caller is
@@ -1166,10 +1166,7 @@ static int compute_decryption_share_for_selection(sp_int* privatekey, sp_int* pa
 /**
  * @brief Verifies a Chaum-Pedersen proof.
  *
- * This function verifies that a given Chaum-Pedersen proof is valid with respect to the provided public key,
- * challenge, alpha, and message. It performs two checks:
- * 1.  The equation 𝑔^𝑣𝑖 = 𝑎𝑖𝐾^𝑐𝑖 holds true
- * 2.  The equation 𝐴^𝑣𝑖 = 𝑏𝑖𝑀𝑖^𝑐𝑖 mod 𝑝 holds true
+ * This function verifies that a given Chaum-Pedersen proof is valid with respect to the provided public key
  *
  * @param public_key The public key (`sp_int`) used in the Chaum-Pedersen proof.
  * @param proof A pointer to the `ChaumPedersenProof` structure containing the proof data.
