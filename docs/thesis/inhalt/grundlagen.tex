@@ -60,7 +60,7 @@ In all applications, the election process utilizing ElectionGuard begins with a 
 \section{Phases of ElectionGuard}
 The election process in ElectionGuard can be divided into three main phases: Pre-election, Intra-election, and Post-election. Each phases involves distinc activities. Below, we will explore each phase in detail.
 
-\subsection{Pre-election}. 
+\subsection{Pre-election Key Generation}. 
 \begin{figure}[h!]
     \centering
     \begin{subfigure}{0.3\textwidth}
@@ -97,7 +97,7 @@ The key generation ceremony involves trustworthy individuals, known as \textbf{g
 
 The last step in the pre-election phase involves loading the election manifest, cryptographic parameters, and the joint key into an encryption device responsible for encrypting ballots throughout the intra-election phase. \cite[8]{eg-paper}.
 
-\subsection{Intra-election}.
+\subsection{Intra-election Ballot Encryption}.
 \begin{figure}
     \centering
     \includegraphics[scale=.5]{abbildungen/Diagramme/ballotencryption.png}
@@ -113,7 +113,7 @@ While encryption itself is a straightforward process, a significant portion of E
 
 Once the encryption of a ballot is finalized, a confirmation code is generated for the voter \cite[17]{eg-spec}. This confirmation code is a cryptographic hash derived entirely from the encrypted ballot \cite[14]{eg-paper}. With the confirmation code, a voter can either cast the associated ballot or choose to spoilt it and restart the ballot preperation process. The two choices are mutually exclusive, since challenging reveals the selections on the ballot. A challenged ballot can never be cast, while a cast ballot cannot be challenged anymore. This casting and spoiling mechanism acts as an interactive proof to assure voters that their selections have been correctly encrypted \cite[17]{eg-spec} \cite{eg-docs}.
 
-\subsection{Post-election}
+\subsection{Post-election Decryption of Tallies}
 At the end of the voting period, all encrypted ballots submitted for tallying are homomorphically combined to produce an encrypted tally \cite[5,18]{eg-spec} \cite[15]{eg-paper}. Each available guardian utilizes their private key to generate a decryption share, which represents a partial decryption for the encrypted tally or spoiled ballots. Decrypting spoiled ballots is unnecessary for determining the election outcome but may be performed to support cast-as-intended verifiability \cite[15,17]{eg-paper} \cite[18]{eg-spec}. To verify the correctness of these shares, guardians also publish a Chaum-Pedersen proof of each share \cite[18]{eg-spec}. The full decryption is achieved through the ordinary multiplication of these partial decryptions. If any guardians are unavailable during decryption, the remaining guardians can utilize the backups to reconstruct the missing shares \cite{eg-docs}.
 
 To conclude the election, the final step involves the publication of the election record, which is vital for the integrity of a verifiable election. This record contains a complete account of all election artifacts, including the election manifest, cryptographic parameters, and the decrypted tally \cite[24]{eg-spec}. Independent verification software can be leveraged at any time after completion of an election to confirm the election's integrity \cite[6]{eg-paper}. The true value of a verifiable election is fully realized only when the election is actively verified by voters, election obsevers, or news organisations \cite[17]{eg-spec}. 
@@ -150,6 +150,9 @@ ESP32s come with either a single or dual-core Xtensa® 32-bit LX6 microprocessor
 The supported cryptographic hardware acceleration capabilities include \ac{AES}, \ac{SHA}, \ac{RSA}, and \ac{RNG} \cite[4-5]{esp32-series}. A functional block diagram illustrating the components and subsystems within ESP32 is presented in Figure \ref{Fig:esp32-crypto}.
 
 \subsection{Development Environment}
-The freeRTOS operating system powers the ESP32 \cite[6]{esp32-module}. For application development, Espressif, the company behind the ESP32, offers the ESP-IDF (Espressif IoT Development Framework). ESP-IDF encompasses a comprehensive toolchain, API components, and defined workflows tailored for ESP32 application development \cite{esp32-prog}. The development workflow for ESP-IDF is depicted in Figure \ref{Fig:esp32-idf}.
+For application development, Espressif, the company behind the ESP32, offers the ESP-IDF (Espressif IoT Development Framework). ESP-IDF encompasses a comprehensive toolchain, API components, and defined workflows tailored for ESP32 application development \cite{esp32-prog}. The development workflow for ESP-IDF is depicted in Figure \ref{Fig:esp32-idf}.
 
-An ESP-IDF project can be seen as an amalgamation of numerous components coded in C. Components are modular pieces of standalone code that are compiled into static libraries which are subsequently linked into a project. These components can originate from various sources, including external git repositories or Espressif's Component Manager. Each component may also come with a Kconfig file, allowing users to configure the component through a text-based menu system \cite{esp-prog}.    
+
+ESP-IDF consists of components written specifically for ESP-IDF as well as third-party libraries.\cite{esp-prog} For example, the real-time operating system kernel used for ESP-IDF applications is the third-party component called FreeRTOS \cite{esp-prog} \cite[6]{esp32-module}. ESP-IDF projects use the same componment based approach and can be seen as an amalgamation of a number of components \cite{esp-prog}. Components are modular pieces of standalone code that are compiled into static libraries which are subsequently linked into a project. These components can originate from various sources, including external git repositories or Espressif's Component Manager. Each component may also come with a Kconfig file, allowing users to configure the component through a text-based menu system \cite{esp-prog}.    
+
+

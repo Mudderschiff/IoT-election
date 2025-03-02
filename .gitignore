@@ -126,3 +126,5 @@ fabric.properties
 .history
 .ionide
 guardian/.vscode/settings.json
+
+docs/documentation-latex
