@@ -57,7 +57,7 @@ The tallier node defines the election manifest, sets the cryptographic constants
 Figure \ref{Fig:comm-pre} illustrates the communication sequence involved in this phase. The Tallier sends the ceremony details required for the key generation ceremony to the Guardians. The quorum size influences how each Guardian generates their ElectionKeyPair. After generating their ElectionKeyPair and stripping the secret key for transmission, the Guardians exchange their ElectionKeyPairs. Each Guardian generates a designatted backup for each ElectionKeyPair received, which is then sent back to the sending Guardian. Each backup contains a proof that must be verified by the receiver. The challenge mechanism and eviction mechanism for failed verifications are not implemented in this experiment. This verification process for a challenge or a backup is identical. Once all backups successfully verify, the ElectionKeyPairs are combined into a joint key.
 
 \subsection{Intra-Election Ballot Encryption}
-During this election, the Tallier simulates the voting process by generating random ballots and encrypting them using the joint key established in the previous phase. The ballots are cast and processed as detailed in Appendix \ref{lst:intra-election}.
+During this election, the Tallier simulates the voting process by generating random ballots and encrypting them using the joint key established in the previous phase. In example in the Appendix \ref{lst:intra-election} the Tallier generates 10 ballots and encrypts them. We test the configuration with 10, 100 and 1000 ballots.
 
 \subsection{Post-Election Decryption of Tallies}
 In the post-election phase, all encrypted ballots from the previous phase are homomorphically aggregated to produce an encrypted tally. This encrypted tally is send to the Guardians for decryption. Each guardian uses their private key to generate a decryption share, which is essentialy a partial decryption. The Tallier then combines all decryption shares into a decrypted tally. Figure \ref{Fig:comm-post} illustrates the communication involved in this phase. The decryption of spoiled ballots is optional and not implemented in this experiment. The decryption process of the spoiled ballots mirrors that of the encrypted tallly. The case of missing Guardians is also not addressed in this experiment. Compensating for missing decryptions functions similarly to the generation of the decryption share. The publication of the election artifacts is also not implemented. Publishing the election artifacts is not implemented,  the interaction between the Guardians and the Tallier requires inherent verification due to the proofs involved.
@@ -479,10 +479,49 @@ In our case, choosing a binary serialization approach could be beneficial. The i
 
 Our implementation, therefore, chooses Protocol Buffers as the serialization format. A Protocol Buffer implementation is already included in the ESP32 as a component. A significant advantage of Protocol Buffers is that we only need to define the structure for the data to be transferred once and can then exchange it over a wide variety of channels. The programming language is secondary since Protocol Buffers are language-neutral \cite[224]{protobuffer}. Thus, with our .proto files, as seen in Appendix \ref{pre-election}, we can generate code for both the ESP32 and the Python client, as seen in Appendices \ref{lst:generated-c} and \ref{lst:generated-python}. An example of serialising ElectionPartialKeyPair which is the backup shared with other guardians is seen in Appendix \ref{lst:serialize} an example of deserialisation is seen in Appendix \ref{lst:deserialise}. 
 
-\subsection{Networ Traffic Analysis}
-Network traffice between the Laptop and the ESP32 was captured using Wireshark (4.4.3) by listening to the access point interface of the laptop. The traffic was narrowed down by applying a display filter to filter out all non mqtt traffic. The precision of the timestamps is in milliseconds. The capture focused on the communication related to the key ceremony and the decryption phase. \ac{RTT} was calculated based on the time difference between request and acknowlegement packets for specific message exchanges. A display filter 
+\section{Networ Traffic Analysis}
+Network traffice between the Laptop and the ESP32 was captured using Wireshark (4.4.3) by listening to the access point interface of the laptop. The MTU size of the Access Point is 1500 Bytes. Both guardians where positioned in close proximity to the laptop.The traffic was narrowed down by applying a display filter to filter out all non mqtt traffic. In the scenarios 10, 100 and 1000 votes no packet loss occured.Payloads such as public keys backups, decryptionshare that are exceeding the MTU size are simply split into multiple TCP segments and Reassembled. 
 
 \begin{comment}
+    Large payloads (e.g. keys/backups) split into 1440-byte segments (Frames 29-32, 82-84). MTU size. To calculate the time 
+
+    Reassembly Delay: The time taken for all segments of a fragmented packet to arrive at the receiver, allowing the original packet to be reconstructed.We simply take the last package and subtract the first package (e.g. Frame 34 - Frame 29)
+
+    [3 Reassembled TCP Segments (2955 bytes): #29(1440), #33(1440), #34(75)]
+    [Frame: 29, payload: 0-1439 (1440 bytes)]
+    [Frame: 33, payload: 1440-2879 (1440 bytes)]
+    [Frame: 34, payload: 2880-2954 (75 bytes)]
+    [Segment count: 3]
+    [Reassembled TCP length: 2955]
+    [Reassembled TCP Data […]: 
+
+\end{comment}
+
+
+The capture focused on the communication between the guardians and the tallier related to the key ceremony and the decryption phase. Furthermore, all captures start with the publishing of the ceremony\_details and end with the publishing of the decryption\_share. 3 captures where taken. One capture where the number of ballots was set to 10, another where it was set to 100 and the third where it was set to 1000 votes.
+
+\subsection{Analysis with 10 Ballots}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/10_ballots.png}
+    \caption{Network Traffic Analysis with 10 Ballots}
+    \label{fig:10-ballots}
+\end{figure}
+
+
+
+\subsection{Analysis with 100 Ballots}
+
+\subsection{Analysis with 100 Ballots}
+
+
+
+
+
+
+\begin{comment}
+    The precision of the timestamps is in milliseconds.  \ac{RTT} was calculated based on the time difference between request and acknowlegement packets for specific message exchanges. A display filter 
+
     This capture shows a secure multi-party communication process between two IoT devices (“Guardian#1” and “Guardian#2”) and a central coordinator (“Tallier”) using the MQTT protocol
     Seperate topic for each phase (ppub_keys, backups, challenge, etc) to compartmentalize data
     
