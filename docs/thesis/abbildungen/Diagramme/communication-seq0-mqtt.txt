@@ -1,27 +1,33 @@
 @startuml
+skinparam dpi 300
 hide unlinked
-actor Admin as A
-actor EncryptionDevice as E
+actor Tallier as T
+Queue Broker as B
 collections Guardians as G
-actor Voter as V
-actor ThirdParties as T
 title Pre-election
-A -> G : Ceremony Details
-note over A, G: Quorum, Max number of Guardians
-G -> G : ElectionKeyPair
-note right: Send key pair to other guardians
-G -> G : PartialKeyPairBackup
-note right: Send backup based on received keys
-alt Proof Verifies
-G -> G : Continue
-else Proof Fails
-     G -> G : Send as Challenge to other Guardians
-else proof fails again
-     G -x G : Evict sending guardian and restart the phase
+T -> B : Ceremony Details
+note right: (Quorum, Max number of Guardians)
+B -> G : Ceremony Details
+G -> B : ElectionKeyPair
+B -> G : ElectionKeyPair
+note right: Exchange of public keys
+G -> B : PartialKeyPairBackup
+B -> G : PartialKeyPairBackup
+note right: Exchange designated backups
+alt Backup proof Verifies
+G ->>o G
+note right: Continue
+else Backup proof Fails
+	G -> B : Challenge
+	B -> G : Challenge
+note right: Forward Backup as challenge
+else Backup proof fails again
+     G -x B : 
+note right: Evict original sender and restart phase
 end
-G -> G : combine_election_public_keys()
-note right: Combine all public keys to create a joint key
-G -> A : ElectionJointKey
-A -> E : ElectionJointKey
+G -> G : 
+note right: Combine public keys to joint key
+G -> B : ElectionJointKey
+B -> T : ElectionJointKey
 note right: Load encryption device with joint key
 @enduml

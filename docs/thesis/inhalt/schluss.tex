@@ -1,17 +1,14 @@
-\chapter{Conclusions}
-Im Schlusskapitel wird die Arbeit und ihre Ergebnisse zusammengefasst sowie ein Ausblick gegeben.
+\chapter{Conclusions} \label{ch:conclusions}
+The implementation of the \ac{IoT} voting system demonstrates the feasibility of deploying secure, \ac{E2E} verifiable elections on resource-constrained hardware. Reduced cryptographic parameters provided a pragmatic balance between security and performance, enabling functional execution while adhering to resouce limits. The ESP32s memory constrains necessitated a custom C port of ElectionGuard. However, by leveraging the ESP32s hardware accelerators (\ac{RSA}, \ac{SHA}) most cryptographic operations speeds improved by 4x compared to software-only implementations (Table \ref{tab:perfromance}). This validates the use of ESP32s for guardian roles in the voting system. The homomorphic aggregation on the Tallier (Python) dominated system latency, requiring an election 251.9s for 1000 ballots (Figure \ref{fig:cpu}). This CPU-bound process limits scalability, suggesting a need for optimized or distributed computation.The choice of \ac{MQTT} as the communication protocol proved effective for \ac{IoT} constraints, balancing payload size limitations (up to 4.2 KB for decryption shares) with reliable transmissions through \ac{QoS} levels. Network traffic analysis revealed consistend \ac{RTT} (~45 ms) under load, though initial bursts highlight the need for congestion management in larger-scale deployments. The use of Protocol Buffers for binary serialisation minimized overhead, ensuring interoperability between the Python based Tallier and the C-based Guardian nodes.
+
+\subsection{Future Work}
+Building upon the success of this implementation, future research should on the following key areas:
+
+\textbf{Decentralised Communication:} While threshold cryptography eliminates single points of failure, our broker-dependent architecture remains vulnerable to central infrastructure failures. A decentralised device-to-device communication model using Wi-Fi mesh networks could enhance robustness through inherent redundancy and self-healing capabilities. This approach would require developing retransmission protocols to maintain delivery guarantees without centralized coordination.
+\textbf{Leveraging ElectionGuard 2.0:} The updated ElectionGuard 2.0 specification and updated C++ core SDK offer promising opportunities for significant performance gains. The new SDK aims to deliver production-level performance for encryption. Specifically, faster proof computations and more compact proof structures could directly translate to reduced latency and improved resource utilization \cite{eg-docs}. A thorough evaluation and integration of the new SDK, with its focus on production-level encryption performance, is a critical next step.
+
+By addressing these challenges, future research can pave the way for the widespread adoption of secure and verifiable voting systems, fostering greater trust and transparency in democratic processes.
 
 
-\begin{comment}
-    MQTT is not suitable. Very involved interactions are hard to model.
-    Trust is distributed and mpc want to avoid single point of failure. However, due to communication the broker inavitably becomes a single point of failure. A true d2d communication is needed. Consensus of the Guardians is hard to model. Elect a leader of dishonest majority
 
-    Mesh network inherent decentralised nature is great however, we are limited by the bandwidth of the network. Can adapt to changes to the topology
 
-    The redundancy and self-healing nature of mesh networks could ensure that the necessary quorum of guardians can still communicate and collaborate effectively.
-
-    Device discovery
-
-    Synchronisation challenges. 
-
-\end{comment}

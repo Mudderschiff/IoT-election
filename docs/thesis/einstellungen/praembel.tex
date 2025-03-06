@@ -14,6 +14,8 @@
 \usepackage{comment}
 \usepackage{subcaption}
 \usepackage{multirow}
+\usepackage{adjustbox}
+\usepackage{lscape}
 
 
 %Kopf- und Fußzeile
@@ -54,5 +56,7 @@
   commentstyle=\itshape\color{purple!40!black},
   identifierstyle=\color{blue},
   stringstyle=\color{orange},
+  escapeinside={(*@}{@*)},
+  linewidth=\textwidth
 }
 \lstset{style=customstyle}

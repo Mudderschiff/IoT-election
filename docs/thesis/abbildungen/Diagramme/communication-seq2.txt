@@ -1,24 +1,30 @@
 @startuml
+skinparam dpi 300
 hide unlinked
 actor Tallier as T
 collections Guardians as G
 actor Verifier as V
 title Post-election
-T -> T : Generate Encrypted Tally from cast ballots
-T -> G : Send Encrypted Tally
+T -> T : 
+note right: Generate Encrypted Tally from cast ballots
+T -> G : EncryptedCiphertextTally
 alt all guardians present
-    G -> T : Send the decryption share
-    T -> T : Combine Decryption Shares to an decrypted Tally
+    G -> T : DecryptionShare
+    T -> T : 
+note right: Combine Decryption Shares to an decrypted Tally
 else guardians are missing
-    G -> G : Compute Partial Decryption for each missing guardian
-    G -> T : Send the decrypted share
-    T -> T : Combine Decryption Shares to an decrypted Tally
+    G -> G : PartialDecryption
+note left: Compute Partial Decryption for each missing guardian
+    G -> T : DecryptionShare
+    T -> T : 
+note right: Combine Decryption Shares to an decrypted Tally
 end
 opt Decryption of Spoiled Ballots
-    T -> G : Send Encrypted Spoiled Ballots
-    G -> T : Send decrypted spoiled ballots
-    T -> T : Combine Decryption Shares to decrypt ballots
+    T -> G : EncryptedCiphertextBallots
+    G -> T : DecryptionShare
+    T -> T : 
+note right: Combine Decryption Shares to decrypt ballots
 end
 T -> V : Publish the election artifacts
-T -> V : Verify the election
+V -> V : Verify the election
 @enduml
