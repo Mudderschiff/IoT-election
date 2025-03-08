@@ -1,4 +1,5 @@
 # Guardian - ElectionGuard ESP32 Client
+[![ElectionGuard 1.0](https://img.shields.io/badge/🗳%20ElectionGuard-v1.0-green)](https://www.electionguard.vote/spec)
 
 ## Overview
 
