@@ -1,9 +1,8 @@
 # Guardian - ElectionGuard ESP32 Client
-[![ElectionGuard 1.0](https://img.shields.io/badge/🗳%20ElectionGuard-v1.0-green)](https://www.electionguard.vote/spec)
 
 ## Overview
 
-This project provides the source code and configuration necessary to build an ElectionGuard guardian client for the ESP32 platform. The guardian client is responsible for securely participating in the key generation ceremony and the tallying phase required by the ElectionGuard protocol. This client communicates via MQTT to a central server (Laptop).
+This project provides the source code and configuration necessary to build an ElectionGuard guardian client for the ESP32 platform. The guardian client is responsible for securely participating in the key generation ceremony and the tallying phase from the the ElectionGuard 1.0. This client communicates via MQTT to a central broker (Laptop).
 
 ## Project Structure
 

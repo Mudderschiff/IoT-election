@@ -7,5 +7,5 @@ python -m election.py &
 
 # Get the PID of the last background command
 #PID=$!
-# Monitor the program
+# Plot the CPU and memory usage of the process
 #psrecord $PID --plot plot.png 
