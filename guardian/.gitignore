@@ -1,6 +1,7 @@
 # ESP-IDF
 build/
-sdkconfig
+# Allow the guardian.bin file
+!build/guardian.bin
 sdkconfig.old
 managed_components/
 

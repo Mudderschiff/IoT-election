@@ -277,7 +277,7 @@ def _buildElection(message):
 	encrypter = EncryptionMediator(internal_manifest, context, device)
 	 	
 	print("Generating Random Ballots")	
-	plaintext_ballots = BallotFactory().generate_fake_plaintext_ballots_for_election(internal_manifest, 1000, None, False, False)
+	plaintext_ballots = BallotFactory().generate_fake_plaintext_ballots_for_election(internal_manifest, 10, None, False, False)
 	for plain in plaintext_ballots:
 		for contest in plain.contests:
 			for selection in contest.ballot_selections:
